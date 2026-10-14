@@ -1,0 +1,241 @@
+{
+ "data": {
+  "b27d09e3": {
+   "axis_correlation_xyz": [
+    0.9987,
+    0.9895,
+    0.9828
+   ],
+   "best_time_shift_ms_xyz": [
+    -3.5,
+    -4.500000000000001,
+    -4.0
+   ],
+   "rotation_used": 0,
+   "logged_rates_hz": {
+    "vehicle_angular_velocity": 800.6,
+    "vehicle_torque_setpoint": 800.6
+   },
+   "IMU_GYRO_RATEMAX": 800.0,
+   "window_main": [
+    45.16,
+    53.16
+   ],
+   "window_second": [
+    28.16,
+    36.16
+   ],
+   "second_vs_main_roll_band_db": {
+    "20-60": 1.8,
+    "60-90": 5.99,
+    "90-130": 0.09,
+    "130-180": 2.24,
+    "180-240": 1.83,
+    "240-320": 2.16,
+    "320-400": 1.88,
+    "400-800": 1.14
+   }
+  },
+  "a2571040": {
+   "axis_correlation_xyz": [
+    0.9082,
+    0.8862,
+    0.5761
+   ],
+   "best_time_shift_ms_xyz": [
+    -5.0,
+    -5.0,
+    -4.500000000000001
+   ],
+   "rotation_used": 4,
+   "logged_rates_hz": {
+    "vehicle_angular_velocity": 66.5,
+    "vehicle_torque_setpoint": 49.9
+   },
+   "IMU_GYRO_RATEMAX": 400.0,
+   "window_main": [
+    8.04,
+    16.04
+   ],
+   "window_second": [
+    30.04,
+    38.04
+   ],
+   "second_vs_main_roll_band_db": {
+    "20-60": -0.71,
+    "60-90": 1.51,
+    "90-130": -0.23,
+    "130-180": -0.3,
+    "180-240": 0.32,
+    "240-320": 0.98,
+    "320-400": -1.03,
+    "400-800": -0.13
+   }
+  }
+ },
+ "plant": {
+  "roll": {
+   "full": {
+    "b": 431.1,
+    "tau_m": 0.0292,
+    "Td": 0.00261
+   },
+   "att_sp_instrument": {
+    "b": 436.4,
+    "tau_m": 0.0294,
+    "Td": 0.00212,
+    "n_freq": 11
+   },
+   "sub_windows": [
+    {
+     "window": [
+      24.0,
+      38.5
+     ],
+     "error": "too few frequencies with enough coherence (not enough excitation)"
+    },
+    {
+     "window": [
+      38.5,
+      53.0
+     ],
+     "error": "too few frequencies with enough coherence (not enough excitation)"
+    }
+   ],
+   "spread": null
+  },
+  "pitch": {
+   "full": {
+    "b": 473.5,
+    "tau_m": 0.0342,
+    "Td": 0.0
+   },
+   "att_sp_instrument": {
+    "b": 472.3,
+    "tau_m": 0.034,
+    "Td": 0.0,
+    "n_freq": 20
+   },
+   "sub_windows": [
+    {
+     "window": [
+      8.5,
+      15.7
+     ],
+     "error": "too few frequencies with enough coherence (not enough excitation)"
+    },
+    {
+     "window": [
+      15.7,
+      22.9
+     ],
+     "b": 588.1,
+     "tau_m": 0.0394,
+     "Td": 0.0,
+     "n_freq": 11
+    }
+   ],
+   "spread": null
+  }
+ },
+ "time_domain_vs_nyquist": {
+  "n_cases": 160,
+  "model_stable": 94,
+  "agree": 158,
+  "disagree": 0,
+  "unclear_in_4s": 2,
+  "disagreements": [],
+  "sim_seconds": 13.2,
+  "Ms_of_unclear_cases": [
+   99.6,
+   108.4
+  ]
+ },
+ "optimizer": {
+  "N_rel_f_hi_800": {
+   "PX4 default": 0.668,
+   "pilot": 1.0,
+   "mode A": 1.0,
+   "mode B": 0.879
+  },
+  "N_rel_f_hi_3194": {
+   "PX4 default": 0.667,
+   "pilot": 1.0,
+   "mode A": 1.0,
+   "mode B": 0.879
+  },
+  "second_window": {
+   "window": [
+    28.16,
+    36.16
+   ],
+   "metrics": {
+    "PX4 default": {
+     "N_rel": 0.669,
+     "PM": 27.25
+    },
+    "pilot": {
+     "N_rel": 1.0,
+     "PM": 39.52
+    },
+    "mode A": {
+     "N_rel": 0.98,
+     "PM": 42.0
+    },
+    "mode B": {
+     "N_rel": 0.861,
+     "PM": 40.96
+    }
+   }
+  },
+  "worst_of_8_corners": {
+   "PX4 default": {
+    "PM": 6.97,
+    "GM": 0.92,
+    "Ms": 12.81
+   },
+   "pilot": {
+    "PM": 23.38,
+    "GM": 3.35,
+    "Ms": 3.87
+   },
+   "mode A": {
+    "PM": 27.76,
+    "GM": 3.86,
+    "Ms": 3.32
+   },
+   "mode B": {
+    "PM": 26.47,
+    "GM": 3.65,
+    "Ms": 3.49
+   }
+  },
+  "step_response": {
+   "PX4 default": {
+    "overshoot_pct": 16.9,
+    "rise_ms": 33.8,
+    "ringing_rms_after_150ms": 0.0043
+   },
+   "pilot": {
+    "overshoot_pct": 5.0,
+    "rise_ms": 37.0,
+    "ringing_rms_after_150ms": 0.0022
+   },
+   "mode A": {
+    "overshoot_pct": 6.6,
+    "rise_ms": 37.0,
+    "ringing_rms_after_150ms": 0.0023
+   },
+   "mode B": {
+    "overshoot_pct": 7.7,
+    "rise_ms": 36.6,
+    "ringing_rms_after_150ms": 0.0023
+   }
+  }
+ },
+ "meta": {
+  "date": "2026-10-14",
+  "seconds": 111.9,
+  "results_json_date": "2026-10-14"
+ }
+}

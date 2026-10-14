@@ -1,0 +1,626 @@
+% refs.bib -- bibliography for the thesis / paper
+% Built 2026-10-14 (Day 17, Phase 1). Every entry was checked to exist:
+%   - journal/conference papers: DOI and metadata from Crossref (api.crossref.org)
+%   - arXiv papers: title/authors from the arXiv abstract page
+%   - software, docs and web pages: URL opened (date in urldate / note)
+% Import into Zotero: File > Import... > refs.bib. Keys follow THESIS.md Section 16 numbers in the comments [n].
+% Before submission: re-export from Zotero with the journal's style; check author lists marked "and others".
+
+% =====================================================================
+% Controller-filter co-design, noise-aware PID design            [1,26-31]
+% =====================================================================
+
+@misc{torresgarcia2026codesign,                                  % [1]
+  author        = {Torres-Garc{\'i}a, Diego and Michiels, Wim},
+  title         = {A numerical approach to the co-design of {PID} controllers and low-pass filters for time-delay systems},
+  year          = {2026},
+  eprint        = {2604.16124},
+  archivePrefix = {arXiv},
+  primaryClass  = {eess.SY},
+  url           = {https://arxiv.org/abs/2604.16124}
+}
+
+@article{romerosegovia2014noise,                                 % [26]
+  author  = {Romero Segovia, V. and H{\"a}gglund, T. and {\AA}str{\"o}m, K. J.},
+  title   = {Measurement noise filtering for {PID} controllers},
+  journal = {Journal of Process Control},
+  volume  = {24},
+  number  = {4},
+  pages   = {299--313},
+  year    = {2014},
+  doi     = {10.1016/j.jprocont.2014.01.017}
+}
+
+@article{soltesz2017simultaneous,                                % [27]
+  author  = {Soltesz, Kristian and Grimholt, Chriss and Skogestad, Sigurd},
+  title   = {Simultaneous design of proportional-integral-derivative controller and measurement filter by optimisation},
+  journal = {IET Control Theory \& Applications},
+  volume  = {11},
+  number  = {3},
+  pages   = {341--348},
+  year    = {2017},
+  doi     = {10.1049/iet-cta.2016.0297}
+}
+
+@article{garpinger2015software,                                  % [28]
+  author  = {Garpinger, Olof and H{\"a}gglund, Tore},
+  title   = {Software-based optimal {PID} design with robustness and noise sensitivity constraints},
+  journal = {Journal of Process Control},
+  volume  = {33},
+  pages   = {90--101},
+  year    = {2015},
+  doi     = {10.1016/j.jprocont.2015.06.001}
+}
+
+@article{isaksson2002derivative,                                 % [29]
+  author  = {Isaksson, A. J. and Graebe, S. F.},
+  title   = {Derivative filter is an integral part of {PID} design},
+  journal = {IEE Proceedings - Control Theory and Applications},
+  volume  = {149},
+  number  = {1},
+  pages   = {41--45},
+  year    = {2002},
+  doi     = {10.1049/ip-cta:20020111}
+}
+
+@article{kristiansson2006robust,                                 % [30]
+  author  = {Kristiansson, B. and Lennartson, B.},
+  title   = {Robust tuning of {PI} and {PID} controllers: using derivative action despite sensor noise},
+  journal = {IEEE Control Systems Magazine},
+  volume  = {26},
+  number  = {1},
+  pages   = {55--69},
+  year    = {2006},
+  doi     = {10.1109/MCS.2006.1580154}
+}
+
+@article{abramovitch2002disk,                                    % [31]
+  author  = {Abramovitch, Daniel and Franklin, Gene},
+  title   = {A brief history of disk drive control},
+  journal = {IEEE Control Systems Magazine},
+  volume  = {22},
+  number  = {3},
+  pages   = {28--42},
+  year    = {2002},
+  doi     = {10.1109/MCS.2002.1003997}
+}
+
+@book{astrom2008feedback,                                        % learning resource / textbook
+  author    = {{\AA}str{\"o}m, Karl Johan and Murray, Richard M.},
+  title     = {Feedback Systems: An Introduction for Scientists and Engineers},
+  publisher = {Princeton University Press},
+  year      = {2008},
+  doi       = {10.1515/9781400828739},
+  note      = {Second edition 2021; free PDF on the authors' website}
+}
+
+% =====================================================================
+% Multirotor dynamics, vibration, notch filters, delay           [32-35, new]
+% =====================================================================
+
+@article{mahony2012multirotor,                                   % new [45]
+  author  = {Mahony, Robert and Kumar, Vijay and Corke, Peter},
+  title   = {Multirotor aerial vehicles: Modeling, estimation, and control of quadrotor},
+  journal = {IEEE Robotics \& Automation Magazine},
+  volume  = {19},
+  number  = {3},
+  pages   = {20--32},
+  year    = {2012},
+  doi     = {10.1109/MRA.2012.2206474}
+}
+
+@article{bangura2017thrust,                                      % [35]
+  author  = {Bangura, Moses and Mahony, Robert},
+  title   = {Thrust control for multirotor aerial vehicles},
+  journal = {IEEE Transactions on Robotics},
+  volume  = {33},
+  number  = {2},
+  pages   = {390--405},
+  year    = {2017},
+  doi     = {10.1109/TRO.2016.2633562}
+}
+
+@article{chen2023quadcopter,                                     % [32]
+  author  = {Chen, Lian and Zhang, Jing and Quan, Quan},
+  title   = {Quadcopter attitude control with vibration reduction by additive-state-decomposition dynamic inversion design with a notch filter},
+  journal = {Nonlinear Dynamics},
+  volume  = {111},
+  number  = {9},
+  pages   = {8313--8327},
+  year    = {2023},
+  doi     = {10.1007/s11071-023-08272-6}
+}
+
+@inproceedings{xu2019tailsitter,                                 % new [46]
+  author    = {Xu, Wei and Gu, Haowei and Qing, Youming and Lin, Jiarong and Zhang, Fu},
+  title     = {Full attitude control of an efficient quadrotor tail-sitter {VTOL} {UAV} with flexible modes},
+  booktitle = {2019 International Conference on Unmanned Aircraft Systems (ICUAS)},
+  pages     = {542--550},
+  year      = {2019},
+  doi       = {10.1109/ICUAS.2019.8797947},
+  eprint    = {1903.06393},
+  archivePrefix = {arXiv}
+}
+
+@article{ghalamchi2020vibration,                                 % new [47]
+  author  = {Ghalamchi, Behnam and Jia, Zheng and Mueller, Mark Wilfried},
+  title   = {Real-time vibration-based propeller fault diagnosis for multicopters},
+  journal = {IEEE/ASME Transactions on Mechatronics},
+  volume  = {25},
+  number  = {1},
+  pages   = {395--405},
+  year    = {2020},
+  doi     = {10.1109/TMECH.2019.2947250}
+}
+
+@article{smeur2016adaptive,                                      % [33]
+  author  = {Smeur, Ewoud J. J. and Chu, Qiping and de Croon, Guido C. H. E.},
+  title   = {Adaptive incremental nonlinear dynamic inversion for attitude control of micro air vehicles},
+  journal = {Journal of Guidance, Control, and Dynamics},
+  volume  = {39},
+  number  = {3},
+  pages   = {450--461},
+  year    = {2016},
+  doi     = {10.2514/1.G001490}
+}
+
+@article{tal2021accurate,                                        % [34]
+  author  = {Tal, Ezra and Karaman, Sertac},
+  title   = {Accurate tracking of aggressive quadrotor trajectories using incremental nonlinear dynamic inversion and differential flatness},
+  journal = {IEEE Transactions on Control Systems Technology},
+  volume  = {29},
+  number  = {3},
+  pages   = {1203--1218},
+  year    = {2021},
+  doi     = {10.1109/TCST.2020.3001117}
+}
+
+% =====================================================================
+% System identification (Tier 2, decision D-14)                  [new]
+% =====================================================================
+
+@article{forssell1999closedloop,                                 % new [48]
+  author  = {Forssell, Urban and Ljung, Lennart},
+  title   = {Closed-loop identification revisited},
+  journal = {Automatica},
+  volume  = {35},
+  number  = {7},
+  pages   = {1215--1241},
+  year    = {1999},
+  doi     = {10.1016/S0005-1098(99)00022-9}
+}
+
+@article{bergamasco2014identification,                           % new [49]
+  author  = {Bergamasco, Marco and Lovera, Marco},
+  title   = {Identification of linear models for the dynamics of a hovering quadrotor},
+  journal = {IEEE Transactions on Control Systems Technology},
+  volume  = {22},
+  number  = {5},
+  pages   = {1696--1707},
+  year    = {2014},
+  doi     = {10.1109/TCST.2014.2299555}
+}
+
+@book{tischler2012aircraft,                                      % new [50]
+  author    = {Tischler, Mark B. and Remple, Robert K.},
+  title     = {Aircraft and Rotorcraft System Identification: Engineering Methods with Flight-Test Examples},
+  edition   = {2},
+  publisher = {American Institute of Aeronautics and Astronautics},
+  year      = {2012},
+  doi       = {10.2514/4.868207}
+}
+
+% =====================================================================
+% Controller autotuning (competing approaches)                   [11,12,36,37, new]
+% =====================================================================
+
+@misc{vaiuso2025multiobjective,                                  % [11]
+  author        = {Vaiuso, Andrea and Immordino, Gabriele and Onofri, Ludovica and Coppotelli, Giuliano and Righi, Marcello},
+  title         = {Methods for multi-objective optimization {PID} controller for quadrotor {UAVs}},
+  year          = {2025},
+  eprint        = {2509.17423},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2509.17423}
+}
+
+@misc{kavas2024insitu,                                           % [12] (laser powder bed fusion, not a drone; cite only as a BO-autotuning example)
+  author        = {Kavas, Baris and Balta, Efe C. and Tucker, Michael R. and Krishnadas, Raamadaas and Rupenyan, Alisa and Lygeros, John and others},
+  title         = {In-situ controller autotuning by {B}ayesian optimization for closed-loop feedback control of laser powder bed fusion process},
+  year          = {2024},
+  eprint        = {2406.19096},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2406.19096}
+}
+
+@inproceedings{berkenkamp2016safe,                               % [36]
+  author    = {Berkenkamp, Felix and Schoellig, Angela P. and Krause, Andreas},
+  title     = {Safe controller optimization for quadrotors with {G}aussian processes},
+  booktitle = {2016 IEEE International Conference on Robotics and Automation (ICRA)},
+  pages     = {491--496},
+  year      = {2016},
+  doi       = {10.1109/ICRA.2016.7487170},
+  eprint    = {1509.01066},
+  archivePrefix = {arXiv}
+}
+
+@article{berkenkamp2023bayesian,                                 % new [51]
+  author  = {Berkenkamp, Felix and Krause, Andreas and Schoellig, Angela P.},
+  title   = {Bayesian optimization with safety constraints: safe and automatic parameter tuning in robotics},
+  journal = {Machine Learning},
+  volume  = {112},
+  number  = {10},
+  pages   = {3713--3747},
+  year    = {2023},
+  doi     = {10.1007/s10994-021-06019-1},
+  note    = {Published online 2021; arXiv:1602.04450}
+}
+
+@misc{holzapfel2023eventtriggered,                               % new [52]
+  author        = {Holzapfel, Antonia and Brunzema, Paul and Trimpe, Sebastian},
+  title         = {Event-triggered safe {B}ayesian optimization on quadcopters},
+  year          = {2023},
+  eprint        = {2312.08058},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2312.08058}
+}
+
+@article{loquercio2022autotune,                                  % [37]
+  author  = {Loquercio, Antonio and Saviolo, Alessandro and Scaramuzza, Davide},
+  title   = {{AutoTune}: Controller tuning for high-speed flight},
+  journal = {IEEE Robotics and Automation Letters},
+  volume  = {7},
+  number  = {2},
+  pages   = {4432--4439},
+  year    = {2022},
+  doi     = {10.1109/LRA.2022.3146897}
+}
+
+@article{sonmez2025rl,                                           % new [53]
+  author  = {S{\"o}nmez, Serhat and Montecchio, Luca and Martini, Simone and Rutherford, Matthew J. and Rizzo, Alessandro and others},
+  title   = {Reinforcement learning-based {PD} controller gains prediction for quadrotor {UAVs}},
+  journal = {Drones},
+  volume  = {9},
+  number  = {8},
+  pages   = {581},
+  year    = {2025},
+  doi     = {10.3390/drones9080581},
+  note    = {Preprint: arXiv:2502.04552}
+}
+
+@misc{fpvtune2025,                                               % [10]
+  author       = {{FPVTune}},
+  title        = {How {I} built a neural network to auto-tune {FPV} drone {PIDs} from {Blackbox} logs},
+  howpublished = {DEV Community blog},
+  url          = {https://dev.to/fpvtune/how-i-built-a-neural-network-to-auto-tune-fpv-drone-pids-from-blackbox-logs-1aoc},
+  note         = {Accessed 2026-09-30}
+}
+
+% =====================================================================
+% Amortized optimization, learned controllers, physics-guided ML [13,14,38-42, new]
+% =====================================================================
+
+@article{amos2023tutorial,                                       % [38]
+  author  = {Amos, Brandon},
+  title   = {Tutorial on amortized optimization},
+  journal = {Foundations and Trends in Machine Learning},
+  volume  = {16},
+  number  = {5},
+  pages   = {592--732},
+  year    = {2023},
+  doi     = {10.1561/2200000102}
+}
+
+@article{chen2022learning,                                       % new [54]
+  author  = {Chen, Tianlong and Chen, Xiaohan and Chen, Wuyang and Heaton, Howard and Liu, Jialin and Wang, Zhangyang and Yin, Wotao},
+  title   = {Learning to optimize: A primer and a benchmark},
+  journal = {Journal of Machine Learning Research},
+  volume  = {23},
+  number  = {189},
+  pages   = {1--59},
+  year    = {2022},
+  url     = {https://jmlr.org/papers/v23/21-0308.html}
+}
+
+@misc{withoft2026amortized,                                      % [13]
+  author        = {With{\"o}ft, Julian and John, Werner and Ecik, Emre and Br{\"u}ning, Ralf and G{\"o}tze, J{\"u}rgen},
+  title         = {Amortized neural optimization for pre-layout signal integrity design space exploration using differentiable surrogates},
+  year          = {2026},
+  eprint        = {2606.07463},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2606.07463}
+}
+
+@misc{osti2481183,                                               % [14] -- complete authors/venue from the OSTI page before submission
+  title        = {Neural network approaches for parameterized optimal control},
+  howpublished = {OSTI.GOV record 2481183},
+  url          = {https://www.osti.gov/pages/biblio/2481183-neural-network-approaches-parameterized-optimal-control},
+  note         = {Accessed 2026-09-30}
+}
+
+@article{hertneck2018learning,                                   % [39]
+  author  = {Hertneck, Michael and K{\"o}hler, Johannes and Trimpe, Sebastian and Allg{\"o}wer, Frank},
+  title   = {Learning an approximate model predictive controller with guarantees},
+  journal = {IEEE Control Systems Letters},
+  volume  = {2},
+  number  = {3},
+  pages   = {543--548},
+  year    = {2018},
+  doi     = {10.1109/LCSYS.2018.2843682}
+}
+
+@article{karg2020efficient,                                      % [40]
+  author  = {Karg, Benjamin and Lucia, Sergio},
+  title   = {Efficient representation and approximation of model predictive control laws via deep learning},
+  journal = {IEEE Transactions on Cybernetics},
+  volume  = {50},
+  number  = {9},
+  pages   = {3866--3878},
+  year    = {2020},
+  doi     = {10.1109/TCYB.2020.2999556}
+}
+
+@article{willard2022integrating,                                 % [41]
+  author  = {Willard, Jared and Jia, Xiaowei and Xu, Shaoming and Steinbach, Michael and Kumar, Vipin},
+  title   = {Integrating scientific knowledge with machine learning for engineering and environmental systems},
+  journal = {ACM Computing Surveys},
+  volume  = {55},
+  number  = {4},
+  pages   = {1--37},
+  year    = {2022},
+  doi     = {10.1145/3514228}
+}
+
+@article{brunke2022safe,                                         % [42]
+  author  = {Brunke, Lukas and Greeff, Melissa and Hall, Adam W. and Yuan, Zhaocong and Zhou, Siqi and Panerati, Jacopo and Schoellig, Angela P.},
+  title   = {Safe learning in robotics: From learning-based control to safe reinforcement learning},
+  journal = {Annual Review of Control, Robotics, and Autonomous Systems},
+  volume  = {5},
+  pages   = {411--444},
+  year    = {2022},
+  doi     = {10.1146/annurev-control-042920-020211}
+}
+
+@article{clopper1934confidence,                                  % new [55]
+  author  = {Clopper, C. J. and Pearson, E. S.},
+  title   = {The use of confidence or fiducial limits illustrated in the case of the binomial},
+  journal = {Biometrika},
+  volume  = {26},
+  number  = {4},
+  pages   = {404--413},
+  year    = {1934},
+  doi     = {10.1093/biomet/26.4.404}
+}
+
+% =====================================================================
+% TinyML / embedded inference                                    [43,44, new]
+% =====================================================================
+
+@misc{lai2018cmsisnn,                                            % [43]
+  author        = {Lai, Liangzhen and Suda, Naveen and Chandra, Vikas},
+  title         = {{CMSIS-NN}: Efficient neural network kernels for {Arm Cortex-M} {CPUs}},
+  year          = {2018},
+  eprint        = {1801.06601},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/1801.06601}
+}
+
+@inproceedings{banbury2021mlperftiny,                            % [44]
+  author    = {Banbury, Colby and Reddi, Vijay Janapa and Torelli, Peter and Holleman, Jeremy and Jeffries, Nat and Kiraly, Csaba and others},
+  title     = {{MLPerf Tiny} benchmark},
+  booktitle = {Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks},
+  year      = {2021},
+  eprint    = {2106.07597},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{david2021tflm,                                    % new [56]
+  author    = {David, Robert and Duke, Jared and Jain, Advait and Reddi, Vijay Janapa and Jeffries, Nat and Li, Jian and others},
+  title     = {{TensorFlow Lite Micro}: Embedded machine learning for {TinyML} systems},
+  booktitle = {Proceedings of Machine Learning and Systems (MLSys)},
+  volume    = {3},
+  year      = {2021},
+  eprint    = {2010.08678},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{jacob2018quantization,                            % new [57]
+  author    = {Jacob, Benoit and Kligys, Skirmantas and Chen, Bo and Zhu, Menglong and Tang, Matthew and Howard, Andrew and Adam, Hartwig and Kalenichenko, Dmitry},
+  title     = {Quantization and training of neural networks for efficient integer-arithmetic-only inference},
+  booktitle = {2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {2704--2713},
+  year      = {2018},
+  doi       = {10.1109/CVPR.2018.00286}
+}
+
+% =====================================================================
+% Signal processing and ML software                              [new]
+% =====================================================================
+
+@article{welch1967psd,                                           % new [58]
+  author  = {Welch, Peter D.},
+  title   = {The use of fast {F}ourier transform for the estimation of power spectra: A method based on time averaging over short, modified periodograms},
+  journal = {IEEE Transactions on Audio and Electroacoustics},
+  volume  = {15},
+  number  = {2},
+  pages   = {70--73},
+  year    = {1967},
+  doi     = {10.1109/TAU.1967.1161901}
+}
+
+@article{pedregosa2011sklearn,                                   % new [59]
+  author  = {Pedregosa, Fabian and Varoquaux, Ga{\"e}l and Gramfort, Alexandre and Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and others},
+  title   = {Scikit-learn: Machine learning in {P}ython},
+  journal = {Journal of Machine Learning Research},
+  volume  = {12},
+  pages   = {2825--2830},
+  year    = {2011},
+  url     = {https://www.jmlr.org/papers/v12/pedregosa11a.html}
+}
+
+% =====================================================================
+% Datasets                                                       [16,20-25]
+% =====================================================================
+
+@inproceedings{meier2015px4,                                     % new [60]
+  author    = {Meier, Lorenz and Honegger, Dominik and Pollefeys, Marc},
+  title     = {{PX4}: A node-based multithreaded open source robotics framework for deeply embedded platforms},
+  booktitle = {2015 IEEE International Conference on Robotics and Automation (ICRA)},
+  pages     = {6235--6240},
+  year      = {2015},
+  doi       = {10.1109/ICRA.2015.7140074}
+}
+
+@misc{le2023rflymad,                                             % [22]
+  author        = {Le, Xiangli and Jin, Bo and Cui, Gen and Dai, Xunhua and Quan, Quan},
+  title         = {{RflyMAD}: A dataset for multicopter fault detection and health assessment},
+  year          = {2023},
+  eprint        = {2311.11340},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2311.11340}
+}
+
+@article{puchalski2024padre,                                     % [23]
+  author  = {Puchalski, Rados{\l}aw and Ha, Quang and Giernacki, Wojciech and Nguyen, Huynh Anh Duy and Nguyen, Lanh Van},
+  title   = {{PADRE} -- A repository for research on fault detection and isolation of unmanned aerial vehicle propellers},
+  journal = {Journal of Intelligent \& Robotic Systems},
+  volume  = {110},
+  number  = {2},
+  year    = {2024},
+  doi     = {10.1007/s10846-024-02101-7}
+}
+
+@inproceedings{delmerico2019uzhfpv,                              % [24]
+  author    = {Delmerico, Jeffrey and Cieslewski, Titus and Rebecq, Henri and Faessler, Matthias and Scaramuzza, Davide},
+  title     = {Are we ready for autonomous drone racing? {The UZH-FPV} drone racing dataset},
+  booktitle = {2019 International Conference on Robotics and Automation (ICRA)},
+  pages     = {6713--6719},
+  year      = {2019},
+  doi       = {10.1109/ICRA.2019.8793887}
+}
+
+@inproceedings{bauersfeld2021neurobem,                           % [25]
+  author    = {Bauersfeld, Leonard and Kaufmann, Elia and Foehn, Philipp and Sun, Sihao and Scaramuzza, Davide},
+  title     = {{NeuroBEM}: Hybrid aerodynamic quadrotor model},
+  booktitle = {Robotics: Science and Systems XVII},
+  year      = {2021},
+  doi       = {10.15607/RSS.2021.XVII.042},
+  eprint    = {2106.08015},
+  archivePrefix = {arXiv}
+}
+
+% =====================================================================
+% Firmware documentation and source code                         [2-9,15,17-21]
+% =====================================================================
+
+@misc{px4docs_filtertuning,                                      % [2]
+  author       = {{PX4 Development Team}},
+  title        = {{MC} filter tuning \& control latency},
+  howpublished = {PX4 User Guide (main)},
+  url          = {https://docs.px4.io/main/en/config_mc/filter_tuning},
+  note         = {Accessed 2026-10-14}
+}
+
+@misc{px4src_imugyro,                                            % [3], [19]
+  author       = {{PX4 Development Team}},
+  title        = {{PX4-Autopilot} source code: \texttt{imu\_gyro\_parameters.c}, \texttt{VehicleAngularVelocity.cpp}, \texttt{SensorGyroFifo.msg}, \texttt{rc.mc\_defaults}},
+  howpublished = {GitHub, release tags v1.15.4, v1.16.0, v1.17.0},
+  url          = {https://github.com/PX4/PX4-Autopilot},
+  note         = {Accessed 2026-10-06 to 2026-10-14}
+}
+
+@misc{px4src_logger,                                             % [4]
+  author       = {{PX4 Development Team}},
+  title        = {{PX4} logger module: \texttt{module.yaml} ({SDLOG\_PROFILE}) and \texttt{logged\_topics.cpp}},
+  howpublished = {GitHub},
+  url          = {https://github.com/PX4/PX4-Autopilot/tree/main/src/modules/logger},
+  note         = {Accessed 2026-10-06}
+}
+
+@misc{px4_flightreview,                                          % [5]
+  author       = {{PX4 Development Team}},
+  title        = {{Flight Review}: web application for {PX4} flight log analysis, and public log database},
+  howpublished = {GitHub and review.px4.io},
+  url          = {https://github.com/PX4/flight_review},
+  note         = {Accessed 2026-10-06}
+}
+
+@misc{px4_dataset_licence,                                       % [20]
+  author       = {{PX4 Maintainers}},
+  title        = {License for the dataset ({Flight Review} public logs, {CC-BY})},
+  howpublished = {PX4 Discuss forum},
+  year         = {2025},
+  url          = {https://discuss.px4.io/t/license-for-the-dataset/42819},
+  note         = {Accessed 2026-10-06}
+}
+
+@misc{px4docs_statistical,                                       % [21]
+  author       = {{PX4 Development Team}},
+  title        = {Statistical flight log analysis},
+  howpublished = {PX4 User Guide (main)},
+  url          = {https://docs.px4.io/main/en/dev_log/flight_log_analysis_statistical},
+  note         = {Accessed 2026-10-06}
+}
+
+@misc{pyulog,                                                    % [6]
+  author       = {{PX4 Development Team}},
+  title        = {pyulog: Python module to parse {ULog} files},
+  howpublished = {GitHub},
+  url          = {https://github.com/PX4/pyulog},
+  note         = {Version 1.2; accessed 2026-10-10}
+}
+
+@misc{betaflight_src,                                            % [7]
+  author       = {{Betaflight Developers}},
+  title        = {Betaflight flight controller firmware, source code (\texttt{common/filter.c}, \texttt{sensors/gyro.h}, \texttt{flight/pid.c})},
+  howpublished = {GitHub, master branch},
+  url          = {https://github.com/betaflight/betaflight},
+  note         = {Accessed 2026-09-30 and 2026-10-14}
+}
+
+@misc{betaflight_rpm,                                            % [8]
+  author       = {{Betaflight Developers}},
+  title        = {{DShot} {RPM} filtering},
+  howpublished = {Betaflight documentation},
+  url          = {https://betaflight.com/docs/wiki/guides/current/DSHOT-RPM-Filtering},
+  note         = {Accessed 2026-09-30}
+}
+
+@misc{ardupilot_notch,                                           % [9]
+  author       = {{ArduPilot Dev Team}},
+  title        = {Managing gyro noise with the dynamic harmonic notch filters},
+  howpublished = {ArduPilot Copter documentation},
+  url          = {https://ardupilot.org/copter/docs/common-imu-notch-filtering.html},
+  note         = {Accessed 2026-10-14}
+}
+
+@misc{lusk_adaptivegyro,                                         % [15]
+  author       = {Lusk, Parker C.},
+  title        = {adaptive-gyro-filtering: adaptive notch filtering of gyro data (research code)},
+  howpublished = {GitHub},
+  url          = {https://github.com/plusk01/adaptive-gyro-filtering},
+  note         = {Accessed 2026-09-30}
+}
+
+@misc{padre_github,                                              % [16]
+  author       = {{AeroLab, Poznan University of Technology}},
+  title        = {{UAV\_measurement\_data} ({PADRE} propeller fault repository)},
+  howpublished = {GitHub},
+  url          = {https://github.com/AeroLabPUT/UAV_measurement_data},
+  note         = {Accessed 2026-10-06}
+}
+
+@misc{liang_bffiltering,                                         % [17]
+  author       = {Liang, Oscar},
+  title        = {Betaflight filtering 101},
+  howpublished = {oscarliang.com},
+  url          = {https://oscarliang.com/betaflight-filtering/},
+  note         = {Accessed 2026-09-30}
+}
+
+@misc{roboto2025insights,                                        % [18]
+  author       = {{Roboto AI}},
+  title        = {10 insights from 120,000+ {PX4} drone logs collected in 2024},
+  howpublished = {Roboto blog},
+  url          = {https://www.roboto.ai/blog/10-insights-from-120-000-px4-drone-logs-collected-in-2024/},
+  note         = {Accessed 2026-09-30}
+}

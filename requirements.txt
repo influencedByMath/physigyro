@@ -1,0 +1,10 @@
+# Tested 2026-10-10 with Python 3.13 (versions seen in the feasibility run)
+numpy>=2.3
+scipy>=1.16
+matplotlib>=3.10
+pandas>=2.3
+scikit-learn>=1.8
+joblib>=1.5
+pyulog>=1.2
+control>=0.10
+pytest>=9.0
