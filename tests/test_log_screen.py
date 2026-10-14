@@ -170,3 +170,44 @@ def test_write_summary_files(tmp_path):
     assert got[0]["profile_bit8"] == "True" and got[0]["profile_bit4"] == "True"
     import gzip
     assert [json.loads(x) for x in gzip.open(tmp_path / "s.jsonl.gz", "rt")] == rows
+
+
+# ------------------------------------------------------------ Task 8: full download
+
+class _Server:
+    """Serves ``data`` with HTTP range semantics; the first response can drop after ``cut`` bytes."""
+
+    def __init__(self, data, cut_first=None):
+        self.data, self.cut, self.ranges = data, cut_first, []
+
+    def __call__(self, req, timeout):
+        rng = req.get_header("Range")
+        self.ranges.append(rng)
+        start = int(rng.split("=")[1].split("-")[0]) if rng else 0
+        body = self.data[start:]
+        if self.cut is not None and len(self.ranges) == 1:
+            body = body[:self.cut]
+        r = _Resp(body)
+        r.headers = {"Content-Range": f"bytes {start}-{len(self.data) - 1}/{len(self.data)}"}
+        return r
+
+
+ULOG_BYTES = b"ULog\x01\x12\x35\x01" + bytes(8) + bytes(range(256)) * 40
+
+
+def test_download_resumes_and_checks_size(tmp_path):
+    srv = _Server(ULOG_BYTES, cut_first=3000)
+    path = ls.download_log(_entry(log_id="abc"), str(tmp_path), opener=srv, pause_s=0.0, chunk=1024)
+    assert path == str(tmp_path / "abc.ulg")
+    assert open(path, "rb").read() == ULOG_BYTES
+    assert srv.ranges == ["bytes=0-", "bytes=3000-"]
+    assert not os.path.exists(path + ".part")
+    again = _Server(ULOG_BYTES)
+    assert ls.download_log(_entry(log_id="abc"), str(tmp_path), opener=again, pause_s=0.0) == path
+    assert again.ranges == []                                       # already complete: no request
+
+
+def test_download_rejects_non_ulog(tmp_path):
+    with pytest.raises(ValueError):
+        ls.download_log(_entry(log_id="bad"), str(tmp_path), opener=_Server(b"<html>" + bytes(5000)), pause_s=0.0)
+    assert os.listdir(tmp_path) == []

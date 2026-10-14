@@ -79,3 +79,16 @@ def test_write_split_refuses_changes(tmp_path):
                                              sys_hw=["Z"], n_fifo_logs=[1]))], ignore_index=True)
     sp.write_split(grown, path)
     assert sorted(pd.read_csv(path)["vehicle_key"]) == ["uuid:a", "uuid:b", "uuid:c"]
+
+
+def test_pilot_set_takes_forced_then_hash_ordered_fit_vehicles():
+    keys = [f"uuid:v{i}" for i in range(200)] + ["uuid:" + u for u in sp.FORCED_FIT_UUIDS]
+    df = pd.DataFrame(dict(vehicle_key=keys, split=[sp.assign_split(k) for k in keys],
+                           forced=[k in sp.FORCED_FIT_KEYS for k in keys], log_ids=[k[5:] for k in keys],
+                           sys_hw="X", n_fifo_logs=1))
+    pilot = sp.pilot_set(df, n_random=25)
+    assert list(pilot["vehicle_key"][:4]) == ["uuid:" + u for u in sp.FORCED_FIT_UUIDS]
+    assert len(pilot) == 29 and (pilot["split"] == "fit").all()
+    rest = [k for k in df.loc[(df["split"] == "fit") & ~df["forced"], "vehicle_key"]]
+    expected = sorted(rest, key=lambda k: hashlib.sha256(f"px4-noise-split-2026-10-14|pilot|{k}".encode()).hexdigest())[:25]
+    assert list(pilot["vehicle_key"][4:]) == expected

@@ -203,6 +203,45 @@ def run_screen(order, out_jsonl=SCREEN_JSONL, target_fifo_vehicles=200, max_logs
     return dict(screened_now=n_new, total_rows=len(rows) + n_new, fifo_vehicles=len(fifo))
 
 
+# ----------------------------------------------------------------- full downloads (after the split)
+
+def download_log(entry, dest_dir, opener=urllib.request.urlopen, chunk=1 << 20, pause_s=1.0, max_tries=6,
+                 timeout=120):
+    """Download one whole log to ``dest_dir/<log_id>.ulg``; resumes a partial ``.part`` file with a range
+    request, checks the size against Content-Range and the ULog magic. Returns the path."""
+    path = os.path.join(dest_dir, entry["log_id"] + ".ulg")
+    if os.path.exists(path):
+        return path
+    os.makedirs(dest_dir, exist_ok=True)
+    part, total = path + ".part", None
+    for _ in range(max_tries):
+        have = os.path.getsize(part) if os.path.exists(part) else 0
+        req = urllib.request.Request(entry["download_url"], headers={"Range": f"bytes={have}-", "User-Agent": USER_AGENT})
+        try:
+            with opener(req, timeout=timeout) as r, open(part, "ab") as fh:
+                h = getattr(r, "headers", None) or {}
+                cr = (h.get("Content-Range") or "").split("/")[-1]
+                total = int(cr) if cr.isdigit() else (have + int(h["Content-Length"]) if h.get("Content-Length") else None)
+                while True:
+                    c = r.read(chunk)
+                    if not c:
+                        break
+                    fh.write(c)
+        except OSError:                          # dropped connection, timeout: resume on the next try
+            pass
+        time.sleep(pause_s)
+        size = os.path.getsize(part) if os.path.exists(part) else 0
+        with open(part, "rb") as fh:
+            head = fh.read(7)
+        if size and not b"ULog\x01\x12\x35".startswith(head):
+            os.remove(part)
+            raise ValueError(f"{entry['log_id']}: not a ULog file")
+        if total is not None and size == total and size >= 16:
+            os.replace(part, path)
+            return path
+    raise IOError(f"{entry['log_id']}: incomplete after {max_tries} tries ({size} of {total} bytes)")
+
+
 # ----------------------------------------------------------------- summary (for the author, before the split)
 
 SUMMARY_PARAMS = ("SDLOG_PROFILE", "IMU_GYRO_RATEMAX", "IMU_GYRO_CUTOFF", "IMU_DGYRO_CUTOFF", "IMU_GYRO_DNF_EN",

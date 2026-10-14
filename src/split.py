@@ -75,6 +75,16 @@ def write_split(df, path=SPLIT_CSV):
     df.sort_values("vehicle_key")[COLUMNS].to_csv(path, index=False)
 
 
+def pilot_set(split_df, n_random=25):
+    """Pilot-study vehicles (fit half only): the forced vehicles, then ``n_random`` other fit vehicles
+    in the order of SHA-256(SALT + "|pilot|" + key)."""
+    fit = split_df[split_df["split"] == "fit"]
+    forced = [k for k in ("uuid:" + u for u in FORCED_FIT_UUIDS) if k in set(fit["vehicle_key"])]
+    rest = sorted((k for k in fit["vehicle_key"] if k not in FORCED_FIT_KEYS),
+                  key=lambda k: hashlib.sha256(f"{SALT}|pilot|{k}".encode()).hexdigest())[:n_random]
+    return fit.set_index("vehicle_key").loc[forced + rest].reset_index()[COLUMNS]
+
+
 def main():
     with open(SCREEN_JSONL) as fh:
         rows = [json.loads(x) for x in fh if x.strip()]
