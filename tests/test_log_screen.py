@@ -211,3 +211,16 @@ def test_download_rejects_non_ulog(tmp_path):
     with pytest.raises(ValueError):
         ls.download_log(_entry(log_id="bad"), str(tmp_path), opener=_Server(b"<html>" + bytes(5000)), pause_s=0.0)
     assert os.listdir(tmp_path) == []
+
+
+def test_download_many_reports_each_log(tmp_path):
+    srv = _Server(ULOG_BYTES)
+    bad = _Server(b"<html>" + bytes(100))
+    opener = lambda req, timeout: (bad if "bad" in req.full_url else srv)(req, timeout)
+    entries = [_entry(log_id="good1", download_url="https://cdn.logs.px4.io/good1.ulg"),
+               _entry(log_id="bad1", download_url="https://cdn.logs.px4.io/bad1.ulg"),
+               _entry(log_id="good2", download_url="https://cdn.logs.px4.io/good2.ulg")]
+    res = ls.download_many(entries, str(tmp_path), workers=2, opener=opener, pause_s=0.0)
+    assert res["good1"]["ok"] and res["good2"]["ok"] and not res["bad1"]["ok"]
+    assert "not a ULog" in res["bad1"]["error"]
+    assert sorted(os.listdir(tmp_path)) == ["good1.ulg", "good2.ulg"]

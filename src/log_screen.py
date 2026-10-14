@@ -242,6 +242,24 @@ def download_log(entry, dest_dir, opener=urllib.request.urlopen, chunk=1 << 20, 
     raise IOError(f"{entry['log_id']}: incomplete after {max_tries} tries ({size} of {total} bytes)")
 
 
+def download_many(entries, dest_dir, workers=4, opener=urllib.request.urlopen, pause_s=1.0, log=print):
+    """download_log for many logs (at most 4 parallel connections); one result per log_id, errors kept."""
+    def one(e):
+        t = time.perf_counter()
+        try:
+            path = download_log(e, dest_dir, opener=opener, pause_s=pause_s)
+            return e["log_id"], dict(ok=True, path=path, mb=round(os.path.getsize(path) / 1e6, 1),
+                                     seconds=round(time.perf_counter() - t, 1))
+        except Exception as ex:                  # report and continue with the other logs
+            return e["log_id"], dict(ok=False, error=repr(ex)[:200])
+    out = {}
+    with ThreadPoolExecutor(min(workers, 4)) as ex:
+        for log_id, r in ex.map(one, entries):
+            out[log_id] = r
+            log(f"   {log_id[:8]} {'ok ' + str(r.get('mb')) + ' MB' if r['ok'] else 'FAILED ' + r['error']}")
+    return out
+
+
 # ----------------------------------------------------------------- summary (for the author, before the split)
 
 SUMMARY_PARAMS = ("SDLOG_PROFILE", "IMU_GYRO_RATEMAX", "IMU_GYRO_CUTOFF", "IMU_DGYRO_CUTOFF", "IMU_GYRO_DNF_EN",
@@ -314,6 +332,7 @@ def main(argv=None):
     s.add_argument("--max-logs", type=int, default=4000)
     s.add_argument("--workers", type=int, default=4)
     sub.add_parser("summary")
+    sub.add_parser("download-pilot")
     a = ap.parse_args(argv)
     if a.cmd == "fetch-index":
         print(json.dumps(fetch_index(), indent=1))
@@ -328,6 +347,16 @@ def main(argv=None):
         out = os.path.dirname(SCREEN_JSONL)
         write_summary(rows, os.path.join(out, "screen_summary.csv"), os.path.join(out, "screen_results.jsonl.gz"))
         print(json.dumps(summarize(rows), indent=1))
+    elif a.cmd == "download-pilot":                # fit-half pilot set only (data/screen/pilot_set.csv)
+        import csv
+        with open(SCREEN_JSONL) as fh:
+            by_id = {r["log_id"]: r for r in (json.loads(x) for x in fh if x.strip())}
+        with open(os.path.join(ROOT, "data", "screen", "pilot_set.csv"), newline="") as fh:
+            ids = [r["log_ids"].split(";")[0] for r in csv.DictReader(fh)]
+        res = download_many([by_id[i] for i in ids], os.path.join(ROOT, "data", "raw_logs"))
+        with open(os.path.join(ROOT, "data", "screen", "pilot_downloads.json"), "w") as fh:
+            json.dump(res, fh, indent=1)
+        print(f"{sum(r['ok'] for r in res.values())} of {len(res)} pilot logs downloaded")
 
 
 if __name__ == "__main__":
