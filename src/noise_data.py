@@ -6,6 +6,7 @@ Q9 clipping, Q10 steady flight, Q11 actual vs default parameters, Q13 Welch
 averages, Q16 RPM validity). Thresholds marked TBD in THESIS.md are function
 arguments here; the pilot study will fix them.
 """
+import warnings
 from dataclasses import dataclass
 
 import numpy as np
@@ -172,6 +173,53 @@ def steady_windows(ulog, W=8.0, t_edge=5.0, max_sp_std_dps=15.0, step=1.0):
             if act <= max_sp_std_dps:
                 out.append((float(s), float(s + W), float(act)))
     return sorted(out, key=lambda w: w[2])
+
+
+def _throttle(ulog):
+    """Time [s] and mean command of the active motors (actuator_motors; unused slots are NaN)."""
+    am = ulog.get_dataset("actuator_motors").data
+    M = np.stack([am[k] for k in am if k.startswith("control[")], 1).astype(float)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)        # samples with no active motor -> NaN
+        return _t(ulog, am["timestamp"]), np.nanmean(M, axis=1)
+
+
+def _window_metrics(tr, rs, tt, thr, t0, t1):
+    m = (tr >= t0) & (tr < t1)
+    sp = float(np.degrees(max(rs["roll"][m].std(), rs["pitch"][m].std()))) if m.sum() >= 10 else np.nan
+    k = (tt >= t0) & (tt < t1) if tt is not None else None
+    ok = k is not None and np.isfinite(thr[k]).sum() >= 10
+    return dict(t0=float(t0), t1=float(t1), sp_std_dps=sp,
+                thr_std=float(np.nanstd(thr[k])) if ok else np.nan, thr_mean=float(np.nanmean(thr[k])) if ok else np.nan)
+
+
+def window_activity(ulog, t0, t1):
+    """Gate Q10 metrics of one window: rate-setpoint activity (larger of the roll and pitch setpoint
+    std, deg/s; as steady_windows) and throttle steadiness (std and mean of the mean motor command)."""
+    rs = ulog.get_dataset("vehicle_rates_setpoint").data
+    try:
+        tt, thr = _throttle(ulog)
+    except Exception:            # older logs without actuator_motors
+        tt = thr = None
+    return _window_metrics(_t(ulog, rs["timestamp"]), rs, tt, thr, t0, t1)
+
+
+def airborne_windows(ulog, W=10.0, t_edge=5.0, step=1.0):
+    """All in-air windows on the grid of steady_windows, with their gate-Q10 metrics and NO limits
+    (the pilot study looks at the distributions before any limit is chosen)."""
+    rs = ulog.get_dataset("vehicle_rates_setpoint").data
+    tr = _t(ulog, rs["timestamp"])
+    try:
+        tt, thr = _throttle(ulog)
+    except Exception:
+        tt = thr = None
+    out = []
+    for a, b in airborne_intervals(ulog):
+        for s in np.arange(a + t_edge, b - t_edge - W + 1e-9, step):
+            w = _window_metrics(tr, rs, tt, thr, s, s + W)
+            if np.isfinite(w["sp_std_dps"]):
+                out.append(w)
+    return out
 
 
 def window_psd(gs: GyroStream, t0, t1, nperseg=4096, clip_counts=32000):
