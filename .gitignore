@@ -5,3 +5,4 @@ data/raw_logs/
 *.ulg
 experiments/**/arrays.npz
 node_modules/
+data/index/
