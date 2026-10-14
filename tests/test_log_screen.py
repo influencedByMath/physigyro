@@ -129,3 +129,44 @@ def test_run_screen_stops_at_target(tmp_path, monkeypatch):
     res = ls.run_screen(order, str(tmp_path / "s.jsonl"), target_fifo_vehicles=3, workers=2, pause_s=0.0)
     assert res["fifo_vehicles"] >= 3
     assert len(calls) <= 3 + 2                                     # at most the in-flight requests on top
+
+
+# ------------------------------------------------------------ Task 4: screen summary
+
+def test_wilson_ci_matches_audit_numbers():
+    lo, hi = ls.wilson_ci(23, 300)                                 # audit 2026-10-06: 7.7 % (5.2-11.2 %)
+    assert abs(lo - 0.0516) < 1e-3 and abs(hi - 0.1124) < 1e-3
+    assert ls.wilson_ci(0, 0) == (0.0, 0.0)
+
+
+def _row(log_id, uuid, status="ok", fifo=False, profile=1, n_q=10, **params):
+    return dict(log_id=log_id, vehicle_uuid=uuid, status=status, fifo=fifo, err=None if status != "error" else "x",
+                info={"sys_uuid": uuid}, params=dict(SDLOG_PROFILE=profile, **params), n_default_records=n_q,
+                topics={"sensor_gyro_fifo": [0]} if fifo else {}, fifo_data_msgs=5 if fifo else 0,
+                log_date="2026-01-01", sys_hw="HW", download_url=f"https://cdn.logs.px4.io/{log_id}.ulg")
+
+
+def test_summarize_counts_and_rates():
+    rows = [_row("a", "0006000000000000000000000000000000a1", fifo=True, profile=273, IMU_GYRO_RATEMAX=800),
+            _row("b", "0006000000000000000000000000000000b1", fifo=True, profile=1, n_q=0),
+            _row("c", "0006000000000000000000000000000000c1"),
+            _row("d", "0006000000000000000000000000000000d1", status="incomplete"),
+            _row("e", "0006000000000000000000000000000000e1", status="error")]
+    s = ls.summarize(rows)
+    assert s["n_rows"] == 5 and s["status"] == {"ok": 3, "incomplete": 1, "error": 1}
+    assert s["fifo_logs"] == 2 and s["fifo_vehicles"] == 2
+    assert s["hit_rate"] == 2 / 3                                  # unknown (incomplete, error) not in the denominator
+    assert s["fifo_defaults_known_share"] == 0.5
+    assert s["fifo_profiles"] == {"273": 1, "1": 1}
+
+
+def test_write_summary_files(tmp_path):
+    import csv
+    rows = [_row("a", "0006000000000000000000000000000000a1", fifo=True, profile=273, IMU_GYRO_RATEMAX=800)]
+    ls.write_summary(rows, str(tmp_path / "s.csv"), str(tmp_path / "s.jsonl.gz"))
+    with open(tmp_path / "s.csv", newline="") as fh:
+        got = list(csv.DictReader(fh))
+    assert got[0]["log_id"] == "a" and got[0]["fifo"] == "True" and got[0]["SDLOG_PROFILE"] == "273"
+    assert got[0]["profile_bit8"] == "True" and got[0]["profile_bit4"] == "True"
+    import gzip
+    assert [json.loads(x) for x in gzip.open(tmp_path / "s.jsonl.gz", "rt")] == rows

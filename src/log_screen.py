@@ -203,6 +203,64 @@ def run_screen(order, out_jsonl=SCREEN_JSONL, target_fifo_vehicles=200, max_logs
     return dict(screened_now=n_new, total_rows=len(rows) + n_new, fifo_vehicles=len(fifo))
 
 
+# ----------------------------------------------------------------- summary (for the author, before the split)
+
+SUMMARY_PARAMS = ("SDLOG_PROFILE", "IMU_GYRO_RATEMAX", "IMU_GYRO_CUTOFF", "IMU_DGYRO_CUTOFF", "IMU_GYRO_DNF_EN",
+                  "IMU_GYRO_NF0_FRQ", "IMU_GYRO_FFT_EN", "MC_ROLLRATE_P", "MC_ROLLRATE_I", "MC_ROLLRATE_D",
+                  "MC_ROLLRATE_K", "DSHOT_BIDIR_EN", "SENS_BOARD_ROT", "SYS_AUTOSTART")
+SUMMARY_TOPICS = ("esc_status", "vehicle_angular_velocity", "vehicle_torque_setpoint", "sensor_gyro_fft")
+
+
+def wilson_ci(k, n, z=1.96):
+    """95 % Wilson score interval of a proportion k/n."""
+    if n == 0:
+        return 0.0, 0.0
+    p, d = k / n, 1 + z * z / n
+    c = (p + z * z / (2 * n)) / d
+    h = z * (p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5 / d
+    return c - h, c + h
+
+
+def summarize(rows):
+    """Counts the author sees before the split: statuses, FIFO hit rate (known rows only), profiles."""
+    from collections import Counter
+    status = Counter(r.get("status") for r in rows)
+    known = [r for r in rows if r.get("status") == "ok"]
+    fifo = [r for r in known if r.get("fifo")]
+    k, n = len({_vehicle(r) for r in fifo}), len({_vehicle(r) for r in known})
+    lo, hi = wilson_ci(k, n)
+    par = lambda name: Counter(str((r.get("params") or {}).get(name)) for r in fifo)
+    return dict(n_rows=len(rows), status=dict(status), fifo_logs=len(fifo), fifo_vehicles=k,
+                hit_rate=k / n if n else 0.0, hit_rate_ci95=(lo, hi),
+                fifo_defaults_known_share=(sum(1 for r in fifo if (r.get("n_default_records") or 0) > 0) / len(fifo)
+                                           if fifo else 0.0),
+                fifo_profiles=dict(par("SDLOG_PROFILE")), fifo_ratemax=dict(par("IMU_GYRO_RATEMAX")),
+                fifo_with_topic={t: sum(1 for r in fifo if t in (r.get("topics") or {})) for t in SUMMARY_TOPICS},
+                fifo_no_data_in_window=sum(1 for r in fifo if not r.get("fifo_data_msgs")))
+
+
+def write_summary(rows, csv_path, gz_path):
+    """One CSV line per screened log (small, in git) and the complete rows gzipped (record)."""
+    import csv
+    cols = (["log_id", "log_date", "sys_hw", "ver_sw_release", "vehicle_uuid", "airframe_name", "duration_s", "status",
+             "err", "fifo", "fifo_data_msgs", "n_default_records", "bytes_read", "size_bytes", "download_url"]
+            + list(SUMMARY_PARAMS) + [f"profile_bit{b}" for b in (3, 4, 8)] + [f"topic_{t}" for t in SUMMARY_TOPICS])
+    with open(csv_path, "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=cols)
+        w.writeheader()
+        for r in rows:
+            p = r.get("params") or {}
+            prof = int(p.get("SDLOG_PROFILE") or 0)
+            line = {c: r.get(c) for c in cols[:15]}
+            line.update({c: p.get(c) for c in SUMMARY_PARAMS})
+            line.update({f"profile_bit{b}": bool(prof & (1 << b)) for b in (3, 4, 8)})
+            line.update({f"topic_{t}": t in (r.get("topics") or {}) for t in SUMMARY_TOPICS})
+            w.writerow(line)
+    with gzip.open(gz_path, "wt") as fh:
+        for r in rows:
+            fh.write(json.dumps(r) + "\n")
+
+
 def _latest_index_path():
     with open(SNAPSHOT_META) as fh:
         return os.path.join(ROOT, json.load(fh)["file"])
@@ -216,6 +274,7 @@ def main(argv=None):
     s.add_argument("--target", type=int, default=200)
     s.add_argument("--max-logs", type=int, default=4000)
     s.add_argument("--workers", type=int, default=4)
+    sub.add_parser("summary")
     a = ap.parse_args(argv)
     if a.cmd == "fetch-index":
         print(json.dumps(fetch_index(), indent=1))
@@ -224,6 +283,12 @@ def main(argv=None):
         order = sampling_order(cands, SCREEN_SALT, AUDIT_RANDOM_FIFO_LOGS)
         print(f"{len(cands)} candidate logs, {len(order)} vehicles in the sampling order")
         print(json.dumps(run_screen(order, SCREEN_JSONL, a.target, a.max_logs, min(a.workers, 4))))
+    elif a.cmd == "summary":
+        with open(SCREEN_JSONL) as fh:
+            rows = [json.loads(x) for x in fh if x.strip()]
+        out = os.path.dirname(SCREEN_JSONL)
+        write_summary(rows, os.path.join(out, "screen_summary.csv"), os.path.join(out, "screen_results.jsonl.gz"))
+        print(json.dumps(summarize(rows), indent=1))
 
 
 if __name__ == "__main__":
