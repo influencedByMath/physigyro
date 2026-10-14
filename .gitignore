@@ -6,3 +6,4 @@ data/raw_logs/
 experiments/**/arrays.npz
 node_modules/
 data/index/
+data/screen/screen_results.jsonl
