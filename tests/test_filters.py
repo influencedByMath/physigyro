@@ -34,6 +34,20 @@ def test_notch_matches_scipy_iirnotch(f0, bw, fs):
     assert abs((above[-1] - above[0]) - bw) < 0.02 * bw
 
 
+@pytest.mark.parametrize("f0,bw,fs,f0_eff,bw_eff", [
+    (100, 5, 8000, 100, 8.0),     # PX4 runs a 5 Hz notch as 8 Hz at 8 kHz (bw >= 0.001 fs)
+    (100, 5, 6400, 100, 6.4),
+    (100, 10, 8000, 100, 10),     # above the floor: unchanged
+    (100, 5, 2000, 100, 5),       # floor 2 Hz: unchanged
+    (3, 20, 8000, 8.0, 20),       # centre floor (NotchFilter::setParameters, v1.16.0)
+])
+def test_notch_lower_clamp_as_in_px4(f0, bw, fs, f0_eff, bw_eff):
+    b_ref, a_ref = signal.iirnotch(f0_eff, f0_eff / bw_eff, fs=fs)
+    b, a = notch_coeffs(f0, bw, fs)
+    np.testing.assert_allclose(b, b_ref, rtol=1e-10)
+    np.testing.assert_allclose(a, a_ref[1:], rtol=1e-10)
+
+
 def test_pt1_matches_lfilter():
     fs, fc = 6400, 30
     alpha = pt1_alpha(fc, fs)

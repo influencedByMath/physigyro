@@ -108,11 +108,12 @@ def test_tracking_notch_uses_the_same_samples_as_window_psd():
     cut = int(4.5 * fs)                                   # second segment: 1.5 s, > nperseg, < nperseg + warm-up
     gs = GyroStream(t, x, x.astype(np.int16), fs, fs, 0, [(0, cut), (cut, len(t))], 0.0)
     t_esc = np.arange(0, 6.0, 1 / 200)
-    ulog = _FakeULog(t_esc, np.full((len(t_esc), 4), 6000.0))
+    # notch at 3000 Hz, outside the compared band (PX4 runs any notch at least 0.001 fs = 6.4 Hz wide)
+    ulog = _FakeULog(t_esc, np.full((len(t_esc), 4), 180000.0))
     _, P_raw, n_raw, _ = window_psd(gs, 1.0, 6.0)
-    f, P_tr, n_tr = tracking_notch_psd(ulog, gs, 1.0, 6.0, bw=0.05, n_harmonics=1, f_min=25.0, axes=(0,))
+    f, P_tr, n_tr = tracking_notch_psd(ulog, gs, 1.0, 6.0, bw=5.0, n_harmonics=1, f_min=25.0, axes=(0,))
     assert n_tr == n_raw
-    away = (f > 20) & (np.abs(f - 100) > 5)
+    away = (f > 20) & (f < 2800)
     np.testing.assert_allclose(P_tr[away, 0], P_raw[away, 0], rtol=5e-3)
 
 

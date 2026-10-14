@@ -56,10 +56,13 @@ def pt1_alpha(fc, fs):
 def notch_coeffs(f0, bw, fs):
     """PX4 NotchFilter::setParameters. Disabled when f0 <= 0, bw <= 0 or f0 >= fs/2.
 
-    Same as scipy.signal.iirnotch(f0, Q=f0/bw, fs)."""
+    PX4 then raises f0 and bw to at least 0.001 fs (e.g. a 5 Hz bandwidth runs
+    as 8 Hz at fs = 8 kHz). Same as scipy.signal.iirnotch(f0, Q=f0/bw, fs)."""
     f0 = np.asarray(f0, dtype=float)
     bw = np.asarray(bw, dtype=float)
     on = (f0 > 0) & (bw > 0) & (f0 < fs / 2)
+    f0 = np.maximum(f0, 0.001 * fs)
+    bw = np.maximum(bw, 0.001 * fs)
     alpha = np.tan(np.pi * np.where(on, bw, 1.0) / fs)
     beta = -np.cos(2.0 * np.pi * f0 / fs)
     b0 = np.where(on, 1.0 / (1.0 + alpha), 1.0)
