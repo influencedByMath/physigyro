@@ -88,3 +88,12 @@ def stability(X, groups, k, n_boot=200, var=0.95, seed=20261015):
 def crosstab(labels, attribute):
     """Cluster x attribute counts (gate Q12: a cluster that is one chip type is a hardware label)."""
     return pd.crosstab(pd.Series(labels, name="cluster"), pd.Series(attribute, name="attribute"))
+
+
+SIL_MIN, ARI_MIN = 0.5, 0.8      # decision D-24 P3 (fixed before clustering)
+
+
+def is_stable(silhouette, median_ari):
+    """D-24 P3: clusters are kept only if silhouette >= 0.5 AND median bootstrap ARI over vehicles >= 0.8;
+    otherwise one generator for all spectra (chip as covariate)."""
+    return silhouette >= SIL_MIN and median_ari >= ARI_MIN

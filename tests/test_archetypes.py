@@ -97,3 +97,8 @@ def test_stability_low_without_structure():
     X = rng.standard_normal((40, 48))
     s = ar.stability(X, np.arange(40), k=3, n_boot=40, seed=3)
     assert s["median_ari"] < 0.5
+
+
+def test_stability_rule_d24_p3():
+    assert ar.is_stable(0.5, 0.8) and ar.is_stable(0.7, 0.95)
+    assert not ar.is_stable(0.49, 0.95) and not ar.is_stable(0.9, 0.79)
