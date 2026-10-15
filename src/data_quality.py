@@ -1,10 +1,10 @@
 """Data-quality gates with explicit thresholds and reason codes (THESIS.md Section 7.4.3).
 
 Every threshold is a field of ``Thresholds`` and is passed in by the caller.
-``CANDIDATES`` holds the candidate values written in THESIS.md; they are NOT
-frozen. The pilot study (fit half only) proposes the final values, the author
-approves them, and they are recorded as a decision in Section 2 (D-10) before
-any test-half log is processed.
+``CANDIDATES`` holds the candidate values first written in THESIS.md (used by
+the pilot study). ``FROZEN`` holds the values the author approved after the
+pilot study (fit half only), recorded as decision D-23 in THESIS Section 2
+(D-10 freeze): every log of both halves is processed with exactly these.
 
 Gates return ``(rejections, flags)``: a rejection removes the log or window
 (with its reason code, for the data funnel, Table 1); a flag keeps it and is
@@ -24,7 +24,7 @@ from noise_data import airborne_intervals, fifo_dataset
 
 @dataclass(frozen=True)
 class Thresholds:
-    """All values are candidates, not frozen (decision D-10), until the pilot study is approved."""
+    """One complete set of gate thresholds (CANDIDATES: before the pilot; FROZEN: decision D-23)."""
     d_max: float               # Q4  largest dropout fraction of a log (0-1)
     l_min_s: float             # Q4  shortest useful gap-free segment [s] (at least the window length)
     f_min: float               # Q5  lower edge of the fixed band [Hz]
@@ -38,13 +38,21 @@ class Thresholds:
     resolution_hz: float       # Q13 Welch frequency resolution [Hz] (nperseg = fs / resolution)
     min_averages: int          # Q13 Welch averages per window
     windows_per_vehicle: int   # Q14 cap
-    peak_prominence: float     # 7.4.4 step 6, in decades of the log10 PSD
+    peak_prominence: float | None  # 7.4.4 step 6, in decades of the log10 PSD (None: not decided)
     rpm_rate_min_hz: float     # D-13 logged esc_status rate needed for the tracking notch [Hz]
 
 
 CANDIDATES = Thresholds(d_max=0.05, l_min_s=10.0, f_min=20.0, f_max=800.0, jitter_max=0.01, clip_max=0, window_s=10.0,
                         t_edge_s=5.0, sp_std_max_dps=15.0, thr_std_max=0.05, resolution_hz=1.5, min_averages=20,
                         windows_per_vehicle=3, peak_prominence=0.5, rpm_rate_min_hz=50.0)
+
+# Decision D-23 (2026-10-15), from experiments/pilot_study/REPORT.md Section 2; numbers re-checked by
+# experiments/pilot_study/verify_numbers.py. L_min is one Welch segment (nperseg / fs = 1 / resolution)
+# because Welch never crosses a gap; the window gate Q13 (20 averages) decides. f_max applies to the
+# MEASURED IMU rate. The peak prominence selects notch positions, not data: set in Part 2 on the fit half.
+FROZEN = Thresholds(d_max=0.20, l_min_s=1 / 1.5, f_min=20.0, f_max=780.0, jitter_max=0.01, clip_max=0, window_s=10.0,
+                    t_edge_s=5.0, sp_std_max_dps=15.0, thr_std_max=0.02, resolution_hz=1.5, min_averages=20,
+                    windows_per_vehicle=3, peak_prominence=None, rpm_rate_min_hz=50.0)
 
 
 def nperseg_for(fs, resolution_hz):

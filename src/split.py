@@ -62,8 +62,8 @@ def make_split(rows):
     """One line per vehicle with a board ID and at least one FIFO log (screen status ok).
 
     Vehicles without a board ID (fallback key "fb:") are NOT assigned: the fallback key can give one
-    drone two keys when its parameters changed between flights, so their rule waits for the author
-    (see no_id_vehicles)."""
+    drone two keys when its parameters changed between flights (split leakage); they are excluded
+    from the study by decision D-23 (see no_id_vehicles)."""
     by = {k: v for k, v in _fifo_by_vehicle(rows).items() if k.startswith("uuid:")}
     out = [dict(vehicle_key=k, split=assign_split(k), forced=k in FORCED_FIT_KEYS,
                 log_ids=";".join(sorted(r["log_id"] for r in rs)),
@@ -73,7 +73,8 @@ def make_split(rows):
 
 
 def no_id_vehicles(rows):
-    """FIFO vehicles without a board ID (Linux boards such as VOXL2 / Navio2, redacted IDs): listed, not split."""
+    """FIFO vehicles without a board ID (Linux boards such as VOXL2 / Navio2, redacted IDs): listed for
+    the record, never split; excluded from the study by decision D-23."""
     out = [dict(vehicle_key=k, log_ids=";".join(sorted(r["log_id"] for r in rs)),
                 sys_hw=(rs[0].get("info") or {}).get("ver_hw") or rs[0].get("sys_hw"),
                 sys_autostart=(rs[0].get("params") or {}).get("SYS_AUTOSTART"), n_fifo_logs=len(rs))
@@ -111,7 +112,7 @@ def main():
     pend = no_id_vehicles(rows)
     pend.to_csv(os.path.join(os.path.dirname(SPLIT_CSV), "split_pending_no_id.csv"), index=False)
     print(f"{len(df)} FIFO vehicles: fit {int((df['split'] == 'fit').sum())}, test {int((df['split'] == 'test').sum())}, "
-          f"forced {int(df['forced'].sum())}; {len(pend)} vehicles without board ID pending (no split yet)")
+          f"forced {int(df['forced'].sum())}; {len(pend)} vehicles without board ID excluded (D-23)")
 
 
 if __name__ == "__main__":

@@ -2,9 +2,9 @@
 
 Day 18, 2026-10-15. Plan: `notes/phase3_plan.md`, Task 9. Spec: THESIS.md 7.4.3 (gates Q1-Q16, pilot steps 1-5), decision D-10.
 
-**Nothing in this report is frozen.** It proposes values. After the author approves or changes them, they are recorded as one new decision in THESIS Section 2, and only then are the test-half logs downloaded and processed.
+**Frozen 2026-10-15 as decision D-23** (THESIS Section 2): the author approved all values of Section 2 and decided to exclude the 33 vehicles without a board ID (Section 4.1, option a).
 
-Numbers come from `results.json` (`run_pilot.py`), `usable.json` (`usable.py`), `axes.json` (`check_axes.py`) and `data/screen/` (`log_screen.py`, `split.py`). Figures: `figures/` (`make_figures.py`).
+Every number of Section 2 was re-derived independently by `verify_numbers.py` before the freeze (2026-10-15: all claims verified after three corrections, marked below). Numbers come from `results.json` (`run_pilot.py`), `usable.json` (`usable.py`), `axes.json` (`check_axes.py`) and `data/screen/` (`log_screen.py`, `split.py`). Figures: `figures/` (`make_figures.py`).
 
 ---
 
@@ -27,14 +27,14 @@ The pilot ran on fit-half vehicles only; `run_pilot.py` stops if a log belongs t
 
 | Gate | Threshold | THESIS candidate | **Proposed** | Evidence |
 |---|---|---|---|---|
-| Q5 | $f_{max}$ (upper edge of the fixed band) | 800 Hz | **780 Hz**, on the measured IMU rate | 14 of 29 pilot logs are 2 kHz IMUs; their clocks differ from 2,000 Hz by −0.4 % to +0.8 % (1,992.8-2,015.3 Hz). With 800 Hz, the rule $0.8 f_s/2 \ge f_{max}$ drops the slow ones for a 2 Hz difference: 58.6 % of pilot logs pass at 800 Hz, 89.7 % at 780 or 790 Hz (Fig. p2). 780 Hz leaves margin for clocks up to 2.5 % slow. Noise above 800 Hz changed the noise metric by less than 0.002 (feasibility check L3). Motor 3rd harmonics in RPM logs reach at most 428 Hz |
+| Q5 | $f_{max}$ (upper edge of the fixed band) | 800 Hz | **780 Hz**, on the measured IMU rate | 14 of 29 pilot logs are 2 kHz IMUs. On the 8 of them that pass $D_{max}$ the measured clock is 1,994.0-2,000.5 Hz (−0.30 % to +0.03 %); the measured rate agrees with a single long-segment fit within 0.006 % on every log up to 20 % dropout (`verify_numbers.py`, re-check 2026-10-15). The rule $0.8 f_s/2 \ge 800$ needs $f_s \ge$ 2,000 Hz exactly, so 800 Hz drops every 2 kHz IMU whose clock is even slightly slow: 7 of these 8 good logs. Over all 29 logs, 58.6 % pass at 800 Hz and 89.7 % at 780 or 790 Hz (Fig. p2). 780 Hz leaves margin for clocks up to 2.5 % slow (other rates: 6.4 kHz −0.19 to +0.62 %, 8 kHz −1.0 to +1.5 %, one 8,370 Hz nominal IMU −3.0 %, still far above the limit). Noise above 800 Hz changed the noise metric by less than 0.002 (feasibility check L3). Motor 3rd harmonics in RPM logs reach at most 428 Hz |
 | Q5 | $f_{min}$ | 20 Hz | **20 Hz** | Below about 20 Hz the raw spectrum is flight motion (Fig. p4, left). Store PSDs from 0 Hz anyway: the noise metric starts at $5 f_c$, which can be 15 Hz |
 | Q4 | $L_{min}$ (shortest usable gap-free piece) | ≥ window length (10 s) | **one Welch segment** ($n_{perseg}/f_s$ ≈ 0.67 s); the window gate Q13 decides | A window may contain gaps: Welch averages only gap-free pieces, so the estimate stays unbiased and only loses averages. With "≥ 10 s" two logs with 4.1 % and 4.4 % dropout and 7 and 6 good windows were rejected (longest gap-free piece 8.4 s and 6.5 s) |
 | Q4 | $D_{max}$ (dropout fraction of a log) | 5 % | **20 %** (coarse log filter only) | Real gaps are mostly tiny and frequent (median 0.5 ms, up to 60,000 gaps per log). So the fraction alone does not predict usability: in the artificial-dropout test even 1 % spread like the real gaps leaves half of the windows below 20 averages (Fig. p1), while 1 % as a few gaps does no harm. In the pilot, logs up to 13.8 % dropout still had 5-8 good windows; from 23 % on none had any. The real gate is Q13 per window; 20 % only skips hopeless logs |
 | Q10 | Window length $W$ | 10 s | **10 s** | 10 s windows differ from the 20 s window around them by 0.49 dB median (90th percentile 1.7 dB); 5 s windows by 0.74 / 2.8 dB, and give fewer than 20 averages at 1.5 Hz resolution |
 | Q13 | Resolution / minimum averages | 1.5 Hz / 20 | **1.5 Hz / 20** | $n_{perseg} = f_s / 1.5$; 10 s windows of logs with less than 1 % dropout give 24-29 averages at every rate |
 | Q10 | Rate-setpoint activity | 15 °/s | **15 °/s** | Median airborne window 6.7 °/s, 75th percentile 15.9 °/s; 15 °/s keeps 74 % of 3,706 airborne windows (Fig. p3) |
-| Q10 | Throttle steadiness (std of mean motor command) | none | **0.02** | Removes 5 % of the windows that pass the activity limit (climbs, descents: the motor frequency moves inside the window). 0.05 removes almost nothing (1 %). Cost: 1 pilot log loses all its windows (14 instead of 15 usable logs). 947 windows of old logs have no `actuator_motors`: flagged `Q10_no_throttle`, not rejected |
+| Q10 | Throttle steadiness (std of mean motor command) | none | **0.02** | Removes 9.5 % of the calm windows (activity ≤ 15 °/s) that have throttle data, 6.9 % of all calm windows (climbs, descents: the motor frequency moves inside the window); 0.05 removes 2.0 % (1.4 %). **Corrected 2026-10-15** (the first version said 5 % and 1 %). Cost: 1 pilot log loses all its windows (14 instead of 15 usable logs). 947 windows of old logs have no `actuator_motors`: flagged `Q10_no_throttle`, not rejected |
 | Q10 | $T_{edge}$ | 5 s | **5 s** | Not tested separately; no evidence against it |
 | Q6 | Jitter limit | 1 % | **1 %** | No log has any change of the FIFO sample interval (`dt`) |
 | Q9 | Clipped samples per window | 0 | **0** | No clipped sample in any pilot log |
@@ -66,7 +66,7 @@ The biggest loss is dropouts (13 of 29 logs), not the thresholds. Dropouts depen
 | ESC RPM present (Q16) | 21 % (6 of 29) | Scenario B on real data will be small (risk R13) |
 | RPM unit check | strongest peak at 0.84-1.17 x RPM/60 (and x 2 RPM/60) in 18 windows | No factor-2 or pole-pair error; the spread comes from 4 motors at different speeds and slow RPM logging |
 | FFT dynamic notch on | 10 % | Flagged; raw spectra still usable, actual settings not modelled |
-| Sample rates | 2 kHz (14 logs), 6.4 kHz, 8 kHz | Rates 1,251 / 1,259 / 1,823 Hz appear only in logs with more than 50 % dropout: the measured rate is **not reliable** when most samples are missing. Those logs fail Q4 first |
+| Sample rates | 2 kHz (14 logs), 6.4 kHz, 8 kHz | Rates 1,251 / 1,259 / 1,823 Hz (and 2,015 Hz on log b4a9719c) appear only in logs with more than 50 % dropout: the measured rate is **not reliable** when most samples are missing. Those logs fail Q4 first |
 | High-frequency roll-off | PSD 600-780 Hz vs 100-300 Hz: +6 to −52 dB; strongest on ICM-42688P boards at 8 kHz | Probably on-chip filters of the IMU. Consequences in Section 5 |
 
 ---

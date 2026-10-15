@@ -101,3 +101,15 @@ def test_no_long_segment_uses_l_min_only():
     stats = {**GOOD_STATS, "longest_segment_s": 4.0}
     assert dq.log_gates(stats, GOOD_FC, replace(dq.CANDIDATES, l_min_s=1.0))[0] == []
     assert dq.log_gates(stats, GOOD_FC, replace(dq.CANDIDATES, l_min_s=10.0))[0] == ["Q4_no_long_segment"]
+
+
+def test_frozen_thresholds_are_d23():
+    """THESIS D-23 (2026-10-15): any change of these values needs a new author decision."""
+    th = dq.FROZEN
+    assert (th.d_max, th.f_min, th.f_max, th.jitter_max, th.clip_max) == (0.20, 20.0, 780.0, 0.01, 0)
+    assert (th.window_s, th.t_edge_s, th.sp_std_max_dps, th.thr_std_max) == (10.0, 5.0, 15.0, 0.02)
+    assert (th.resolution_hz, th.min_averages, th.windows_per_vehicle, th.rpm_rate_min_hz) == (1.5, 20, 3, 50.0)
+    assert th.l_min_s == pytest.approx(1 / 1.5)              # one Welch segment at every sample rate
+    assert th.peak_prominence is None                        # not a data gate; set in Part 2 on the fit half
+    for fs in (2000.0, 6400.0, 8000.0):
+        assert dq.nperseg_for(fs, th.resolution_hz) / fs == pytest.approx(th.l_min_s, rel=1e-3)

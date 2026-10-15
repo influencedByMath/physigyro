@@ -277,3 +277,14 @@ def test_download_retries_when_first_request_fails(tmp_path):
         return srv(req, timeout)
     path = ls.download_log(_entry(log_id="fl"), str(tmp_path), opener=flaky, pause_s=0.0)
     assert open(path, "rb").read() == ULOG_BYTES and len(calls) == 2
+
+
+def test_half_entries_only_returns_the_requested_half():
+    split_rows = [dict(vehicle_key="uuid:a", split="fit", log_ids="L1"),
+                  dict(vehicle_key="uuid:b", split="test", log_ids="L2"),
+                  dict(vehicle_key="uuid:c", split="fit", log_ids="L3")]
+    by_id = {i: dict(log_id=i) for i in ("L1", "L2", "L3")}
+    assert [e["log_id"] for e in ls.half_entries(split_rows, by_id, "fit")] == ["L1", "L3"]
+    assert [e["log_id"] for e in ls.half_entries(split_rows, by_id, "test")] == ["L2"]
+    with pytest.raises(ValueError):
+        ls.half_entries(split_rows, by_id, "both")

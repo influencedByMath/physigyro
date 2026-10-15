@@ -341,6 +341,14 @@ def _latest_index_path():
         return os.path.join(ROOT, json.load(fh)["file"])
 
 
+def half_entries(split_rows, by_id, half):
+    """Screen rows of the screened logs of one half of the vehicle split (split.csv rows; D-20).
+    Test-half logs are downloaded only after the thresholds are frozen (D-10, D-23)."""
+    if half not in ("fit", "test"):
+        raise ValueError(f"unknown half {half!r}")
+    return [by_id[i] for r in split_rows if r["split"] == half for i in r["log_ids"].split(";")]
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -351,6 +359,7 @@ def main(argv=None):
     s.add_argument("--workers", type=int, default=4)
     sub.add_parser("summary")
     sub.add_parser("download-pilot")
+    sub.add_parser("download-fit")
     a = ap.parse_args(argv)
     if a.cmd == "fetch-index":
         print(json.dumps(fetch_index(), indent=1))
@@ -375,6 +384,16 @@ def main(argv=None):
         with open(os.path.join(ROOT, "data", "screen", "pilot_downloads.json"), "w") as fh:
             json.dump(res, fh, indent=1)
         print(f"{sum(r['ok'] for r in res.values())} of {len(res)} pilot logs downloaded")
+    elif a.cmd == "download-fit":                  # every fit-half vehicle of split.csv (never the test half)
+        import csv
+        with open(SCREEN_JSONL) as fh:
+            by_id = {r["log_id"]: r for r in (json.loads(x) for x in fh if x.strip())}
+        with open(os.path.join(ROOT, "data", "screen", "split.csv"), newline="") as fh:
+            entries = half_entries(list(csv.DictReader(fh)), by_id, "fit")
+        res = download_many(entries, os.path.join(ROOT, "data", "raw_logs"))
+        with open(os.path.join(ROOT, "data", "screen", "fit_downloads.json"), "w") as fh:
+            json.dump(res, fh, indent=1)
+        print(f"{sum(r['ok'] for r in res.values())} of {len(res)} fit-half logs downloaded")
 
 
 if __name__ == "__main__":
