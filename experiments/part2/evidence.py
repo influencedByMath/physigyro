@@ -10,6 +10,12 @@ C. Floor shape (THESIS 7.5 assumes a flat floor): a robust floor (20th percentil
    1/6-decade windows, which ignores narrow peaks) is fitted by a flat line, a power law (straight line in
    log-log) and a 4-knot log-log spline; RMS error in dB over 20-780 Hz.
 D. Usable count: vehicles with at least one window, Wilson 95 % CI, projection to the test half.
+E. Gate Q12 (chip effects): high-frequency roll-off per IMU chip = mean log10 band power above 500 Hz minus
+   100-300 Hz (roll-pitch power mean, per vehicle), in decades.
+F. Does clustering on a band below the roll-off (20-300 Hz) remove the chip dependence? Same PCA + k-means
+   (vehicle means), cross-tab against chip and rate.
+G. Chip or mount? Roll-off per vehicle on the same board model (PX4_FMU_V6X: one isolated IMU board, several
+   IMU chips), and for ICM-4268x chips on any board.
 """
 import json
 import os
@@ -113,10 +119,54 @@ def evidence_d(df):
                 windows=len(df), windows_per_vehicle=df.groupby("vehicle_key").size().value_counts().sort_index().to_dict())
 
 
+def evidence_e(df, B):
+    fc = np.sqrt(sl.band_edges(TH)[:-1] * sl.band_edges(TH)[1:])
+    rp = np.log10((10 ** B[:, :, 0] + 10 ** B[:, :, 1]) / 2)
+    roll = rp[:, fc > 500].mean(1) - rp[:, (fc >= 100) & (fc <= 300)].mean(1)
+    v = pd.DataFrame(dict(vehicle=df["vehicle_key"], chip=df["fifo_chip"].fillna("?"),
+                          rate=(df["fs_nominal"] / 1000).round(1), roll=roll)).groupby("vehicle").agg(
+        chip=("chip", "first"), rate=("rate", "first"), roll=("roll", "mean"))
+    return {f"{c} @ {r:g} kHz": dict(n=int(len(g)), median_dec=q(g["roll"], 50), min_dec=q(g["roll"], 0),
+                                     max_dec=q(g["roll"], 100))
+            for (c, r), g in v.groupby(["chip", "rate"])}
+
+
+def evidence_f(df, B, f_hi=300.0):
+    import archetypes as ar
+    fc = np.sqrt(sl.band_edges(TH)[:-1] * sl.band_edges(TH)[1:])
+    keep = fc <= f_hi
+    X, ids, groups = ar.features(B[:, keep, :], df["vehicle_key"].to_numpy(), axes="mean", per="vehicle")
+    res = ar.fit_archetypes(X, k_range=range(2, 9), seed=20261015)
+    first = df.groupby("vehicle_key").head(1).set_index("vehicle_key", drop=False).loc[[v for v, _ in ids]]
+    st = ar.stability(X, groups, res["k"], n_boot=200, seed=20261015)
+    return dict(band_hz=[TH.f_min, f_hi], n_bands=int(keep.sum()), k=res["k"],
+                silhouette_by_k={int(k): round(v, 3) for k, v in res["silhouette_by_k"].items()},
+                stability=st, chip=ar.crosstab(res["labels"], first["fifo_chip"].fillna("?").to_numpy()).to_dict(),
+                rate=ar.crosstab(res["labels"], (first["fs_nominal"] / 1000).round(1).to_numpy()).to_dict())
+
+
+def evidence_g(df, B):
+    fc = np.sqrt(sl.band_edges(TH)[:-1] * sl.band_edges(TH)[1:])
+    rp = np.log10((10 ** B[:, :, 0] + 10 ** B[:, :, 1]) / 2)
+    roll = rp[:, fc > 500].mean(1) - rp[:, (fc >= 100) & (fc <= 300)].mean(1)
+    v = pd.DataFrame(dict(vehicle=df["vehicle_key"], hw=df["sys_hw"], chip=df["fifo_chip"].fillna("?"),
+                          roll=roll)).groupby("vehicle").agg(hw=("hw", "first"), chip=("chip", "first"), roll=("roll", "mean"))
+    v6x = v[v["hw"] == "PX4_FMU_V6X"]
+    icm = v[v["chip"].str.startswith("ICM4268")]
+    return dict(fmu_v6x={c: sorted(round(float(x), 2) for x in g["roll"]) for c, g in v6x.groupby("chip")},
+                icm4268x_any_board={f"{h} {c}": sorted(round(float(x), 2) for x in g["roll"])
+                                    for (h, c), g in icm.groupby(["hw", "chip"])},
+                other_chips_all=dict(n=int((~v["chip"].str.startswith("ICM4268")).sum()),
+                                     median=q(v.loc[~v["chip"].str.startswith("ICM4268"), "roll"], 50),
+                                     min=q(v.loc[~v["chip"].str.startswith("ICM4268"), "roll"], 0)),
+                icm4268x_all=dict(n=int(len(icm)), median=q(icm["roll"], 50), max=q(icm["roll"], 100)))
+
+
 def main():
     df, z, B = load()
     out = dict(A_roll_vs_pitch=evidence_a(B), B_dependence=evidence_b(df, B), C_floor=evidence_c(df, z),
-               D_usable=evidence_d(df))
+               D_usable=evidence_d(df), E_chip_rolloff=evidence_e(df, B), F_cluster_below_300=evidence_f(df, B),
+               G_chip_or_mount=evidence_g(df, B))
     print(json.dumps(out, indent=1, default=str))
     with open(os.path.join(HERE, "evidence.json"), "w") as fh:
         json.dump(out, fh, indent=1, default=str)

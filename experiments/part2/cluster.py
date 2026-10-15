@@ -39,7 +39,7 @@ def attributes(df, ids, per):
     if per == "window":
         rows = df.iloc[[i for i, _ in ids]]
     else:
-        first = df.groupby("vehicle_key").head(1).set_index("vehicle_key")
+        first = df.groupby("vehicle_key").head(1).set_index("vehicle_key", drop=False)
         rows = first.loc[[v for v, _ in ids]]
     rate = (rows["fs_nominal"].round(-2) / 1000).map(lambda x: f"{x:g} kHz").to_numpy()
     fw = rows["version"].astype(str).str.extract(r"^(\d+\.\d+)")[0].fillna("?").to_numpy()

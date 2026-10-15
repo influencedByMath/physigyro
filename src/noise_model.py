@@ -31,14 +31,16 @@ def n_floor(floor):
     return {"flat": 1, "powerlaw": 2, "spline": N_KNOTS + 4}[floor]
 
 
-def floor_log(f, coef, floor, band):
+def floor_log(f, coef, floor, band, basis=None):
+    """log10 floor; ``basis`` = precomputed _spline_basis(log10 f, ...) for speed (same result)."""
     lf = np.log10(f)
     if floor == "flat":
         return np.full_like(lf, coef[0])
     if floor == "powerlaw":
         return coef[0] + coef[1] * (lf - 2.0)
     if floor == "spline":
-        return _spline_basis(lf, np.log10(band[0]), np.log10(band[1])) @ coef
+        B = basis if basis is not None else _spline_basis(lf, np.log10(band[0]), np.log10(band[1]))
+        return B @ coef
     raise ValueError(floor)
 
 
@@ -46,10 +48,10 @@ def lorentz(f, A, f0, g):
     return A / (1 + ((f - f0) / g) ** 2)
 
 
-def model_psd(f, p, floor, band, motor_hz=None, n_harm=0, n_free=0):
+def model_psd(f, p, floor, band, motor_hz=None, n_harm=0, n_free=0, basis=None):
     """p = [floor coefs | per harmonic (log10 A_h, log10 g_h) | per free peak (log10 A, f0, log10 g)]."""
     k = n_floor(floor)
-    S = 10 ** floor_log(f, p[:k], floor, band)
+    S = 10 ** floor_log(f, p[:k], floor, band, basis)
     for h in range(n_harm):
         A, g = 10 ** p[k + 2 * h], 10 ** p[k + 2 * h + 1]
         for fm in motor_hz:
@@ -97,7 +99,10 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
         free.append(i)
         if len(free) == max_free:
             break
-    p0, lo, hi = list(c0), [-np.inf] * len(c0), [np.inf] * len(c0)
+    # floor coefficients bounded (log10 PSD of a gyro in (rad/s)^2/Hz lies far inside -20..5)
+    p0, lo, hi = list(c0), [-20.0] * len(c0), [5.0] * len(c0)
+    if floor == "powerlaw":
+        lo[1], hi[1] = -10.0, 10.0
     for h in range(n_h):
         hf = [(h + 1) * fm for fm in motor_hz]
         near = np.abs(f[:, None] - np.array(hf)[None]).min(1) < 3 * df
@@ -111,8 +116,10 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
         hi += [5, f[i] + 10.0, np.log10(80.0)]
     p0 = np.clip(p0, np.array(lo) + 1e-9, np.array(hi) - 1e-9)
 
+    basis = _spline_basis(np.log10(f), np.log10(band[0]), np.log10(band[1])) if floor == "spline" else None
+
     def res(p):
-        return np.log10(model_psd(f, p, floor, band, motor_hz, n_h, len(free))) - logP
+        return np.log10(model_psd(f, p, floor, band, motor_hz, n_h, len(free), basis)) - logP
 
     sol = least_squares(res, p0, bounds=(lo, hi), x_scale="jac", max_nfev=4000)
     r = sol.fun
