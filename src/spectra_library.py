@@ -9,6 +9,7 @@ The library stores, per window and body axis (roll, pitch, yaw), the native Welc
 fs/nperseg, about 1.5 Hz) and the PSD on one common grid 0-f_max (log-log interpolation), plus metadata and
 CC-BY provenance. Clustering features are band powers of NATIVE bins (``band_features``).
 """
+import json
 import os
 import time
 from collections import Counter
@@ -164,4 +165,24 @@ def process_half(rows, half, raw_dir, th, process=process_log, done=None, sink=N
             out.append(rec)
             if sink is not None:
                 sink(rec, arrays)
+    return out
+
+
+def vehicle_spectra(df, native):
+    """One spectrum per vehicle (decision D-24 (2)): power mean of roll and pitch, then of the vehicle's windows
+    (all from one log, so one frequency grid). Motor frequencies: mean RPM/60 per motor when every window has
+    valid ESC RPM, else None. ``df``: library windows table; ``native``: mapping "<window_id>|f" / "|P"."""
+    out = []
+    for v, g in df.groupby("vehicle_key", sort=False):
+        f = np.asarray(native[g.window_id.iloc[0] + "|f"], float)
+        Ps = []
+        for w in g.window_id:
+            if not np.array_equal(np.asarray(native[w + "|f"], float), f):
+                raise ValueError(f"{v}: windows on different frequency grids")
+            Ps.append(np.asarray(native[w + "|P"], float)[:, :2].mean(1))
+        motors = None
+        if bool(g.rpm_valid.all()):
+            motors = np.mean([json.loads(x) for x in g.rpm_hz], 0).tolist()
+        out.append(dict(vehicle_key=v, chip=g.fifo_chip.fillna("?").iloc[0], f=f, P=np.mean(Ps, 0),
+                        motor_hz=motors, n_windows=len(g)))
     return out

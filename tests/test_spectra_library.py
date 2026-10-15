@@ -183,3 +183,19 @@ def test_airborne_windows_empty_when_never_airborne():
 def test_airborne_windows_without_rate_setpoint_is_explicit():
     with pytest.raises(nd.MissingTopic):
         nd.airborne_windows(FakeFlight([1] * 5 + [0] * 90 + [1] * 5))
+
+
+def test_vehicle_spectra_power_means():
+    import pandas as pd
+    f = np.arange(0, 100, 1.5)
+    P1 = np.ones((len(f), 3)); P2 = np.ones((len(f), 3)) * 100.0
+    P1[:, 1] = 3.0                                           # roll 1, pitch 3 -> window mean power 2
+    df = pd.DataFrame(dict(window_id=["a|w0", "a|w1", "b|w0"], vehicle_key=["va", "va", "vb"],
+                           fifo_chip=["ICM42688P", "ICM42688P", "BMI088"], rpm_valid=[True, True, False],
+                           rpm_hz=["[100.0, 110.0]", "[102.0, 112.0]", "null"]))
+    native = {"a|w0|f": f, "a|w0|P": P1, "a|w1|f": f, "a|w1|P": P2, "b|w0|f": f, "b|w0|P": P2}
+    vs = sl.vehicle_spectra(df, native)
+    assert [v["vehicle_key"] for v in vs] == ["va", "vb"] and vs[0]["chip"] == "ICM42688P"
+    assert np.allclose(vs[0]["P"], (2.0 + 100.0) / 2) and np.allclose(vs[1]["P"], 100.0)
+    assert vs[0]["motor_hz"] == pytest.approx([101.0, 111.0]) and vs[1]["motor_hz"] is None
+    assert vs[0]["n_windows"] == 2

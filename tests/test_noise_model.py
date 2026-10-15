@@ -99,3 +99,13 @@ def test_fit_with_known_lowpass_recovers_the_unfiltered_model():
     S = synth() * nm.lowpass_gain2(F, (350.0, 4.0))
     fit = nm.fit_spectrum(F, S, BAND, floor="spline", prominence=0.3, lowpass=(350.0, 4.0))
     assert fit["rms_db"] < 0.1 and sorted(fit["peaks_hz"]) == pytest.approx([120.0, 310.0], abs=1.0)
+
+
+def test_chip_lowpass_selected_by_bic_only_when_present():
+    rng = np.random.default_rng(7)
+    base = [synth(floor_coef=(-6.0 + 0.2 * i, -1.0 - 0.2 * i)) * rng.chisquare(50, len(F)) / 50 for i in range(3)]
+    grid = [(250.0, 3.0), (400.0, 4.0)]
+    flat = nm.fit_chip_lowpass([(F, P, None) for P in base], grid, prominence=0.5)
+    assert flat["lowpass"] is None
+    rolled = nm.fit_chip_lowpass([(F, P * nm.lowpass_gain2(F, (300.0, 3.0)), None) for P in base], grid, prominence=0.5)
+    assert rolled["lowpass"] is not None and rolled["bic"][str(rolled["lowpass"])] < rolled["bic"]["None"]

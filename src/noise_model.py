@@ -188,3 +188,25 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
                 n_harm=n_h, motor_hz=None if not use_m else [float(x) for x in motor_hz],
                 peaks_hz=[float(sol.x[k + 3 * j + 1]) for j in range(len(free))], success=bool(sol.success), nfev=int(sol.nfev), lowpass=lowpass,
                 n_params=len(sol.x), n_bins=len(f))
+
+
+def fit_chip_lowpass(spectra, grid, floor="spline", prominence=0.5, band=(20.0, 780.0)):
+    """One low-pass per IMU chip model (D-24 (1), P1), shared by all its vehicles: every (f_c, n) of ``grid`` and
+    "no term" are tried; the choice minimises the BIC of all the chip's spectra together (+2 parameters for a
+    term). ``spectra``: list of (f, P, motor_hz). Only the presence and magnitude are trusted (D-25): the corner
+    and order trade off against the spline floors and are not identifiable."""
+    bic, best = {}, None
+    for lp in [None] + list(grid):
+        sse, n, k, fits = 0.0, 0, 0, []
+        for f, P, motors in spectra:
+            r = fit_spectrum(f, P, band, floor=floor, motor_hz=motors, prominence=prominence, lowpass=lp)
+            sse += (r["rms_db"] / 10) ** 2 * r["n_bins"]
+            n += r["n_bins"]
+            k += r["n_params"]
+            fits.append(r)
+        k += 0 if lp is None else 2
+        b = n * np.log(sse / n) + k * np.log(n)
+        bic[str(lp)] = float(b)
+        if best is None or b < best[0]:
+            best = (b, lp, fits)
+    return dict(lowpass=best[1], bic=bic, fits=best[2])
