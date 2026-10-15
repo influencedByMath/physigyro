@@ -224,3 +224,27 @@ def test_download_many_reports_each_log(tmp_path):
     assert res["good1"]["ok"] and res["good2"]["ok"] and not res["bad1"]["ok"]
     assert "not a ULog" in res["bad1"]["error"]
     assert sorted(os.listdir(tmp_path)) == ["good1.ulg", "good2.ulg"]
+
+
+def test_run_screen_retries_errors_and_survives_cut_last_line(tmp_path, monkeypatch):
+    order = [_entry(log_id=f"L{i}", vehicle_uuid=f"0006{i:032d}1") for i in range(4)]
+    out = tmp_path / "screen.jsonl"
+    ok = dict(log_id="L0", vehicle_uuid=order[0]["vehicle_uuid"], status="ok", fifo=False, info={}, err=None)
+    err = dict(log_id="L1", vehicle_uuid=order[1]["vehicle_uuid"], status="error", fifo=False, info={}, err="timeout")
+    out.write_text(json.dumps(ok) + "\n" + json.dumps(err) + "\n" + '{"log_id": "L2", "sta')   # power cut mid-line
+    calls = _fake_rows(monkeypatch)
+    ls.run_screen(order, str(out), target_fifo_vehicles=100, workers=2, pause_s=0.0)
+    assert sorted(calls) == ["L1", "L2", "L3"]
+    rows = [json.loads(x) for x in out.read_text().splitlines()]
+    assert sorted(r["log_id"] for r in rows) == ["L0", "L1", "L2", "L3"]
+    assert all(r["status"] == "ok" for r in rows)
+
+
+def test_run_screen_repairs_missing_final_newline(tmp_path, monkeypatch):
+    order = [_entry(log_id=f"L{i}", vehicle_uuid=f"0006{i:032d}1") for i in range(2)]
+    out = tmp_path / "screen.jsonl"
+    out.write_text(json.dumps(dict(log_id="L0", vehicle_uuid=order[0]["vehicle_uuid"], status="ok", fifo=False,
+                                   info={}, err=None)))                       # complete row, newline lost
+    _fake_rows(monkeypatch)
+    ls.run_screen(order, str(out), target_fifo_vehicles=100, workers=1, pause_s=0.0)
+    assert [json.loads(x)["log_id"] for x in out.read_text().splitlines()] == ["L0", "L1"]

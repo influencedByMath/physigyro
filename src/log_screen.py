@@ -172,7 +172,17 @@ def run_screen(order, out_jsonl=SCREEN_JSONL, target_fifo_vehicles=200, max_logs
     rows = []
     if os.path.exists(out_jsonl):
         with open(out_jsonl) as fh:
-            rows = [json.loads(x) for x in fh if x.strip()]
+            text = fh.read()
+        lines = [x for x in text.splitlines() if x.strip()]
+        for x in lines:
+            try:
+                rows.append(json.loads(x))
+            except ValueError:                   # line cut by a crash or power loss: screen that log again
+                pass
+        rows = [r for r in rows if r.get("status") != "error"]    # network errors are retried
+        if len(rows) != len(lines) or (text and not text.endswith("\n")):
+            with open(out_jsonl, "w") as fh:     # rewrite without the dropped lines (no duplicates later)
+                fh.writelines(json.dumps(r) + "\n" for r in rows)
     done_ids = {r["log_id"] for r in rows}
     fifo = {_vehicle(r) for r in rows if r.get("fifo") and r.get("status") != "error"}
     todo = iter([e for e in order if e["log_id"] not in done_ids][:max_logs])
