@@ -1,7 +1,8 @@
 stage,n_in,n_removed,n_out,reasons
-fit-half vehicles (screened log each),84,0,84,{}
-downloaded and parsed,84,0,84,{}
-log gates Q4-Q7 (and Q10 topic),84,36,48,"{'Q4_dropout': 35, 'Q4_no_long_segment': 1}"
-at least one good window,48,9,39,{'no_good_window': 9}
-"windows: gates Q10, Q9, Q13",6616,2466,4150,"{'Q10_unsteady': 2092, 'Q13_few_averages': 374}"
-windows: overlap and cap Q14 (3 per vehicle),4150,4044,106,{'not_selected': 4044}
+fit-half vehicles (screened log each),111,0,111,{}
+downloaded and parsed,111,0,111,{}
+log gates Q4-Q7 (and Q10 topic),111,47,64,"{'Q4_no_long_segment': 3, 'Q4_dropout': 44}"
+at least one good window (newest log),64,14,50,{'no_good_window': 14}
+fallback D-24: zero steady windows -> older FIFO log,14,12,2,"{'fallback_log_no_good_window': 7, 'fallback_no_older_fifo_log': 5}"
+"windows: gates Q10, Q9, Q13",8213,3063,5150,"{'Q10_unsteady': 2646, 'Q13_few_averages': 417}"
+windows: overlap and cap Q14 (3 per vehicle),5150,5008,142,{'not_selected': 5008}
