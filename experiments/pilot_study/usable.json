@@ -1,0 +1,113 @@
+{
+ "THESIS candidates (f_max 800, measured fs, D_max 5 %, L_min 10 s)": {
+  "usable_logs": 6,
+  "of": 29,
+  "windows_capped": 16,
+  "removed": {
+   "Q5_rate": 7,
+   "Q4_dropout": 15,
+   "Q4_no_long_segment": 1
+  },
+  "thresholds": {
+   "f_max": 800,
+   "fs": "measured",
+   "d_max": 0.05,
+   "l_min": 10.0,
+   "sp": 15.0,
+   "thr": 0.05,
+   "avg": 20
+  }
+ },
+ "f_max 800 on the nominal rate": {
+  "usable_logs": 11,
+  "of": 29,
+  "windows_capped": 28,
+  "removed": {
+   "Q4_dropout": 15,
+   "no_window": 1,
+   "Q4_no_long_segment": 2
+  },
+  "thresholds": {
+   "f_max": 800,
+   "fs": "nominal",
+   "d_max": 0.05,
+   "l_min": 10.0,
+   "sp": 15.0,
+   "thr": 0.05,
+   "avg": 20
+  }
+ },
+ "f_max 780 on the measured rate": {
+  "usable_logs": 11,
+  "of": 29,
+  "windows_capped": 28,
+  "removed": {
+   "Q4_dropout": 15,
+   "no_window": 1,
+   "Q4_no_long_segment": 2
+  },
+  "thresholds": {
+   "f_max": 780,
+   "fs": "measured",
+   "d_max": 0.05,
+   "l_min": 10.0,
+   "sp": 15.0,
+   "thr": 0.05,
+   "avg": 20
+  }
+ },
+ "f_max 780, L_min = one Welch segment (window gate Q13 decides)": {
+  "usable_logs": 13,
+  "of": 29,
+  "windows_capped": 34,
+  "removed": {
+   "Q4_dropout": 15,
+   "no_window": 1
+  },
+  "thresholds": {
+   "f_max": 780,
+   "fs": "measured",
+   "d_max": 0.05,
+   "l_min": 0.0,
+   "sp": 15.0,
+   "thr": 0.05,
+   "avg": 20
+  }
+ },
+ "f_max 780, L_min = one Welch segment, D_max 20 %": {
+  "usable_logs": 15,
+  "of": 29,
+  "windows_capped": 40,
+  "removed": {
+   "Q4_dropout": 13,
+   "no_window": 1
+  },
+  "thresholds": {
+   "f_max": 780,
+   "fs": "measured",
+   "d_max": 0.2,
+   "l_min": 0.0,
+   "sp": 15.0,
+   "thr": 0.05,
+   "avg": 20
+  }
+ },
+ "PROPOSED: f_max 780, L_min one Welch segment, D_max 20 %, throttle 0.02": {
+  "usable_logs": 14,
+  "of": 29,
+  "windows_capped": 38,
+  "removed": {
+   "Q4_dropout": 13,
+   "no_window": 2
+  },
+  "thresholds": {
+   "f_max": 780,
+   "fs": "measured",
+   "d_max": 0.2,
+   "l_min": 0.0,
+   "sp": 15.0,
+   "thr": 0.02,
+   "avg": 20
+  }
+ }
+}
