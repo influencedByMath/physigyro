@@ -147,3 +147,93 @@ Each fix has a test that failed before it.
 - **Final clustering, Fig. 2 and the parametric model fits.** They wait for decisions 1-4. The code exists and is tested (`archetypes.py`, `noise_model.py`), but its results are not final.
 - **Peak prominence and the fit-error drop limit.** Set in Task 5 on the fit half.
 - **Test half.** Not downloaded (author instruction).
+
+---
+
+# Part 2b (after D-24 and D-25): enlarged fit half, model fits, clustering, generator. STOPPED (new landmine)
+
+Status 2026-10-15. Everything is fit half only; the test half is not downloaded.
+
+## 8. More data (D-24 (5))
+
+- **Extended screen:** exactly the first 4,327 vehicles of the D-21 order. 272 FIFO vehicles; FIFO share 6.3 % (CI 5.6-7.1 %), unchanged. 1 log is unreadable (HTTP 403).
+- **Split:** 216 vehicles, **111 fit / 105 test**. 58 are new; none of the 158 old assignments changed. 42 no-ID vehicles are excluded.
+- **Fallback (D-24 P2, Q3 rule D-25):** 14 vehicles had zero steady windows. For 9 of them an older FIFO log was found; 2 of those were recovered; 5 vehicles had no older FIFO log. Q3 rejected 2 uploads, both verified byte-identical.
+- **Funnel:** 111 vehicles → 64 pass the log gates (44 dropout, 3 no gap-free piece) → **52 usable vehicles (47 %, CI 38-56 %), 142 windows**.
+- **Projection: about 101 vehicles in total (92-111).** The test half projects to about 49 (40-59).
+
+## 9. Model fits (D-24 (1), (3); D-25)
+
+`model_fits.json` (one spectrum per vehicle, spline floor, chip low-pass by BIC, at most 15 free peaks):
+
+| Chip (vehicles) | Low-pass chosen | Gain at 500 / 780 Hz | BIC gain over "none" |
+|---|---|---|---|
+| BMI055 (12) | none | - | - |
+| BMI088 (11) | 899 Hz, n 4 | −0.0 / −1.2 dB | **1 (a tie)** |
+| ICM-42686-P (3) | 150 Hz, n 3 | −31 / −43 dB | 791 |
+| ICM-42688-P (13) | 323 Hz, n 2 | −8 / −15 dB | 2,120 |
+| ICM-45686 (9) | 696 Hz, n 6 | −0.1 / −6.9 dB | 158 |
+| IIM-42652 (2) | 539 Hz, n 3 | −2 / −10 dB | 6 |
+| IIM-42653 (2) | 696 Hz, n 6 | −0.1 / −6.9 dB | 30 |
+
+- **Fit error:** median 2.85 dB (p90 3.79, max 4.80). Welch estimation noise is only 0.36 dB, so **the misfit is the model**. It is largest at 95-130 Hz: motor peaks are wider or split, because 4 motors run at slightly different speeds and the speed varies inside a window. 2 of 52 fits did not converge.
+- **Peak cap (my ruling):** with a cap of 6, 42 of 52 fits hit it (`peak_cap_check.py`). With 15, only 2 do, the median count is 8, and the error barely changes (2.98 → 2.85 dB).
+- **Prominence sensitivity:**
+
+  | Prominence | Fit error | Peaks (median) |
+  |---|---|---|
+  | 0.3 | 2.66 dB | 13 |
+  | 0.5 (used) | 2.85 dB | 8 |
+  | 1.0 | 3.07 dB | 5 |
+
+- **The ICM-42686-P magnitude is not stable either** (3 vehicles): its gain at 500 Hz was −11 dB with cap 6 and −31 dB with cap 15. D-25 already treats the corner and order as not identifiable; with this few vehicles even the magnitude is uncertain.
+
+## 10. Final clustering (D-24 (2), P3)
+
+`clusters_final.json`: one spectrum per vehicle (52), chip low-pass divided out.
+- **Result:** k = 2, silhouette **0.19**, bootstrap median ARI **0.65** (p10 0.10).
+- **The P3 rule therefore decides one generator with the chip as a covariate.**
+- The correction weakens the chip dependence but does not remove it: one cluster holds 11 of the 13 ICM-42688-P.
+- Without the correction: silhouette 0.33, ARI 0.84, and the clusters are essentially "ICM-4268x vs the rest". That hardware split is not stable by the rule either, and would not be a noise type anyway.
+
+## 11. NEW LANDMINE: the generator, as specified in THESIS 7.5, does not reproduce real spectra
+
+**Finding 1: free floor vs broad peaks is not identified.**
+- With a free spline floor, 41 of 52 fitted floors hit the −20 coefficient bound, i.e. the floor is about 0 in places, and broad Lorentzian tails carry the spectrum there.
+- The curve fit is good (median log10 level real −4.71 vs model −4.71), but "floor" and "peaks" lose their meaning: peak/floor ratios have a median of 2.8 decades and reach 10^18.
+
+**Fixed floor (new tested option `fix_floor`):**
+- The floor is the robust 20th-percentile envelope (as in evidence C), and only the peaks are fitted on top.
+- Result: sane parameters (ratios median 1.45, max 5 decades; no bound hit), fit error 3.39 dB.
+- The fixed-floor generator's floors match the real ones (median log10 at 100 Hz: −5.59 real vs −5.56 synthetic).
+
+**Finding 2: independent Gaussian peaks are far too strong.** Sampling every peak independently from one pooled Gaussian on (log f0, log peak/floor, log width), as THESIS 7.5 suggests, gives spectra:
+
+| Floor | Median band level off by | Real vs synthetic AUC |
+|---|---|---|
+| free | **59 dB** | 0.92 |
+| fixed | **32 dB** | 0.90 |
+
+`generator_check.json` is therefore an INVALID result, kept as evidence.
+
+**Cause, verified:**
+- The model rebuilt through the generator's representation reproduces each fit exactly (0.000 dB), so the representation is correct.
+- Sampling breaks two things:
+  - the structure inside a spectrum: motor harmonics belong at h × the same motor frequencies, and the peak heights belong together;
+  - the linear power, through the Gaussian tails: peak/floor median 28×, but mean 926×.
+- With **real vehicles' whole peak sets** placed on sampled floors, the median band difference is **2.5 dB**.
+
+**Not done until decided:** the generator design, the synthetic-vs-real check and Fig. 2.
+
+## 12. Decisions needed
+
+1. **Floor fitting:** fixed robust floor (recommended; identifiable parameters, 3.39 dB) or free floor (2.85 dB, meaningless floor/peak split).
+2. **Generator design:**
+   - (A, recommended) Gaussian floor; **peak sets resampled as whole sets** from real vehicles, with jitter (one common frequency scale factor per spectrum, heights jittered by the within-vehicle spread); chip taken from the source vehicle.
+   - (B) Keep independent peaks but model them better (mixture, truncation).
+   - (C) Gaussian on PCA scores of band powers: matches the statistics by construction, but blurs peaks into 1.6-25 Hz bands, which is not good enough for notch tuning.
+
+   (A) partly copies real peak sets. A leave-one-vehicle-out check must show that it generalises, and it will be reported.
+3. **Chip low-pass selection margin:** BMI088 got a term by a BIC gain of 1. Recommended: require a BIC gain of at least 10 (strong evidence), else no term.
+4. **Peak prominence** (7.4.4, D-23 left it open): 0.5 recommended (THESIS candidate; see the sensitivity table).
+5. **Fit-error drop limit** (7.5): proposed **5 dB**. It drops no spectrum now (max 4.80 dB free floor; to be re-checked on the chosen floor); it only guards against broken fits.
