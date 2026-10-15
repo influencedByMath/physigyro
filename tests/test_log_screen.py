@@ -288,3 +288,17 @@ def test_half_entries_only_returns_the_requested_half():
     assert [e["log_id"] for e in ls.half_entries(split_rows, by_id, "test")] == ["L2"]
     with pytest.raises(ValueError):
         ls.half_entries(split_rows, by_id, "both")
+
+
+def test_run_screen_order_limit_is_a_resume_safe_prefix(tmp_path, monkeypatch):
+    """Extended screen (D-24): screen exactly the first N vehicles of the order; a restart never overshoots."""
+    order = [_entry(log_id=f"L{i}", vehicle_uuid=f"0006{i:032d}1") for i in range(20)]
+    out = tmp_path / "s.jsonl"
+    out.write_text("".join(json.dumps(dict(log_id=f"L{i}", vehicle_uuid=order[i]["vehicle_uuid"], status="ok",
+                                            fifo=True, info={}, err=None)) + "\n" for i in range(5)))
+    calls = _fake_rows(monkeypatch, fifo=True)
+    res = ls.run_screen(order, str(out), target_fifo_vehicles=None, order_limit=12, workers=2, pause_s=0.0)
+    assert sorted(calls, key=lambda x: int(x[1:])) == [f"L{i}" for i in range(5, 12)]   # FIFO count never stops it
+    again = ls.run_screen(order, str(out), target_fifo_vehicles=None, order_limit=12, workers=2, pause_s=0.0)
+    assert again["screened_now"] == 0 and res["total_rows"] == 12
+    assert sorted(json.loads(x)["log_id"] for x in out.read_text().splitlines()) == sorted(f"L{i}" for i in range(12))

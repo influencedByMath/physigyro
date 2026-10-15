@@ -165,8 +165,12 @@ def _paced(entry, pause_s):
 
 
 def run_screen(order, out_jsonl=SCREEN_JSONL, target_fifo_vehicles=200, max_logs=4000, workers=4, pause_s=1.0,
-               log=print):
+               log=print, order_limit=None):
     """Screen logs in ``order`` until ``target_fifo_vehicles`` FIFO vehicles are found (resumable).
+
+    ``order_limit`` (extended screen, D-24): screen exactly the first ``order_limit`` entries of ``order``,
+    whatever the FIFO count (``target_fifo_vehicles`` None); a restart with the same limit only completes
+    the prefix and never overshoots. ``max_logs`` caps the new logs of one run.
 
     Rows are appended to ``out_jsonl`` in the main thread as requests complete."""
     rows = []
@@ -185,12 +189,13 @@ def run_screen(order, out_jsonl=SCREEN_JSONL, target_fifo_vehicles=200, max_logs
                 fh.writelines(json.dumps(r) + "\n" for r in rows)
     done_ids = {r["log_id"] for r in rows}
     fifo = {_vehicle(r) for r in rows if r.get("fifo") and r.get("status") != "error"}
-    todo = iter([e for e in order if e["log_id"] not in done_ids][:max_logs])
+    pool = order if order_limit is None else order[:order_limit]
+    todo = iter([e for e in pool if e["log_id"] not in done_ids][:max_logs])
     n_new, pending = 0, set()
     os.makedirs(os.path.dirname(os.path.abspath(out_jsonl)), exist_ok=True)
     with open(out_jsonl, "a") as fh, ThreadPoolExecutor(workers) as ex:
         def submit_next():
-            if len(fifo) >= target_fifo_vehicles:
+            if target_fifo_vehicles is not None and len(fifo) >= target_fifo_vehicles:
                 return
             e = next(todo, None)
             if e is not None:
@@ -357,6 +362,8 @@ def main(argv=None):
     s.add_argument("--target", type=int, default=200)
     s.add_argument("--max-logs", type=int, default=4000)
     s.add_argument("--workers", type=int, default=4)
+    s.add_argument("--order-limit", type=int, default=None,
+                   help="extended screen (D-24): exactly the first N vehicles of the D-21 order; no FIFO target")
     sub.add_parser("summary")
     sub.add_parser("download-pilot")
     sub.add_parser("download-fit")
@@ -367,7 +374,11 @@ def main(argv=None):
         cands = [e for e in load_index(_latest_index_path()) if is_candidate(e)]
         order = sampling_order(cands, SCREEN_SALT, AUDIT_RANDOM_FIFO_LOGS)
         print(f"{len(cands)} candidate logs, {len(order)} vehicles in the sampling order")
-        print(json.dumps(run_screen(order, SCREEN_JSONL, a.target, a.max_logs, min(a.workers, 4))))
+        if a.order_limit is not None:
+            print(json.dumps(run_screen(order, SCREEN_JSONL, None, 10 ** 9, min(a.workers, 4),
+                                        order_limit=a.order_limit)))
+        else:
+            print(json.dumps(run_screen(order, SCREEN_JSONL, a.target, a.max_logs, min(a.workers, 4))))
     elif a.cmd == "summary":
         with open(SCREEN_JSONL) as fh:
             rows = [json.loads(x) for x in fh if x.strip()]
