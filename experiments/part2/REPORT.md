@@ -237,3 +237,51 @@ Status 2026-10-15. Everything is fit half only; the test half is not downloaded.
 3. **Chip low-pass selection margin:** BMI088 got a term by a BIC gain of 1. Recommended: require a BIC gain of at least 10 (strong evidence), else no term.
 4. **Peak prominence** (7.4.4, D-23 left it open): 0.5 recommended (THESIS candidate; see the sensitivity table).
 5. **Fit-error drop limit** (7.5): proposed **5 dB**. It drops no spectrum now (max 4.80 dB free floor; to be re-checked on the chosen floor); it only guards against broken fits.
+
+---
+
+## 13. Final Part 2b results (after D-26 and D-27)
+
+All results are fit half only; the test half has not been downloaded.
+
+**Model fits** (`model_fits.json`):
+- **Fit error:** median 3.31 dB with the fixed robust floor (Welch noise 0.36 dB).
+- **Dropped (> 5 dB):** 2 of 52 spectra (5.12 and 5.48 dB). 1 fit did not converge. 2 of 52 reach the cap of 15 peaks; the median is 8.5 peaks.
+
+**Chip low-pass terms** (BIC gain ≥ 10):
+
+| Chip | Term | BIC gain |
+|---|---|---|
+| ICM-42688-P | yes | 3,138 |
+| ICM-42686-P | yes | 979 |
+| IIM-42652 (2 vehicles) | yes | 248 |
+| ICM-45686 | yes | 173 |
+| BMI055 | none | −17 |
+| BMI088 | none | −17 (the tie of Section 9 is gone) |
+| IIM-42653 (2 vehicles) | none | −14 |
+
+The two IIM chips swapped compared with the free-floor run. With only 2 vehicles each, their terms are weakly supported.
+
+**Clustering** (`clusters_final.json`): silhouette 0.26, bootstrap ARI 0.57 (p10 0.08). That is not stable by rule P3, so there is **one generator with the chip as a covariate**.
+- Without the chip correction: silhouette 0.33, ARI 0.84. This is the hardware split (ICM-4268x vs the rest), not a noise type.
+
+**Generator** (`generator_check.json`; D-26 design plus the D-27 floor mean per chip class):
+- **Jitter, measured within vehicles:**
+  - frequency 0.65 % (log10 sd 0.0028). This rests on only 4 vehicles with valid RPM and at least 2 windows, a thin basis that is noted here;
+  - height 1.1 dB (log10 sd 0.108, 49 vehicles).
+- **Realism, in-sample:** real-vs-synthetic AUC **0.495** (absolute levels) and **0.47** (shapes). 0.5 means the classifier cannot tell them apart. Band quantiles differ by a median of 2.4-2.8 dB (max 5.5-8.4 dB).
+- **Leave one vehicle out:** the held-out vehicle's nearest synthetic spectrum is 7.7 dB away, its nearest real vehicle 8.2 dB. **76 %** of vehicles are at least as close to a synthetic spectrum as to another real one, so the generator generalises about as well as a new real drone would.
+- **Novelty:** synthetic spectra are 10.2 dB from their source vehicle, farther than real nearest neighbours (8.2 dB). They are not copies.
+- **Remaining limitation:** the median of non-ICM spectra at 20-100 Hz is still **+4.4 dB** high (ICM-4268x +1.2 dB; above 100 Hz +0.4 / +0.7 dB). The median of synthetic spectra is also smoother at the motor peak, because peak positions vary between vehicles.
+
+**Fig. 2:** `figures/fig2_real_vs_synthetic.png` / `.pdf`. Real vs synthetic, median and 10-90 % band, one panel for ICM-4268x and one for the other chips. Palette validated.
+
+**Test quality:**
+- Mutation checks: clustering 10/10 caught, generator 14/14 caught, Jacobian 3/3 caught.
+- 196 tests pass.
+
+## 14. Open items for later phases (no decision needed now)
+
+- The chip delay of ICM-4268x drones enters the loop model as a T_d uncertainty (D-25). The datasheet VERIFY item stays open.
+- **The model misfit at the motor fundamental** (95-130 Hz, about 3 dB). A future refinement could model the motor peak as a sum of 4 peaks at the per-motor RPM with a speed spread. Out of scope now.
+- **Go/no-go:** the fit half gives 52 usable vehicles. The projected total of about 101 (92-111) meets the target of 100 only once the test half is processed. That waits for the author.

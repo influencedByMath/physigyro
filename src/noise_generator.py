@@ -2,7 +2,9 @@
 
 One generator for all spectra, with the IMU chip as a covariate (D-24 (4): the clusters were not stable, P3).
 Design D-26 (2), chosen because independent Gaussian peak triples gave spectra 32-59 dB too high:
-- floor: multivariate Gaussian on the spline coefficients of the fixed robust floors (log10 PSD);
+- floor: multivariate Gaussian on the spline coefficients of the fixed robust floors (log10 PSD), with a mean
+  per chip class (ICM-4268x vs others, D-27: the classes differ at 20-100 Hz) and one covariance shared by both
+  classes (residuals around the class means);
 - peaks: the WHOLE peak set of one real vehicle (free peaks and every motor harmonic, as (log10 f0,
   log10 A / floor(f0), log10 width)), with one common frequency scale per spectrum (log10 sd ``freq_sd``)
   and independent height jitter (log10 sd ``height_sd``); peaks moved outside the band are dropped;
@@ -16,6 +18,11 @@ import noise_model as nm
 
 FLOOR = "spline"
 G_RANGE = (0.3, 80.0)          # Hz, the fit bounds of a peak width
+
+
+def chip_class(chip):
+    """D-27: ICM-42688-P / 42686-P (strong on-chip roll-off) vs all other chips."""
+    return "ICM4268x" if str(chip).startswith("ICM4268") else "other"
 
 
 def entry_peaks(e, band):
@@ -53,7 +60,10 @@ def fit_generator(entries, band, freq_sd, height_sd):
         lowpass.setdefault(e["chip"], e["lowpass"])
         if lowpass[e["chip"]] != e["lowpass"]:
             raise ValueError(f"chip {e['chip']}: entries with different low-pass terms")
-    return dict(band=list(band), floor_mean=floors.mean(0), floor_cov=np.cov(floors.T) + 1e-9 * np.eye(k),
+    cls = np.array([chip_class(c) for c in chips])
+    floor_mean = {c: floors[cls == c].mean(0) for c in sorted(set(cls))}
+    resid = floors - np.array([floor_mean[c] for c in cls])
+    return dict(band=list(band), floor_mean=floor_mean, floor_cov=np.cov(resid.T) + 1e-9 * np.eye(k),
                 sources=use, peak_sets=[entry_peaks(entries[i], band) for i in use], chips=chips,
                 chip_share={c: chips.count(c) / len(chips) for c in sorted(set(chips))}, lowpass=lowpass,
                 freq_sd=float(freq_sd), height_sd=float(height_sd), n_entries=len(use))
@@ -67,7 +77,7 @@ def sample(gen, n, f, rng):
     for i in range(n):
         j = int(rng.integers(len(gen["sources"])))
         chip = gen["chips"][j]
-        coef = rng.multivariate_normal(gen["floor_mean"], gen["floor_cov"])
+        coef = rng.multivariate_normal(gen["floor_mean"][chip_class(chip)], gen["floor_cov"])
         spec = 10 ** nm.floor_log(f, coef, FLOOR, band)
         scale = 10 ** rng.normal(0.0, gen["freq_sd"]) if gen["freq_sd"] > 0 else 1.0
         pk = []

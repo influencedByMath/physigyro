@@ -66,7 +66,7 @@ def test_without_jitter_the_source_peaks_are_reproduced():
 
 def test_generator_reproduces_the_population():
     gen = ng.fit_generator(entries(400, seed=2), BAND, freq_sd=0.01, height_sd=0.1)
-    assert np.allclose(gen["floor_mean"], -6.0, atol=0.05)
+    assert all(np.allclose(m, -6.0, atol=0.05) for m in gen["floor_mean"].values())
     assert gen["chip_share"]["ICM42688P"] == pytest.approx(0.25)
     S, meta = ng.sample(gen, 4000, FB, np.random.default_rng(3))
     assert np.mean([m["chip"] == "ICM42688P" for m in meta]) == pytest.approx(0.25, abs=0.03)
@@ -129,3 +129,22 @@ def test_peaks_scaled_outside_the_band_are_dropped():
     assert all(BAND[0] <= f0 <= BAND[1] for m in meta for f0, _, _ in m["peaks"])
     n = [len(m["peaks"]) for m in meta]
     assert 1 in n and 2 in n                                                 # dropped when scaled out, kept otherwise
+
+
+def test_floor_mean_per_chip_class():
+    """D-27: the floor mean depends on the chip class (ICM-4268x vs others); one shared covariance."""
+    rng = np.random.default_rng(12)
+    es = []
+    for i in range(60):
+        icm = i % 3 == 0
+        e = fake_fit(rng, "ICM42688P" if icm else "BMI055", None)
+        e["params"][:8] = list(np.array(e["params"][:8]) + (1.0 if icm else -1.0))   # floors -5 vs -7
+        es.append(e)
+    gen = ng.fit_generator(es, BAND, freq_sd=0.0, height_sd=0.0)
+    assert np.allclose(gen["floor_mean"]["ICM4268x"], -5.0, atol=0.1)
+    assert np.allclose(gen["floor_mean"]["other"], -7.0, atol=0.1)
+    assert np.all(np.sqrt(np.diag(gen["floor_cov"])) < 0.4)               # residuals around class means, not -5 vs -7
+    _, meta = ng.sample(gen, 600, FB, np.random.default_rng(13))
+    for cls, want in (("ICM42688P", -5.0), ("BMI055", -7.0)):
+        got = np.median([np.mean(m["floor"]) for m in meta if m["chip"] == cls])
+        assert abs(got - want) < 0.1
