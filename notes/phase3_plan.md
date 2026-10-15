@@ -291,39 +291,100 @@ The runner implements THESIS 7.4.3 pilot steps 1-5 on the pilot set only:
 
 ### Task 4: Archetypes (PCA + k-means)
 
-**Files:** Create `src/archetypes.py`, `tests/test_archetypes.py` and `experiments/part2/cluster.py`. Figures go in `experiments/part2/figures/`.
-
-**Interfaces:**
-- `features(lib, unit) -> (X, groups)`: mean-removed log band powers.
-- `fit_archetypes(X, k_range=range(2, 9), var=0.95, seed=20261015) -> dict(pca, k, kmeans, silhouette_by_k, labels)`.
-- `stability(X, groups, k, n_boot=200, seed) -> float`: median ARI, bootstrapping over vehicles.
-
-- [ ] **Step 1:** Write the tests:
-  - two synthetic spectrum families (a low-pass slope and a 150 Hz peak) are separated with k = 2 and ARI 1;
-  - PCA keeps at least 95 % of the variance;
-  - results are reproducible with a fixed seed.
-- [ ] **Step 2:** Run the clustering. Produce:
-  - the centroid plot (Fig. 2);
-  - the cross-tab against chip, sample rate and firmware (Q12);
-  - the silhouette and the bootstrap ARI.
-- [ ] **Step 3:** Commit.
+> **Superseded by Part 2b, Task 10** (D-24). Kept for the record.
 
 ### Task 5: Parametric noise model fit
 
-**Files:** Create `src/noise_model.py`, `tests/test_noise_model.py` and `experiments/part2/fit_model.py`.
-
-**Interfaces:**
-- `model_psd(f, params, floor) -> ndarray`: THESIS 7.5, with the floor chosen in the D-24 decision.
-- `fit_spectrum(f, P, floor, motor_hz=None, prominence) -> dict(params, rms_db, n_peaks)`: motor frequencies are fixed to RPM/60 where `has_rpm`.
-
-- [ ] **Step 1:** Write the tests:
-  - known parameters are recovered from a synthetic spectrum: peak positions within 1 Hz, floor within 0.5 dB, RMS error < 0.5 dB;
-  - an RPM-fixed fit keeps f_m fixed.
-- [ ] **Step 2:** Run the fit on the library and show the distribution of fit errors. Propose the drop limit for the author to approve.
-- [ ] **Step 3:** Commit.
+> **Superseded by Part 2b, Task 9** (D-24). Kept for the record.
 
 ### Task 6: Report and THESIS update
 
-- [ ] **Step 1:** Complete `experiments/part2/REPORT.md`.
-- [ ] **Step 2:** Update THESIS: Phase 3 checklist, session log, landmines.
-- [ ] **Step 3:** Run the full suite, then commit.
+> **Superseded by Part 2b, Task 12.** Kept for the record.
+
+**Status of Part 2 (2026-10-15):**
+- Tasks 1-3 are done. Commits: `62a296b`, `ea89c57`, `8ac571a`, `22151c1`.
+- Tests: the mutation check of the clustering tests is done (`89e46b0`), and the analytic Jacobian is in (`01a27b4`).
+- The author's decisions are recorded as D-24.
+
+---
+
+# Phase 3, Part 2b Implementation Plan: more data, chip low-pass term, archetypes, model, generator (after D-24)
+
+> **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans (native; commit per task on `phase3`; full suite before every commit).
+
+**Goal:** Enlarge the fit half (extended screen plus the next-newest-log fallback) and rebuild its library. Then fit the parametric model with the spline floor and the chip low-pass term, cluster one spectrum per drone, build the generator and compare synthetic with real spectra. The test half stays undownloaded.
+
+**Spec:** D-20, D-21, D-23, D-24; `experiments/part2/REPORT.md`; THESIS 7.4-7.5.
+
+## Global Constraints (in addition to Part 2)
+
+- New vehicles get their split from D-20 (`split.write_split` merges and refuses changed assignments). No-ID vehicles stay excluded (D-23).
+- **Test half:** only its header screens are allowed (needed to apply the fallback rule identically). No full download.
+- Stop and report on any new landmine.
+
+## Review Focus
+
+1. **The screen restarts mid-way** (laptop): no duplicate and no lost row (existing resume logic). The new vehicles are exactly the next ones in the D-21 order.
+2. **The fallback picks a duplicate upload** of the newest flight. Q3 must reject it. Test `test_fallback_skips_q3_duplicates`.
+3. **The fallback triggers on a log that has steady windows but failed for dropouts:** it must NOT trigger. Test `test_fallback_trigger_only_zero_steady`.
+4. **The low-pass term and the spline floor trade off** (not identifiable). See open point P1.
+5. **Generator samples outside the physical range** (negative widths, peaks outside the band): the parameters are sampled in log space and clipped to the fitted range. Test `test_generator_samples_valid_spectra`.
+
+---
+
+### Task 7: Extended header screen (about 1,150 more vehicles)
+
+- [ ] **Step 1:** `log_screen.py screen --max-logs 4327`, i.e. 3,177 + 1,150 more vehicles in the same D-21 order. Fixed size: it does not stop on results, so there is no optional stopping.
+- [ ] **Step 2:** `split.py`: new FIFO vehicles with a board ID get fit/test by D-20, and the existing assignments are checked to be unchanged. Update `screen_summary.csv` and the gz file.
+- [ ] **Step 3:** Commit.
+
+### Task 8: Next-newest-log fallback (D-24 (5)) and the enlarged fit-half library
+
+**Functions:** `split.fallback_candidates(vehicle_key, index, screened)` and `spectra_library.needs_fallback(record) -> bool`. The fallback rule:
+
+- **Trigger:** the newest screened log passed every log gate but has zero steady windows (no airborne window passes Q10, including a vehicle that never flew). Logs rejected by a log gate never trigger it.
+- **Search:** older qualifying index logs of the same vehicle are read newest first (header screen). The first log that has FIFO and is not a Q3 duplicate is taken.
+  - Q3 duplicate: same `time_ref_utc` when it is non-zero, else the same `log_date` and `duration_s`.
+- **Limits:** at most one fallback log per vehicle, and at most 10 header reads per vehicle.
+- **Scope:** the same rule for the test half, but header screens only.
+
+Steps:
+- [ ] **Step 1:** Write the tests `test_fallback_trigger_only_zero_steady`, `test_fallback_skips_q3_duplicates` and `test_fallback_newest_first_and_capped`.
+- [ ] **Step 2:** Run them (they fail), implement, run them (they pass).
+- [ ] **Step 3:** Download the new fit-half logs and the fit-half fallback logs.
+- [ ] **Step 4:** Rebuild `data/spectra/fit_*` with the funnel. The fallback appears as its own funnel row.
+- [ ] **Step 5:** Commit.
+
+### Task 9: Parametric model with spline floor and chip low-pass term (D-24 (1), (3))
+
+- [ ] **Step 1:** Write the tests:
+  - the low-pass factor $|H(f)|^2 = 1/(1+(f/f_c)^{2n})$ multiplies the whole model, and its Jacobian matches finite differences;
+  - $f_c$ and $n$ are recovered from synthetic spectra of 3 vehicles sharing one chip filter.
+- [ ] **Step 2:** Implement the form chosen at open point P1.
+- [ ] **Step 3:** Fit the whole enlarged library. Output: the per-spectrum RMS error distribution and the proposed fit-error drop limit (author approves it), the chip low-pass parameters with their group delay at 50-200 Hz, and peak-prominence sensitivity.
+- [ ] **Step 4:** Commit.
+
+### Task 10: Archetypes (D-24 (2), (4))
+
+- [ ] **Step 1:** Cluster one spectrum per drone (power mean of windows and of roll/pitch), after removing the chip low-pass term. Report PCA, k-means, silhouette, bootstrap ARI over vehicles, and the Q12 cross-tables.
+- [ ] **Step 2:** Apply the stability rule (open point P3). If the clusters are unstable, make one generator group, with the chip as a covariate.
+- [ ] **Step 3:** Draw Fig. 2 (centroids or the single-group spread).
+- [ ] **Step 4:** Commit.
+
+### Task 11: Generator and synthetic-vs-real comparison (THESIS 7.5; open point P4)
+
+- [ ] **Step 1:** Write the test `test_generator_samples_valid_spectra`.
+- [ ] **Step 2:** Fit a Gaussian on the log-parameters (per group, or one group with a chip covariate).
+- [ ] **Step 3:** Run the sanity check: statistics of 48-band features, synthetic vs real (quantiles per band; leave-one-vehicle-out).
+- [ ] **Step 4:** Commit.
+
+### Task 12: Report and THESIS update
+
+- [ ] **Step 1:** Write the Part 2b report, update the funnel table, the go/no-go projection with the enlarged fit half, the THESIS checklist and the session log.
+- [ ] **Step 2:** Run the full suite, then commit.
+
+**Open points for the author (asked before Task 7):**
+- **P1:** the form of the low-pass term (per chip or per spectrum).
+- **P2:** details of the fallback rule.
+- **P3:** the stability rule.
+- **P4:** whether the generator is in scope now.
