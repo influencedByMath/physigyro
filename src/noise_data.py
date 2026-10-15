@@ -259,6 +259,8 @@ def esc_rpm(ulog, t0, t1, n_motors=None):
     te = _t(ulog, e["timestamp"])
     m = (te >= t0) & (te < t1)
     n = int(n_motors or np.median(e["esc_count"]))
+    if n == 0:                                   # esc_status logged without any ESC report
+        return None
     rpm = np.abs(np.stack([e[f"esc[{i}].esc_rpm"][m] for i in range(n)], 1).astype(float))
     if rpm.size == 0 or (rpm == 0).any():
         return None

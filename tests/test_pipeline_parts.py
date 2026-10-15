@@ -155,3 +155,10 @@ def test_sysid_instrument_variable_recovers_plant_in_closed_loop():
     fit = sysid.identify(dict(r=r, u=u, omega=omega, Tc=Tc), f_band=(1.0, 20.0), min_coh=0.3)
     assert abs(fit["b"] / b_true - 1) < 0.10
     assert abs(fit["tau_m"] / tau_true - 1) < 0.20
+
+
+def test_esc_rpm_is_none_when_no_esc_reports():
+    """Found in the pilot (2026-10-15): esc_status logged with esc_count = 0 crashed esc_rpm."""
+    from noise_data import esc_rpm
+    t_esc = np.arange(0, 2.0, 1 / 100)
+    assert esc_rpm(_FakeULog(t_esc, np.zeros((len(t_esc), 0))), 0.0, 2.0) is None

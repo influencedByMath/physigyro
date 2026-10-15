@@ -343,6 +343,10 @@ def main():
     log(f"\n=== step 1: dropout experiment on {len(clean)} clean logs, {len(pooled)} real gaps")
     OUT["dropout_experiment"] = dropout_experiment(clean, pooled, rng) if clean and pooled else None
     OUT["summary"] = summarize(logs, OUT["dropout_experiment"], OUT["window_length"])
+    for r in logs:                               # keep a summary of the gaps, not every gap (file size)
+        g = np.array(r.pop("gap_lengths_s", []))
+        r["gaps"] = dict(n=int(len(g)), median_s=float(np.median(g)) if len(g) else None,
+                         p90_s=float(np.percentile(g, 90)) if len(g) else None, max_s=float(g.max()) if len(g) else None)
     log(json.dumps(OUT["summary"], indent=1, default=str)[:4000])
     OUT["meta"] = dict(date=time.strftime("%Y-%m-%d"), seconds=round(time.perf_counter() - t_all, 1), seed=SEED,
                        n_logs=len(pairs))

@@ -46,6 +46,14 @@ def logged_rate_hz(ulog, topic):
     return float(1.0 / np.median(dt)) if len(dt) else None
 
 
+def has_esc_reports(ulog):
+    """True if esc_status is logged AND at least one message reports an ESC (some logs have esc_count 0)."""
+    try:
+        return bool(np.max(ulog.get_dataset("esc_status").data["esc_count"]) > 0)
+    except Exception:
+        return False
+
+
 def version_string(v):
     """ver_sw_release (0xMMmmpptt) -> '1.16.0', with '-dev'/'-alpha'/'-beta'/'-rc' for non-release types."""
     if v is None:
@@ -75,6 +83,6 @@ def fc_info(ulog):
                 fifo_chip=imu_chip(fifo_id), control_chip=imu_chip(sel[-1]) if sel else None,
                 fifo_is_control_gyro=bool(sel) and all(s == fifo_id for s in sel),
                 fft_notch=roll["fft_notch"], changed_in_flight=roll["changed_in_flight"],
-                esc_rate_hz=rates["esc_status"], has_rpm_topic=rates["esc_status"] is not None,
+                esc_rate_hz=rates["esc_status"], has_rpm_topic=rates["esc_status"] is not None and has_esc_reports(ulog),
                 has_highrate=fast("vehicle_angular_velocity") and fast("vehicle_torque_setpoint"),
                 has_sysid=bool(profile & (1 << 3) or profile & (1 << 4)))

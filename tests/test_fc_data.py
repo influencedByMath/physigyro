@@ -1,6 +1,8 @@
 """Flight-controller data per log (THESIS 7.4.3 gates Q8, Q11, Q12, Q16; 7.4.5)."""
 import os
 
+import numpy as np
+
 import pytest
 
 import fc_data as fd
@@ -58,3 +60,19 @@ def test_defaults_unknown_without_q_records(real_ulog, monkeypatch):
     assert i["defaults_known"] is False
     assert i["default"] is None
     assert i["actual"].f_gyro == 80.0
+
+
+class _EscOnly:
+    def __init__(self, counts):
+        self.d = None if counts is None else type("D", (), {"data": {"esc_count": np.array(counts)}})()
+
+    def get_dataset(self, name):
+        if self.d is None:
+            raise ValueError("not logged")
+        return self.d
+
+
+def test_has_esc_reports():
+    assert fd.has_esc_reports(_EscOnly([4, 4, 4])) is True
+    assert fd.has_esc_reports(_EscOnly([0, 0, 0])) is False          # pilot 2026-10-15: logged but empty
+    assert fd.has_esc_reports(_EscOnly(None)) is False
