@@ -80,7 +80,7 @@ def funnel(recs, n_vehicles):
                    else "error" for r in recs if r["log_rejections"] == ["error"])
     F.add("downloaded and parsed", n_vehicles, errs)
     passed = [r for r in parsed if not r["log_rejections"]]
-    F.add("log gates Q4-Q7", len(parsed), Counter(r["log_rejections"][0] for r in parsed if r["log_rejections"]))
+    F.add("log gates Q4-Q7 (and Q10 topic)", len(parsed), Counter(r["log_rejections"][0] for r in parsed if r["log_rejections"]))
     F.add("at least one good window", len(passed), Counter("no_good_window" for r in passed if not r["windows"]))
     cand = sum(r["n_candidates"] for r in passed)
     reasons = Counter()

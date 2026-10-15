@@ -39,6 +39,10 @@ def board_rotation_matrix(rot):
     return Rz @ Ry @ Rx
 
 
+class MissingTopic(Exception):
+    """A topic needed by a gate is not in the log (reason code instead of a crash)."""
+
+
 @dataclass
 class GyroStream:
     t: np.ndarray            # sample times [s] from log start
@@ -206,15 +210,22 @@ def window_activity(ulog, t0, t1):
 
 def airborne_windows(ulog, W=10.0, t_edge=5.0, step=1.0):
     """All in-air windows on the grid of steady_windows, with their gate-Q10 metrics and NO limits
-    (the pilot study looks at the distributions before any limit is chosen)."""
-    rs = ulog.get_dataset("vehicle_rates_setpoint").data
+    (the pilot study looks at the distributions before any limit is chosen). No windows if the vehicle was
+    never airborne; MissingTopic if it flew but the rate setpoint (gate Q10 activity) was not logged."""
+    air = airborne_intervals(ulog)
+    if not air:
+        return []
+    try:
+        rs = ulog.get_dataset("vehicle_rates_setpoint").data
+    except (IndexError, KeyError) as e:
+        raise MissingTopic("vehicle_rates_setpoint") from e
     tr = _t(ulog, rs["timestamp"])
     try:
         tt, thr = _throttle(ulog)
     except Exception:
         tt = thr = None
     out = []
-    for a, b in airborne_intervals(ulog):
+    for a, b in air:
         for s in np.arange(a + t_edge, b - t_edge - W + 1e-9, step):
             w = _window_metrics(tr, rs, tt, thr, s, s + W)
             if np.isfinite(w["sp_std_dps"]):

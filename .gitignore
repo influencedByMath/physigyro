@@ -7,3 +7,5 @@ experiments/**/arrays.npz
 node_modules/
 data/index/
 data/screen/screen_results.jsonl
+data/spectra/*_native/
+data/spectra/*.tmp

@@ -159,3 +159,27 @@ def test_axis_correlation_pass_fail_inconclusive(amp, perm, expected):
     u = FakeULog(tl, motion(tl, amp) + 0.002 * rng.standard_normal((len(tl), 3)))
     c = nd.axis_correlation(u, gs)
     assert c["diagonal_ok"] is expected
+
+
+class FakeFlight:
+    """land detector only (no rate setpoint topic)."""
+    start_timestamp = 0
+
+    def __init__(self, landed):
+        t = np.arange(len(landed)) * 1e6
+        self.last_timestamp = int(t[-1])
+        self._ld = {"timestamp": t.astype(np.int64), "landed": np.array(landed, dtype=np.uint8)}
+
+    def get_dataset(self, name):
+        if name == "vehicle_land_detected":
+            return _DS(self._ld)
+        raise IndexError("list index out of range")             # what pyulog raises for a missing topic
+
+
+def test_airborne_windows_empty_when_never_airborne():
+    assert nd.airborne_windows(FakeFlight([1] * 100)) == []
+
+
+def test_airborne_windows_without_rate_setpoint_is_explicit():
+    with pytest.raises(nd.MissingTopic):
+        nd.airborne_windows(FakeFlight([1] * 5 + [0] * 90 + [1] * 5))
