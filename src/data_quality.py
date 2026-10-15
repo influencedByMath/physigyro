@@ -73,7 +73,7 @@ def log_gates(stats, fc, th: Thresholds):
     rej, flags = [], []
     if stats["dropout_fraction"] > th.d_max:
         rej.append("Q4_dropout")
-    if stats["longest_segment_s"] < max(th.l_min_s, th.window_s):
+    if stats["longest_segment_s"] < th.l_min_s:
         rej.append("Q4_no_long_segment")
     if 0.8 * stats["fs_measured"] / 2 < th.f_max:
         rej.append("Q5_rate")

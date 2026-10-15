@@ -94,3 +94,10 @@ def test_window_activity_matches_steady_windows(real):
     wins = nd.airborne_windows(u, W=8.0, t_edge=5.0, step=1.0)
     assert any(abs(w["t0"] - t0) < 1e-9 for w in wins)                          # same window grid, no limits applied
     assert max(w["sp_std_dps"] for w in wins) > 15.0                             # manoeuvres are kept for the pilot
+
+
+def test_no_long_segment_uses_l_min_only():
+    """L_min is its own threshold (the pilot may set it below W); it must not be raised to W silently."""
+    stats = {**GOOD_STATS, "longest_segment_s": 4.0}
+    assert dq.log_gates(stats, GOOD_FC, replace(dq.CANDIDATES, l_min_s=1.0))[0] == []
+    assert dq.log_gates(stats, GOOD_FC, replace(dq.CANDIDATES, l_min_s=10.0))[0] == ["Q4_no_long_segment"]
