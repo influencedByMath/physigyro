@@ -12,35 +12,12 @@ import json
 import os
 import sys
 
-import numpy as np
-from scipy.signal import butter, sosfiltfilt
-
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, "..", "..", "src"))
 import noise_data as nd          # noqa: E402
+from noise_data import axis_correlation  # noqa: E402  (moved to src for Part 2)
 from run_pilot import pilot_paths  # noqa: E402
-
-
-def axis_correlation(u, gs, f_motion=5.0):
-    """3x3 correlation of FIFO body axes (rows) with the logged body rate (columns), both low-passed to
-    flight motion (zero-phase, f_motion Hz). Correct rotation: diagonal positive and largest in each row."""
-    v = u.get_dataset("vehicle_angular_velocity").data
-    tv = nd._t(u, v["timestamp_sample"] if "timestamp_sample" in v else v["timestamp"])
-    a0, b0 = max(gs.segments, key=lambda s: s[1] - s[0])
-    seg_t = gs.t[a0:b0]
-    m = (tv > seg_t[0] + 1) & (tv < seg_t[-1] - 1)
-    if m.sum() < 50:
-        return None
-    rate = (m.sum() - 1) / (tv[m][-1] - tv[m][0])
-    fifo = sosfiltfilt(butter(2, f_motion, fs=gs.fs_measured, output="sos"), gs.gyro[a0:b0], axis=0)
-    logged = sosfiltfilt(butter(2, min(f_motion, 0.4 * rate), fs=rate, output="sos"),
-                         np.stack([v[f"xyz[{i}]"][m].astype(float) for i in range(3)], 1), axis=0)
-    F = np.stack([np.interp(tv[m], seg_t, fifo[:, i]) for i in range(3)], 1)
-    C = np.array([[np.corrcoef(F[:, i], logged[:, j])[0, 1] for j in range(3)] for i in range(3)])
-    ok = all(np.argmax(np.abs(C[i])) == i and C[i, i] > 0 for i in range(3))
-    return dict(matrix=np.round(C, 3).tolist(), diagonal_ok=bool(ok), n=int(m.sum()),
-                seconds=round(float(seg_t[-1] - seg_t[0]), 1), logged_rate_hz=round(float(rate), 1))
 
 
 def main():

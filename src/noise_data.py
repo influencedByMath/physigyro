@@ -244,6 +244,40 @@ def window_psd(gs: GyroStream, t0, t1, nperseg=4096, clip_counts=32000):
     return f, acc / n_avg, n_avg, clipped
 
 
+def welch_count(gs: GyroStream, t0, t1, nperseg):
+    """Number of Welch averages window_psd would use in [t0, t1) (same rule), without computing a PSD."""
+    n = 0
+    for a, b in gs.segments:
+        i0, i1 = np.searchsorted(gs.t[a:b], [t0, t1])
+        if i1 - i0 >= nperseg:
+            n += 1 + (i1 - i0 - nperseg) // (nperseg // 2)
+    return int(n)
+
+
+def axis_correlation(u, gs, f_motion=5.0):
+    """Gate Q7 check: 3x3 correlation of the FIFO body axes (rows) with the firmware's logged body rate
+    vehicle_angular_velocity (columns), both low-passed to flight motion (zero-phase, f_motion Hz), on the
+    longest gap-free segment. Correct rotation: diagonal positive and largest in each row. None if the
+    logged rate is missing or too short."""
+    from scipy.signal import butter, sosfiltfilt
+    v = u.get_dataset("vehicle_angular_velocity").data
+    tv = _t(u, v["timestamp_sample"] if "timestamp_sample" in v else v["timestamp"])
+    a0, b0 = max(gs.segments, key=lambda s: s[1] - s[0])
+    seg_t = gs.t[a0:b0]
+    m = (tv > seg_t[0] + 1) & (tv < seg_t[-1] - 1)
+    if m.sum() < 50:
+        return None
+    rate = (m.sum() - 1) / (tv[m][-1] - tv[m][0])
+    fifo = sosfiltfilt(butter(2, f_motion, fs=gs.fs_measured, output="sos"), gs.gyro[a0:b0], axis=0)
+    logged = sosfiltfilt(butter(2, min(f_motion, 0.4 * rate), fs=rate, output="sos"),
+                         np.stack([v[f"xyz[{i}]"][m].astype(float) for i in range(3)], 1), axis=0)
+    F = np.stack([np.interp(tv[m], seg_t, fifo[:, i]) for i in range(3)], 1)
+    C = np.array([[np.corrcoef(F[:, i], logged[:, j])[0, 1] for j in range(3)] for i in range(3)])
+    ok = all(np.argmax(np.abs(C[i])) == i and C[i, i] > 0 for i in range(3))
+    return dict(matrix=np.round(C, 3).tolist(), diagonal_ok=bool(ok), n=int(m.sum()),
+                seconds=round(float(seg_t[-1] - seg_t[0]), 1), logged_rate_hz=round(float(rate), 1))
+
+
 def esc_rpm(ulog, t0, t1, n_motors=None):
     """Gate Q16: mean and std of each motor's |RPM| in the window; None if invalid.
 

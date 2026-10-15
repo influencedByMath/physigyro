@@ -174,6 +174,156 @@ The runner implements THESIS 7.4.3 pilot steps 1-5 on the pilot set only:
 
 ---
 
-## Part 2 (separate plan after the freeze; listed so nothing is lost)
+# Phase 3, Part 2 Implementation Plan: fit-half spectrum library, archetypes and parametric noise model
 
-Download all screened FIFO logs of both halves; apply the frozen gates; build `data/spectra/` (per-window, per-axis PSD on one common grid plus metadata, CC-BY provenance); data funnel Table 1; PCA + k-means on the fit half (Fig. 2) with the chip / rate / firmware cross-tab; parametric noise model (floor model to be decided with evidence) with motor frequencies fixed from RPM where valid; generator and the synthetic-vs-real comparison; go/no-go (>= 100 vehicles, minimum 30).
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (author's choice: native, commit per task on branch `phase3`). Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Apply the frozen gates (D-23) to all 84 fit-half vehicles, build the fit-half spectrum library with its data funnel, and report the real usable count. Then, after the author's method decisions at the Task 3 checkpoint, cluster the spectra and fit the parametric noise model.
+
+**Architecture:**
+- `src/spectra_library.py` turns one log into gated, selected windows with PSDs and metadata. It is built from pure functions on top of `noise_data`, `fc_data` and `data_quality`.
+- `experiments/part2/build_library.py` runs it over one split half and writes `data/spectra/<half>_*`.
+- `src/archetypes.py` (band features, PCA, k-means) and `src/noise_model.py` (parametric fit) read only the library, never the raw logs.
+
+**Tech Stack:** Python 3.13 (`.venv`), numpy, scipy, pandas, scikit-learn, pyulog 1.2.4, matplotlib. No new packages.
+
+**Spec:**
+- `THESIS.md` 7.4.3-7.4.5 (gates, spectra, FC data) and 7.5 (archetypes, parametric model).
+- Decisions D-13, D-20 and D-23.
+- Author instructions of 2026-10-15: fit half first, no test-half download, report the real usable count, stop on any new landmine.
+
+## Global Constraints
+
+- Thresholds come only from `data_quality.FROZEN` (D-23). No runner contains a literal threshold.
+- Fit half only. Every processed log's vehicle must be `fit` in `data/screen/split.csv`, or the runner stops. No test-half download in Part 2 (author, 2026-10-15).
+- No-ID vehicles are excluded (D-23). They are not in `split.csv`, so they never enter.
+- Run the full test suite before every commit (`.venv/Scripts/python -m pytest -q`). Commit per task on `phase3`.
+- Clustering and the parametric fit use only the fixed band 20-780 Hz (Q5).
+- Every number in the report comes from code in the repository. On any new landmine: stop and report.
+
+## Review Focus
+
+1. **Gate first, select after.** The quietest window fails Q13 (gappy), but an overlapping, slightly busier window passes: the passing window must still be selectable. Test `test_select_windows_gates_before_overlap`.
+2. **Unverified board rotation.** A log without `vehicle_angular_velocity`:
+   - with a rotation never verified on data → rejected `Q7_unverified`;
+   - with a verified rotation (0, 2, 4) → kept and flagged.
+
+   Test `test_axis_gate_rules`.
+3. **A log that crashes during parsing** (corrupt file, missing topic): one row with reason `error`, the run continues, and the funnel counts it. Test `test_process_half_survives_a_bad_log`.
+4. **Different native PSD grids.** The resolution fs/nperseg differs by sample rate. The common grid is interpolated in log space, and band features are power means of native bins, never of interpolated points. Test `test_band_features_use_native_bins`.
+5. **More than 3 good windows in a vehicle:** exactly 3 are kept, the quietest non-overlapping ones. Test `test_select_windows_cap_and_order`.
+
+---
+
+### Task 1: Per-log library builder
+
+**Files:**
+- Create: `src/spectra_library.py`, `tests/test_spectra_library.py`
+- Modify: `src/noise_data.py`:
+  - move `axis_correlation` there from `experiments/pilot_study/check_axes.py`, which then imports it;
+  - add `welch_count(gs, t0, t1, nperseg) -> int`: the number of Welch averages, without computing a PSD (same rule as `window_psd`).
+
+**Interfaces (produces):**
+- `VERIFIED_ROTATIONS = (0, 2, 4)` (from the pilot `axes.json`).
+- `axis_gate(rotation: int, check: dict | None) -> tuple[list, list]`:
+  - check present and failed → rejection `["Q7_axes"]`;
+  - no check and rotation not verified → rejection `["Q7_unverified"]`;
+  - no check and rotation verified → flag `Q7_not_checked`.
+- `select_windows(cands: list[dict], th) -> list[dict]`:
+  - `cands` carry `t0, t1, sp_std_dps, thr_std, n_averages, clipped`;
+  - keep the candidates whose `window_gates` rejections are empty;
+  - then pick greedily, quietest first (by `sp_std_dps`, ties by `t0`), non-overlapping, at most `th.windows_per_vehicle`;
+  - return them sorted by `t0`.
+- `common_grid(th) -> ndarray` = `np.arange(0, th.f_max + 1e-9, th.resolution_hz)`.
+- `to_grid(f, P, grid) -> ndarray`: linear interpolation of log10 power, per axis.
+- `band_edges(th, n=48)`: log-spaced from `f_min` to `f_max`.
+- `band_features(f, P, edges) -> (n_bands, n_axes)`: log10 of the power mean of the native bins with `lo <= f < hi`.
+- `process_log(path, vehicle_key, th) -> (record: dict, arrays: dict)`:
+  - `record` has `log_id`, `vehicle_key`, `stats`, `fc`, `rotation`, `axis_check`, `log_rejections`, `log_flags`, `n_candidates`, `window_reasons` (a Counter of each window's first rejection) and `windows`;
+  - each selected window carries its gates and RPM data: `rpm_hz`, `rpm_std_hz`, `rpm_rate_hz`, and `has_rpm` (valid, and logged rate ≥ `th.rpm_rate_min_hz`);
+  - `arrays` holds the native `f` and `P` (float32) of each selected window.
+
+- [ ] **Step 1:** Write the five Review Focus tests above, plus `test_common_grid_and_to_grid` (a power law in gives the same power law out, within 1e-6 dex).
+- [ ] **Step 2:** Run them; they fail.
+- [ ] **Step 3:** Implement.
+- [ ] **Step 4:** Run them; they pass. Run the full suite.
+- [ ] **Step 5:** Commit.
+
+### Task 2: Run the fit half, funnel, usable count
+
+**Files:**
+- Create: `experiments/part2/build_library.py`.
+- Outputs, all in `data/spectra/`:
+  - `fit_windows.csv`: one row per window, with metadata and provenance (log URL, `CC-BY 4.0, PX4 Flight Review`);
+  - `fit_psd_grid.npz`: `grid`, `psd` (N, 3, G) and `window_id`;
+  - `fit_psd_native.npz`;
+  - `fit_logs.json`: every log's record;
+  - `fit_funnel.csv`: THESIS Table 1 layout, via `data_quality.Funnel`.
+
+- [ ] **Step 1:** Implement `process_half(half)`:
+  - read `split.csv`, and stop on a non-fit vehicle when `half` is fit;
+  - run each log in its own try/except (reason `error`);
+  - make it resumable per log (`fit_logs.json` keeps finished logs).
+- [ ] **Step 2:** Add test `test_process_half_survives_a_bad_log` to the Task 1 test file (a corrupt file gives one error row).
+- [ ] **Step 3:** After the download, run on all 84 fit vehicles. Check that:
+  - every log has a record;
+  - no vehicle has more than 3 windows;
+  - every selected window passes `window_gates`;
+  - the funnel adds up.
+- [ ] **Step 4:** Commit the code, the funnel, and the library if it is under 15 MB.
+
+### Task 3: Evidence for the method decisions, then STOP for the author
+
+**Files:** Create `experiments/part2/evidence.py` and `experiments/part2/REPORT.md` (Sections 1-2).
+
+- [ ] **Step 1:** Usable count with a 95 % Wilson CI, and the projection for the test half (input to the go/no-go).
+- [ ] **Step 2:** Evidence A, the unit of a spectrum: the roll vs pitch difference per window (median and p90 of |dB| over the 48 bands).
+- [ ] **Step 3:** Evidence B, dependence: within-vehicle vs between-vehicle feature distance. Do the 3 windows of one vehicle form their own mini-cluster?
+- [ ] **Step 4:** Evidence C, floor shape: for each window, fit a flat, a power-law and a 4-knot log-log spline floor, all with the same peak terms. Report the median fit error of each.
+- [ ] **Step 5:** Ask the author (AskUserQuestion):
+  - the spectrum unit;
+  - clustering on windows or on vehicle means;
+  - the floor model;
+  - the fit-error drop limit;
+  - more data.
+
+  Record the answers as a D-24 row.
+
+### Task 4: Archetypes (PCA + k-means)
+
+**Files:** Create `src/archetypes.py`, `tests/test_archetypes.py` and `experiments/part2/cluster.py`. Figures go in `experiments/part2/figures/`.
+
+**Interfaces:**
+- `features(lib, unit) -> (X, groups)`: mean-removed log band powers.
+- `fit_archetypes(X, k_range=range(2, 9), var=0.95, seed=20261015) -> dict(pca, k, kmeans, silhouette_by_k, labels)`.
+- `stability(X, groups, k, n_boot=200, seed) -> float`: median ARI, bootstrapping over vehicles.
+
+- [ ] **Step 1:** Write the tests:
+  - two synthetic spectrum families (a low-pass slope and a 150 Hz peak) are separated with k = 2 and ARI 1;
+  - PCA keeps at least 95 % of the variance;
+  - results are reproducible with a fixed seed.
+- [ ] **Step 2:** Run the clustering. Produce:
+  - the centroid plot (Fig. 2);
+  - the cross-tab against chip, sample rate and firmware (Q12);
+  - the silhouette and the bootstrap ARI.
+- [ ] **Step 3:** Commit.
+
+### Task 5: Parametric noise model fit
+
+**Files:** Create `src/noise_model.py`, `tests/test_noise_model.py` and `experiments/part2/fit_model.py`.
+
+**Interfaces:**
+- `model_psd(f, params, floor) -> ndarray`: THESIS 7.5, with the floor chosen in the D-24 decision.
+- `fit_spectrum(f, P, floor, motor_hz=None, prominence) -> dict(params, rms_db, n_peaks)`: motor frequencies are fixed to RPM/60 where `has_rpm`.
+
+- [ ] **Step 1:** Write the tests:
+  - known parameters are recovered from a synthetic spectrum: peak positions within 1 Hz, floor within 0.5 dB, RMS error < 0.5 dB;
+  - an RPM-fixed fit keeps f_m fixed.
+- [ ] **Step 2:** Run the fit on the library and show the distribution of fit errors. Propose the drop limit for the author to approve.
+- [ ] **Step 3:** Commit.
+
+### Task 6: Report and THESIS update
+
+- [ ] **Step 1:** Complete `experiments/part2/REPORT.md`.
+- [ ] **Step 2:** Update THESIS: Phase 3 checklist, session log, landmines.
+- [ ] **Step 3:** Run the full suite, then commit.
