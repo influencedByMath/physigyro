@@ -92,3 +92,15 @@ def test_pilot_set_takes_forced_then_hash_ordered_fit_vehicles():
     rest = [k for k in df.loc[(df["split"] == "fit") & ~df["forced"], "vehicle_key"]]
     expected = sorted(rest, key=lambda k: hashlib.sha256(f"px4-noise-split-2026-10-14|pilot|{k}".encode()).hexdigest())[:25]
     assert list(pilot["vehicle_key"][4:]) == expected
+
+
+def test_no_id_vehicles_wait_for_the_author():
+    """Vehicles without a board ID (fallback key) are NOT assigned yet: the fallback key can give one drone two
+    keys (leakage), so the rule for them is an open author decision (2026-10-15)."""
+    rows = [_row("L1"), _row("L2", sys_uuid="", vehicle_uuid=""),
+            _row("L3", sys_uuid="REDACTED\x00", vehicle_uuid="", MC_ROLLRATE_D=0.005)]
+    df = sp.make_split(rows)
+    assert list(df["vehicle_key"]) == ["uuid:" + GOOD]
+    pending = sp.no_id_vehicles(rows)
+    assert len(pending) == 2 and all(k.startswith("fb:") for k in pending["vehicle_key"])
+    assert "split" not in pending.columns and list(pending["log_ids"]) == sorted(pending["log_ids"])

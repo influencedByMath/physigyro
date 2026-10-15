@@ -50,17 +50,35 @@ def assign_split(key):
     return "fit" if int(hashlib.sha256(f"{SALT}|{key}".encode()).hexdigest(), 16) % 2 == 0 else "test"
 
 
-def make_split(rows):
-    """One line per vehicle with at least one FIFO log (screen status ok)."""
+def _fifo_by_vehicle(rows):
     by = {}
     for r in rows:
         if r.get("fifo") and r.get("status") == "ok":
             by.setdefault(vehicle_key(r), []).append(r)
+    return by
+
+
+def make_split(rows):
+    """One line per vehicle with a board ID and at least one FIFO log (screen status ok).
+
+    Vehicles without a board ID (fallback key "fb:") are NOT assigned: the fallback key can give one
+    drone two keys when its parameters changed between flights, so their rule waits for the author
+    (see no_id_vehicles)."""
+    by = {k: v for k, v in _fifo_by_vehicle(rows).items() if k.startswith("uuid:")}
     out = [dict(vehicle_key=k, split=assign_split(k), forced=k in FORCED_FIT_KEYS,
                 log_ids=";".join(sorted(r["log_id"] for r in rs)),
                 sys_hw=(rs[0].get("info") or {}).get("ver_hw") or rs[0].get("sys_hw"), n_fifo_logs=len(rs))
            for k, rs in sorted(by.items())]
     return pd.DataFrame(out, columns=COLUMNS)
+
+
+def no_id_vehicles(rows):
+    """FIFO vehicles without a board ID (Linux boards such as VOXL2 / Navio2, redacted IDs): listed, not split."""
+    out = [dict(vehicle_key=k, log_ids=";".join(sorted(r["log_id"] for r in rs)),
+                sys_hw=(rs[0].get("info") or {}).get("ver_hw") or rs[0].get("sys_hw"),
+                sys_autostart=(rs[0].get("params") or {}).get("SYS_AUTOSTART"), n_fifo_logs=len(rs))
+           for k, rs in sorted(_fifo_by_vehicle(rows).items()) if not k.startswith("uuid:")]
+    return pd.DataFrame(out, columns=["vehicle_key", "log_ids", "sys_hw", "sys_autostart", "n_fifo_logs"])
 
 
 def write_split(df, path=SPLIT_CSV):
@@ -90,8 +108,10 @@ def main():
         rows = [json.loads(x) for x in fh if x.strip()]
     df = make_split(rows)
     write_split(df)
+    pend = no_id_vehicles(rows)
+    pend.to_csv(os.path.join(os.path.dirname(SPLIT_CSV), "split_pending_no_id.csv"), index=False)
     print(f"{len(df)} FIFO vehicles: fit {int((df['split'] == 'fit').sum())}, test {int((df['split'] == 'test').sum())}, "
-          f"forced {int(df['forced'].sum())}")
+          f"forced {int(df['forced'].sum())}; {len(pend)} vehicles without board ID pending (no split yet)")
 
 
 if __name__ == "__main__":
