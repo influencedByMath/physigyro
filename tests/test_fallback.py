@@ -17,17 +17,20 @@ def test_fallback_trigger_only_zero_steady():
     assert not fb.needs_fallback(rec(error=True, n_candidates=0, q10=0))
 
 
-def row(log_id, date="2026-05-01", dur=300, utc=0, fifo=True, status="ok"):
-    return dict(log_id=log_id, log_date=date, duration_s=dur, info={"time_ref_utc": utc}, fifo=fifo, status=status)
+def row(log_id, date="2026-05-01", dur=300, size=1000, fifo=True, status="ok", utc=10800):
+    # utc: time_ref_utc is the TIME-ZONE OFFSET (PX4 logger.cpp: SDLOG_UTC_OFFSET * 60), never a start time
+    return dict(log_id=log_id, log_date=date, duration_s=dur, size_bytes=size, info={"time_ref_utc": utc},
+                fifo=fifo, status=status)
 
 
 def test_fallback_skips_q3_duplicates():
-    newest = row("N", utc=1700000000)
-    assert fb.is_q3_duplicate(newest, row("A", date="2026-04-01", dur=999, utc=1700000000))   # same GPS start
-    assert not fb.is_q3_duplicate(newest, row("B", utc=1700000500))                        # other GPS start
-    assert fb.is_q3_duplicate(row("N"), row("C"))                     # no GPS time: same date and duration
+    """D-25: a duplicate upload has the same log date, the same duration and the same file size."""
+    assert fb.is_q3_duplicate(row("N"), row("C"))                                   # byte-identical re-upload
     assert not fb.is_q3_duplicate(row("N"), row("D", dur=301))
-    assert fb.is_q3_duplicate(row("N", utc=5), row("E", utc=0))       # GPS time on one only: date and duration
+    assert not fb.is_q3_duplicate(row("N"), row("E", date="2026-05-02"))
+    assert not fb.is_q3_duplicate(row("N"), row("F", size=1001))                    # same day and length, other file
+    assert not fb.is_q3_duplicate(row("N", utc=10800), row("G", date="2026-04-01", utc=10800))   # same TZ offset only
+    assert not fb.is_q3_duplicate(row("N"), row("H", size=None))                    # size unknown: not confirmed
 
 
 def entry(log_id, date, dur=300, group="g"):

@@ -2,7 +2,7 @@
 
 When a vehicle's screened log passed every log gate but has ZERO steady windows (no airborne window passes
 Q10, including a vehicle that never flew), the vehicle's older qualifying logs are header-screened newest
-first, and the first one that has FIFO and is not a duplicate upload of the screened flight (gate Q3) replaces
+first, and the first one that has FIFO and is not a duplicate upload of the screened flight (gate Q3, D-25) replaces
 it. At most one fallback log and ``max_reads`` header reads per vehicle; network errors are retried and do not
 count as reads (a persistent error stops the search, which a rerun retries). Logs rejected by a log gate (dropouts, rate, axes, missing topic) never trigger it.
 The rule is the same for both halves; it can only be evaluated on a processed (downloaded) log.
@@ -18,16 +18,13 @@ def needs_fallback(rec):
     return steady == 0
 
 
-def _utc(r):
-    return int((r.get("info") or {}).get("time_ref_utc") or 0)
-
-
 def is_q3_duplicate(a, b):
-    """Gate Q3: same flight uploaded twice. Same GPS start time when both logs have one; otherwise the same
-    log date and the same duration (whole seconds, as in the index)."""
-    if _utc(a) and _utc(b):
-        return _utc(a) == _utc(b)
-    return a.get("log_date") == b.get("log_date") and a.get("duration_s") == b.get("duration_s")
+    """Gate Q3 (decision D-25): the same flight uploaded twice = same log date, same duration (whole seconds, as
+    in the index) and the same file size (from the header read). Unknown size: not confirmed, not a duplicate.
+    NOT time_ref_utc: PX4 writes the time-zone offset there (logger.cpp: SDLOG_UTC_OFFSET * 60)."""
+    sa, sb = a.get("size_bytes"), b.get("size_bytes")
+    return (sa is not None and sa == sb and a.get("log_date") == b.get("log_date")
+            and a.get("duration_s") == b.get("duration_s"))
 
 
 def _key(e):                                   # the same ordering key as log_screen.sampling_order
