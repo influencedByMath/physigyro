@@ -109,3 +109,12 @@ def test_chip_lowpass_selected_by_bic_only_when_present():
     assert flat["lowpass"] is None
     rolled = nm.fit_chip_lowpass([(F, P * nm.lowpass_gain2(F, (300.0, 3.0)), None) for P in base], grid, prominence=0.5)
     assert rolled["lowpass"] is not None and rolled["bic"][str(rolled["lowpass"])] < rolled["bic"]["None"]
+
+
+def test_fixed_floor_keeps_the_robust_floor_and_fits_peaks_on_top():
+    S = synth()
+    f = F[(F >= 20) & (F <= 780)]
+    c0, _ = nm.initial_floor(f, np.log10(S[(F >= 20) & (F <= 780)]), "spline", BAND)
+    fit = nm.fit_spectrum(F, S, BAND, floor="spline", prominence=0.3, fix_floor=True)
+    assert np.allclose(fit["params"][:nm.n_floor("spline")], c0, atol=1e-6)
+    assert sorted(fit["peaks_hz"]) == pytest.approx([120.0, 310.0], abs=1.0) and fit["rms_db"] < 1.0

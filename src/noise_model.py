@@ -123,7 +123,7 @@ def initial_floor(f, logP, floor, band, pct=20, width_dec=1 / 6):
 
 
 def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_harm=3, prominence=0.5,
-                 max_free=6, min_sep_hz=8.0, lowpass=None):
+                 max_free=6, min_sep_hz=8.0, lowpass=None, fix_floor=False):
     """Fit the model to one PSD (1-D, native bins). ``motor_hz``: valid mean motor frequencies [Hz] or None.
     Free peaks: the ``max_free`` most prominent peaks of log10 PSD above the robust floor (``prominence`` in
     decades), skipping peaks within ``min_sep_hz`` of a fixed motor harmonic.
@@ -151,6 +151,8 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
     p0, lo, hi = list(c0), [-20.0] * len(c0), [5.0] * len(c0)
     if floor == "powerlaw":
         lo[1], hi[1] = -10.0, 10.0
+    if fix_floor:                    # floor = robust lower envelope (identifiable); only the peaks are fitted
+        lo, hi = [c - 1e-9 for c in c0], [c + 1e-9 for c in c0]
     for h in range(n_h):
         hf = [(h + 1) * fm for fm in motor_hz]
         near = np.abs(f[:, None] - np.array(hf)[None]).min(1) < 3 * df
@@ -162,7 +164,8 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
         p0 += [np.log10(max(10 ** logP[i] - 10 ** base[i], 1e-12)), f[i], np.log10(3.0)]
         lo += [-20, f[i] - 10.0, np.log10(0.3)]
         hi += [5, f[i] + 10.0, np.log10(80.0)]
-    p0 = np.clip(p0, np.array(lo) + 1e-9, np.array(hi) - 1e-9)
+    eps = 1e-10 if fix_floor else 1e-9           # start strictly inside the bounds
+    p0 = np.clip(p0, np.array(lo) + eps, np.array(hi) - eps)
 
     Bf = floor_basis(f, floor, band)
     cache = {}
@@ -190,7 +193,7 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
                 n_params=len(sol.x), n_bins=len(f))
 
 
-def fit_chip_lowpass(spectra, grid, floor="spline", prominence=0.5, band=(20.0, 780.0)):
+def fit_chip_lowpass(spectra, grid, floor="spline", prominence=0.5, band=(20.0, 780.0), max_free=6):
     """One low-pass per IMU chip model (D-24 (1), P1), shared by all its vehicles: every (f_c, n) of ``grid`` and
     "no term" are tried; the choice minimises the BIC of all the chip's spectra together (+2 parameters for a
     term). ``spectra``: list of (f, P, motor_hz). Only the presence and magnitude are trusted (D-25): the corner
@@ -199,7 +202,8 @@ def fit_chip_lowpass(spectra, grid, floor="spline", prominence=0.5, band=(20.0, 
     for lp in [None] + list(grid):
         sse, n, k, fits = 0.0, 0, 0, []
         for f, P, motors in spectra:
-            r = fit_spectrum(f, P, band, floor=floor, motor_hz=motors, prominence=prominence, lowpass=lp)
+            r = fit_spectrum(f, P, band, floor=floor, motor_hz=motors, prominence=prominence, lowpass=lp,
+                             max_free=max_free)
             sse += (r["rms_db"] / 10) ** 2 * r["n_bins"]
             n += r["n_bins"]
             k += r["n_params"]

@@ -26,6 +26,7 @@ TH = dq.FROZEN
 BAND = (TH.f_min, TH.f_max)
 FLOOR = "spline"
 PROMINENCE = 0.5                   # THESIS 7.4.4 candidate; sensitivity at 0.3 and 1.0 is reported
+MAX_FREE = 15                      # not binding (peak_cap_check.py: 2 of 52 vehicles reach 15; 42 reached 6)
 GRID = [(float(round(fc)), float(n)) for fc in np.geomspace(150, 1500, 10) for n in (1, 2, 3, 4, 6)]
 
 
@@ -35,11 +36,11 @@ def main():
     df = pd.read_csv(os.path.join(spec, "fit_windows.csv"))
     native = np.load(os.path.join(spec, "fit_psd_native.npz"))
     vs = sl.vehicle_spectra(df, native)
-    out = dict(floor=FLOOR, prominence=PROMINENCE, grid=GRID, chips={}, vehicles={})
+    out = dict(floor=FLOOR, prominence=PROMINENCE, max_free=MAX_FREE, grid=GRID, chips={}, vehicles={})
     for chip in sorted({v["chip"] for v in vs}):
         group = [v for v in vs if v["chip"] == chip]
         res = nm.fit_chip_lowpass([(v["f"], v["P"], v["motor_hz"]) for v in group], GRID, floor=FLOOR,
-                                  prominence=PROMINENCE, band=BAND)
+                                  prominence=PROMINENCE, band=BAND, max_free=MAX_FREE)
         lp = res["lowpass"]
         ranked = sorted(res["bic"].items(), key=lambda kv: kv[1])
         out["chips"][chip] = dict(n_vehicles=len(group), lowpass=lp, bic_best5=ranked[:5],
@@ -51,7 +52,7 @@ def main():
             sens = {}
             for prom in (0.3, 1.0):
                 rr = nm.fit_spectrum(v["f"], v["P"], BAND, floor=FLOOR, motor_hz=v["motor_hz"], prominence=prom,
-                                     lowpass=lp)
+                                     lowpass=lp, max_free=MAX_FREE)
                 sens[str(prom)] = dict(rms_db=round(rr["rms_db"], 3), n_free=rr["n_free"])
             out["vehicles"][v["vehicle_key"]] = dict(
                 chip=chip, n_windows=v["n_windows"], lowpass=lp, motor_hz=v["motor_hz"], n_harm=r["n_harm"],

@@ -1,0 +1,36 @@
+{
+ "free": {
+  "rms_db_median": 2.85,
+  "rms_db_p90": 3.789,
+  "peak_ratio_dec": {
+   "p10": 0.26,
+   "p50": 2.84,
+   "p90": 12.5,
+   "max": 18.53
+  },
+  "floor_coef_at_bound": 41,
+  "median_band_diff_db": {
+   "median_abs": 59.0,
+   "max_abs": 67.79
+  },
+  "auc_absolute": 0.915,
+  "auc_shape": 0.722
+ },
+ "fixed": {
+  "rms_db_median": 3.393,
+  "rms_db_p90": 4.686,
+  "peak_ratio_dec": {
+   "p10": -0.8,
+   "p50": 1.45,
+   "p90": 2.94,
+   "max": 5.08
+  },
+  "floor_coef_at_bound": 0,
+  "median_band_diff_db": {
+   "median_abs": 32.18,
+   "max_abs": 38.24
+  },
+  "auc_absolute": 0.897,
+  "auc_shape": 0.688
+ }
+}
