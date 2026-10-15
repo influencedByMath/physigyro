@@ -61,17 +61,23 @@ def fit_archetypes(X, k_range=range(2, 9), var=0.95, seed=20261015):
     return dict(k=k, pca=pca, Z=Z, kmeans=km, labels=km.labels_.copy(), silhouette_by_k=sil)
 
 
+def bootstrap_indices(groups, rng):
+    """Row indices of one bootstrap resample over VEHICLES: draw vehicles with replacement, keep all their rows."""
+    groups = np.asarray(groups)
+    uniq = np.array(list(dict.fromkeys(groups)))
+    pick = rng.choice(uniq, size=len(uniq), replace=True)
+    return np.concatenate([np.nonzero(groups == v)[0] for v in pick])
+
+
 def stability(X, groups, k, n_boot=200, var=0.95, seed=20261015):
     """Bootstrap over VEHICLES (rows of one vehicle stay together): refit PCA + k-means on each resample,
     label all rows, compare with the full-data labels by the adjusted Rand index."""
     groups = np.asarray(groups)
     ref = _fit(X, k, var, seed)[2].labels_
-    uniq = np.array(list(dict.fromkeys(groups)))
     rng = np.random.default_rng(seed)
     aris = []
     for b in range(n_boot):
-        pick = rng.choice(uniq, size=len(uniq), replace=True)
-        idx = np.concatenate([np.nonzero(groups == v)[0] for v in pick])
+        idx = bootstrap_indices(groups, rng)
         if len(np.unique(X[idx], axis=0)) <= k:
             continue
         pca, _, km = _fit(X[idx], k, var, seed + b + 1)

@@ -63,3 +63,37 @@ def test_stability_high_for_clear_clusters():
 def test_crosstab_counts():
     t = ar.crosstab(np.array([0, 0, 1, 1, 1]), np.array(["ICM", "BMI", "ICM", "ICM", "BMI"]))
     assert t.loc[0, "ICM"] == 1 and t.loc[1, "ICM"] == 2 and int(t.values.sum()) == 5
+
+
+def test_vehicle_rows_are_power_means_of_their_windows():
+    B = np.zeros((3, 48, 3))
+    B[0, :, :2], B[1, :, :2], B[2, :, :2] = 0.0, 2.0, 5.0        # vehicle a: windows at 1 and 100; b: one window
+    X, ids, g = ar.features(B, np.array(["a", "a", "b"]), axes="mean", per="vehicle", remove_mean=False)
+    assert list(g) == ["a", "b"]
+    assert np.allclose(X[0], np.log10((1 + 100) / 2)) and np.allclose(X[1], 5.0)
+
+
+def test_pca_keeps_the_smallest_number_of_components_for_95_percent():
+    rng = np.random.default_rng(0)
+    X = rng.standard_normal((60, 48)) * np.linspace(3, 0.2, 48)    # variance spread over many directions
+    res = ar.fit_archetypes(X, k_range=range(2, 4), var=0.95, seed=1)
+    from sklearn.decomposition import PCA
+    cum = np.cumsum(PCA().fit(X).explained_variance_ratio_)
+    assert res["pca"].n_components_ == int(np.searchsorted(cum, 0.95) + 1) > 1
+
+
+def test_bootstrap_keeps_vehicles_whole():
+    groups = np.repeat(np.array(["a", "b", "c", "d", "e"]), [1, 2, 3, 2, 1])
+    rng = np.random.default_rng(0)
+    for _ in range(50):
+        idx = ar.bootstrap_indices(groups, rng)
+        for v in set(groups[idx]):
+            n_rows = (groups == v).sum()
+            assert (groups[idx] == v).sum() % n_rows == 0        # every pick of a vehicle brings all its rows
+
+
+def test_stability_low_without_structure():
+    rng = np.random.default_rng(2)
+    X = rng.standard_normal((40, 48))
+    s = ar.stability(X, np.arange(40), k=3, n_boot=40, seed=3)
+    assert s["median_ari"] < 0.5
