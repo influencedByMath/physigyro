@@ -5,7 +5,7 @@
 > This is the base document for the whole project. Read it at the start of every work session.
 > Update **Section 17 (Progress tracker and session log)** at the end of every session.
 >
-> Last updated: 2026-10-14 (Day 17). Phase 1 finished; Phase 2 checked again (P2-1 fixed); Phase 3 started on branch `phase3` with plan `notes/phase3_plan.md` (decisions D-19 to D-22). Feasibility test: `experiments/feasibility/REPORT.md`
+> Last updated: 2026-10-15 (Day 18). Phase 3 Part 1 done on branch `phase3` (screen, split, pilot study); proposed thresholds in `experiments/pilot_study/REPORT.md` wait for the author's approval. Plan: `notes/phase3_plan.md`. Feasibility test: `experiments/feasibility/REPORT.md`
 
 ---
 
@@ -924,9 +924,9 @@ Learn first: frequency response, Bode plots, z-transform basics, IIR filters, ph
 
 Learn first: PSD and Welch's method, pyulog, PCA, k-means.
 
-- [ ] `log_screen.py`: index filter + header screen (Section 7.4.2, steps A-B); screen enough candidates to find about 200 FIFO logs
-- [ ] Split vehicles 50/50 into fit and held-out test (step C). **Do this before downloading full logs or looking at any result.**
-- [ ] Pilot study on 20-30 fit-half logs; fix all TBD thresholds of the gates; record them as a decision in Section 2 (Section 7.4.3)
+- [x] `log_screen.py`: index filter + header screen (Section 7.4.2, steps A-B). Done 2026-10-15: 3,177 logs read, **200 FIFO vehicles**; FIFO share per vehicle 6.3 % (95 % CI 5.5-7.2 %). `data/screen/screen_summary.csv`, `screen_results.jsonl.gz`
+- [x] Split vehicles 50/50 (step C, D-20). Done 2026-10-15: 158 vehicles with a board ID, **84 fit / 74 test** (`data/screen/split.csv`). 33 vehicles without a board ID (21 VOXL2, 11 Navio2, 1 redacted) are **not split yet**: author decision (`split_pending_no_id.csv`, `experiments/pilot_study/REPORT.md` Section 4)
+- [ ] Pilot study on 20-30 fit-half logs; fix all TBD thresholds of the gates; record them as a decision in Section 2 (Section 7.4.3). **2026-10-15: pilot done on 29 fit-half logs, thresholds PROPOSED in `experiments/pilot_study/REPORT.md`; waiting for the author's approval (then one new decision, D-10 freeze)**
 - [ ] `data_quality.py` + `noise_data.py`: apply gates Q1-Q16 to all logs; rebuild gyro (body axes), select windows, compute PSDs, save the library with metadata
 - [ ] `fc_data.py`: extract actual and default parameters, PID gains, ESC RPM (with validity and unit checks), flags `has_rpm`/`has_highrate`/`has_sysid` (Section 7.4.5)
 - [ ] Cluster the fit half with PCA and k-means; plot centroids (Fig. 2); cross-check clusters vs IMU chip
@@ -1258,7 +1258,7 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 | 0 Topic selection | 1-3 | Sep 28-30 | Done |
 | 1 Setup, literature, proposal | 4-7 → 17-18 | Oct 14-15 | Done 2026-10-14 except author tasks: accounts, GitHub push, Zotero import, send proposal |
 | 2 Physics model | 8-12 | Oct 5-9 | Core done 2026-10-10 (feasibility test); Tier 1 priors and Fig. 1 moved to Phase 4 |
-| 3 Real noise and clustering | 19-23 | Oct 16-20 | Started 2026-10-14 (Day 17): plan `notes/phase3_plan.md` (Part 1 up to the pilot-study proposal); decisions D-19 to D-22 |
+| 3 Real noise and clustering | 19-23 | Oct 16-20 | Part 1 done 2026-10-15 (screen, split, pilot): thresholds proposed, waiting for approval; Part 2 (library, clustering, generator, go/no-go) after the freeze |
 | 4 Optimizer and training data | 24-26 | Oct 21-23 | Optimizer done and checked (feasibility test); dataset generation not started |
 | 5 ML tuner | 27-32 | Oct 24-29 | Not started |
 | 6 Deployment and validation | 33-35 | Oct 30-Nov 1 | Not started |
@@ -1273,7 +1273,7 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 - [x] PX4: field names in `SensorGyroFifo.msg` (Section 7.4): checked 2026-10-06 (`dt`, `scale`, `samples`, `x/y/z[32]`, `timestamp_sample`, `device_id`, `is_external`)
 - [x] PX4 defaults by version: `IMU_DGYRO_CUTOFF` 30 Hz (v1.15-v1.16), 20 Hz (v1.17); multicopter `IMU_GYRO_RATEMAX` 800 Hz: checked 2026-10-06
 - [x] PX4: does `timestamp_sample` of `sensor_gyro_fifo` belong to the last sample of the message? (Section 7.4.4). Yes: checked 2026-10-14 in the v1.16.0 ICM-42688-P driver (data-ready time of the newest sample; read time when polled, which explains the ±1-sample jitter). `notes/px4_notes.md`
-- [ ] PX4: rotation table for `SENS_BOARD_ROT` and the frame of FIFO data (gate Q7). 2026-10-10: table copied from `rotation.h` v1.16.0 into `src/noise_data.py`. 2026-10-14: checked on data for rotations 0 and 4 (FIFO body rate vs logged `vehicle_angular_velocity`: correlation +0.99 and +0.91/+0.89 on x/y); PX4 filters the sensor axes and rotates afterwards (same result, linear filters). External IMUs use `CAL_GYROn_ROT` (now in code). Still open: other rotations, board trims `SENS_BOARD_*_OFF`
+- [ ] PX4: rotation table for `SENS_BOARD_ROT` and the frame of FIFO data (gate Q7). 2026-10-10: table copied from `rotation.h` v1.16.0 into `src/noise_data.py`. 2026-10-14: checked on data for rotations 0 and 4 (FIFO body rate vs logged `vehicle_angular_velocity`: correlation +0.99 and +0.91/+0.89 on x/y); PX4 filters the sensor axes and rotates afterwards (same result, linear filters). External IMUs use `CAL_GYROn_ROT` (now in code). Still open: other rotations, board trims `SENS_BOARD_*_OFF` **2026-10-15:** 3x3 axis check (`experiments/pilot_study/check_axes.py`) correct on 17 of 17 checkable pilot logs; rotation 2 (yaw 90°) now verified. Rotations 6, 8, 12, 14 occur only in heavy-dropout logs: every accepted log with such a rotation must pass the axis check in Part 2
 - [x] PX4: exact rate-controller form, use of `MC_ROLLRATE_K` and D on measurement (Section 7.1): checked 2026-10-10
 - [ ] PX4: is `esc_status.esc_rpm` mechanical RPM for every ESC type? (Section 7.4.5). 2026-10-10: re-checked on the same 2 audit logs (FMU-V6X with bidirectional DShot; HKUST NXT Dual): RPM/60 harmonics match the spectrum peaks; other ESC types still unchecked
 - [x] Multi-rate loop: how to model filters at the FIFO rate and the controller at `IMU_GYRO_RATEMAX` (answer with E10): filters at the FIFO rate, then fold to the publication rate; matches the logged spectra within 1 dB (2026-10-10)
@@ -1287,6 +1287,14 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 - [ ] FFT dynamic notch (`IMU_GYRO_DNF_EN` bit 1) is not modelled: flag and exclude such logs (code flag `fft_notch` added 2026-10-14)
 - [ ] Noise is not stationary inside one flight: band powers of two 8 s windows of b27d09e3 differ by up to 6 dB (60-90 Hz). Report window-to-window spread; consider several windows per vehicle
 - [ ] Pilot study: choose Welch `nperseg` per sample rate for a fixed resolution (a fixed 4096 gave only 6 averages at 2 kHz)
+- [ ] **Author decision (Phase 3):** rule for the 33 FIFO vehicles without a board ID: exclude (recommended) / one key per board type + airframe / fine fallback key (leakage risk). `experiments/pilot_study/REPORT.md` Section 4
+- [ ] **Author decision (Phase 3):** approve the proposed thresholds (REPORT Section 2): f_max 780 Hz (measured rate), L_min one Welch segment, D_max 20 %, W 10 s, 1.5 Hz / 20 averages, activity 15 deg/s, throttle 0.02, jitter 1 %, clipping 0, 3 windows per vehicle, RPM gate 50 Hz
+- [ ] Go/no-go projection: 14 of 29 pilot logs usable (95 % CI 31-66 %), about 76 of 158 vehicles; target 100 needs about 780 more screened vehicles (R1 a)
+- [ ] Part 2: `IMU_GYRO_RATEMAX` = 0 (v1.11) or 250 Hz in some logs: take the controller rate from the logged `vehicle_angular_velocity` or drop the log
+- [ ] Part 2: the measured FIFO rate is unreliable above about 50 % dropout (1,251-1,823 Hz for 2 kHz IMUs); such logs fail Q4 first
+- [ ] Part 2: on-chip IMU low-pass filters shape the raw FIFO spectrum (PSD 600-780 Hz vs 100-300 Hz: +6 to -52 dB): check clusters against the chip (Q12); their delay is not in the loop model (limitation; PX4 driver settings VERIFY)
+- [ ] Part 2: duplicate uploads (gate Q3) exist among vehicles without a board ID
+- [ ] Part 2: noise-floor shape of the parametric model (THESIS 7.5 assumes a flat floor; pilot spectra change by 2-4 decades over 20-800 Hz)
 - [ ] Gate Q11: logs without any default-parameter record (older firmware) get `defaults_known = False`; count them in the pilot study (2026-10-14, PX4 `logger.cpp` checked)
 - [ ] Setup defaults differ per vehicle even for `IMU_GYRO_RATEMAX` (b27d09e3, v1.16.0 release: setup default 400 Hz, actual 800 Hz). `θ_default` replaces only the filter parameters; loop rate and gains stay as flown
 - [ ] PADRE sampling rate (risk R1)
@@ -1308,3 +1316,4 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 | 2026-10-14 | 17 | Audit of `src/`, `tests/`, feasibility run (REPORT.md Section 10): 12 code fixes (ESC-notch floor max(DNF_MIN, BW) as in PX4 source; tracking spectrum on the same samples as the raw PSD; \|RPM\|; replica with board rotation and selected IMU; external-IMU rotation; notch-floor consistency; second-log drone acceptance; flags for FFT notch and in-flight parameter changes); 4 new tests (39 pass). Independent checks (`pipeline_checks.py`): time-domain multi-rate simulation agrees with the Nyquist verdict in 158/160 random cases (0 disagree); axes and filter delay confirmed against logged data; noise above 800 Hz negligible; optimum holds on a second window. P1-P5 decided as D-13 to D-17 | Phase 3: `log_screen.py`, vehicle split (D-17), pilot study | - |
 | 2026-10-14 | 17 | **Phase 1 finished.** Folder structure (Section 9); local git repo + first commit; 60 verified references in `paper/refs.bib` (16 new: closed-loop sysid, safe BO on quadcopters, RL on PX4, L2O, TinyML, Welch, PX4 paper) and reading notes `notes/literature.md`; PX4 filter-tuning guide notes and 2 VERIFY items answered (`notes/px4_notes.md`); 1-page proposal `proposal/proposal.md` + `.docx`; timeline extended to Day 47 = 2026-11-13 (D-18). Push to GitHub: create an empty private repo on github.com, then `git remote add origin https://github.com/<user>/<repo>.git` and `git push -u origin main` | Author: accounts, GitHub push, Zotero import, send proposal. Then Phase 3: `log_screen.py`, vehicle split (D-17), pilot study | Proposal .docx not rendered here (no Word/LibreOffice): check that it fits one page |
 | 2026-10-14 | 17 | **Phase 2 checked, Phase 3 started** (branch `phase3`). Phase 2: 39/39 tests; PX4 v1.16.0 source re-read; new exact discrete closed-loop-pole check 200/200; fix P2-1 (PX4 notch clamp, 44 tests). Phase 3 evidence: `vehicle_uuid` = ULog `sys_uuid` (FC board ID); index logs per vehicle median 2, max 1,276; 2,674 logs without ID; network about 270 KB/s per connection; fourth audited vehicle 220b5990 found; Q11 defaults rule refined; noise floor not flat (about 2 decades). Decisions D-19 to D-22. Plan `notes/phase3_plan.md` (Part 1) | Tasks 2-9 of the plan: parser, screen, split, pilot study; then threshold approval | - |
+| 2026-10-15 | 18 | **Phase 3 Part 1 finished** (branch `phase3`). Laptop shut down during the header screen on 2026-10-14: no data lost; resume made crash-safe (error rows retried, cut lines repaired). Screen: 3,177 logs, 200 FIFO vehicles (6.3 % per vehicle). Split: 158 vehicles with board ID, 84 fit / 74 test; 33 no-ID vehicles held for a decision. Pilot on 29 fit-half logs (`experiments/pilot_study/REPORT.md`): thresholds proposed; usable 14 of 29 logs; dropouts are the main loss and depend on the board; rotation 2 verified. Bugs fixed: esc_count 0 crash, L_min gate, two download-resume bugs. 122 tests; feasibility stages 1-2 reproduce all 494 values | Author: approve thresholds, decide no-ID vehicles and whether to screen ~780 more vehicles; then Part 2 (freeze, process both halves, library, clustering, generator, go/no-go) | Author decisions |
