@@ -63,6 +63,15 @@ def floor_basis(f, floor, band):
 LN10 = np.log(10.0)
 
 
+def lowpass_gain2(f, lowpass):
+    """IMU-chip low-pass |H(f)|^2 = 1 / (1 + (f / f_c)^(2 n)) (D-24 (1); one per chip model, fitted jointly).
+    ``lowpass`` = (f_c, n) or None (no term)."""
+    if lowpass is None:
+        return np.ones_like(np.asarray(f, float))
+    fc, n = lowpass
+    return 1.0 / (1.0 + (np.asarray(f, float) / fc) ** (2 * n))
+
+
 def model_and_jac(f, p, Bf, motor_hz=None, n_harm=0, n_free=0):
     """Model PSD S(f) and its exact Jacobian dS/dp (same parameter layout as model_psd)."""
     k = Bf.shape[1]
@@ -93,10 +102,11 @@ def model_and_jac(f, p, Bf, motor_hz=None, n_harm=0, n_free=0):
     return S, J
 
 
-def model_psd(f, p, floor, band, motor_hz=None, n_harm=0, n_free=0, basis=None):
-    """p = [floor coefs | per harmonic (log10 A_h, log10 g_h) | per free peak (log10 A, f0, log10 g)]."""
+def model_psd(f, p, floor, band, motor_hz=None, n_harm=0, n_free=0, basis=None, lowpass=None):
+    """p = [floor coefs | per harmonic (log10 A_h, log10 g_h) | per free peak (log10 A, f0, log10 g)].
+    ``lowpass`` (f_c, n): the chip low-pass multiplies the whole vibration model (the chip filters the signal)."""
     Bf = basis if basis is not None and floor == "spline" else floor_basis(f, floor, band)
-    return model_and_jac(f, p, Bf, motor_hz, n_harm, n_free)[0]
+    return model_and_jac(f, p, Bf, motor_hz, n_harm, n_free)[0] * lowpass_gain2(f, lowpass)
 
 
 def initial_floor(f, logP, floor, band, pct=20, width_dec=1 / 6):
@@ -113,14 +123,15 @@ def initial_floor(f, logP, floor, band, pct=20, width_dec=1 / 6):
 
 
 def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_harm=3, prominence=0.5,
-                 max_free=6, min_sep_hz=8.0):
+                 max_free=6, min_sep_hz=8.0, lowpass=None):
     """Fit the model to one PSD (1-D, native bins). ``motor_hz``: valid mean motor frequencies [Hz] or None.
     Free peaks: the ``max_free`` most prominent peaks of log10 PSD above the robust floor (``prominence`` in
     decades), skipping peaks within ``min_sep_hz`` of a fixed motor harmonic.
     Returns dict(params, floor, rms_db, n_free, n_harm, peaks_hz, motor_hz)."""
     m = (f >= band[0]) & (f <= band[1])
     f, P = np.asarray(f, float)[m], np.asarray(P, float)[m]
-    logP = np.log10(P)
+    logH = np.log10(lowpass_gain2(f, lowpass))      # known chip low-pass: fit the vibration model to P / |H|^2
+    logP = np.log10(P) - logH
     c0, base = initial_floor(f, logP, floor, band)
     use_m = motor_hz is not None and len(motor_hz) > 0
     n_h = 0
@@ -170,10 +181,10 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
         S, J = _eval(p)
         return J / (S * LN10)[:, None]
 
-    sol = least_squares(res, p0, jac=jac, bounds=(lo, hi), x_scale="jac", max_nfev=4000)
+    sol = least_squares(res, p0, jac=jac, bounds=(lo, hi), x_scale="jac", max_nfev=4000)   # residual unchanged by H
     r = sol.fun
     k = n_floor(floor) + 2 * n_h
     return dict(params=sol.x, floor=floor, rms_db=float(10 * np.sqrt(np.mean(r ** 2))), n_free=len(free),
                 n_harm=n_h, motor_hz=None if not use_m else [float(x) for x in motor_hz],
-                peaks_hz=[float(sol.x[k + 3 * j + 1]) for j in range(len(free))], success=bool(sol.success), nfev=int(sol.nfev),
+                peaks_hz=[float(sol.x[k + 3 * j + 1]) for j in range(len(free))], success=bool(sol.success), nfev=int(sol.nfev), lowpass=lowpass,
                 n_params=len(sol.x), n_bins=len(f))

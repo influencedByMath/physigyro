@@ -84,3 +84,18 @@ def test_fit_converges_on_noisy_spectrum():
     noisy = synth() * rng.chisquare(50, len(F)) / 50
     fit = nm.fit_spectrum(F, noisy, BAND, floor="spline", prominence=0.5)
     assert fit["success"] and fit["nfev"] < 500
+
+
+def test_lowpass_factor_multiplies_the_model():
+    f = F[(F >= 20) & (F <= 780)]
+    p = np.array([-6.0, -1.0])
+    plain = nm.model_psd(f, p, "powerlaw", BAND)
+    lp = nm.model_psd(f, p, "powerlaw", BAND, lowpass=(300.0, 3.0))
+    assert np.allclose(lp, plain / (1 + (f / 300.0) ** 6))
+    assert np.allclose(nm.lowpass_gain2(f, None), 1.0)
+
+
+def test_fit_with_known_lowpass_recovers_the_unfiltered_model():
+    S = synth() * nm.lowpass_gain2(F, (350.0, 4.0))
+    fit = nm.fit_spectrum(F, S, BAND, floor="spline", prominence=0.3, lowpass=(350.0, 4.0))
+    assert fit["rms_db"] < 0.1 and sorted(fit["peaks_hz"]) == pytest.approx([120.0, 310.0], abs=1.0)
