@@ -228,21 +228,29 @@ def download_log(entry, dest_dir, opener=urllib.request.urlopen, chunk=1 << 20, 
         have = os.path.getsize(part) if os.path.exists(part) else 0
         req = urllib.request.Request(entry["download_url"], headers={"Range": f"bytes={have}-", "User-Agent": USER_AGENT})
         try:
-            with opener(req, timeout=timeout) as r, open(part, "ab") as fh:
+            with opener(req, timeout=timeout) as r:
                 h = getattr(r, "headers", None) or {}
-                cr = (h.get("Content-Range") or "").split("/")[-1]
-                total = int(cr) if cr.isdigit() else (have + int(h["Content-Length"]) if h.get("Content-Length") else None)
-                while True:
-                    c = r.read(chunk)
-                    if not c:
-                        break
-                    fh.write(c)
+                cr = h.get("Content-Range") or ""
+                if cr:                           # 206: the bytes from `have` on
+                    total = int(cr.split("/")[-1]) if cr.split("/")[-1].isdigit() else None
+                    mode = "ab"
+                else:                            # the server ignored Range and sends the whole file: restart
+                    total = int(h["Content-Length"]) if h.get("Content-Length") else None
+                    mode = "wb"
+                with open(part, mode) as fh:
+                    while True:
+                        c = r.read(chunk)
+                        if not c:
+                            break
+                        fh.write(c)
         except OSError:                          # dropped connection, timeout: resume on the next try
             pass
         time.sleep(pause_s)
         size = os.path.getsize(part) if os.path.exists(part) else 0
-        with open(part, "rb") as fh:
-            head = fh.read(7)
+        head = b""
+        if size:
+            with open(part, "rb") as fh:
+                head = fh.read(7)
         if size and not b"ULog\x01\x12\x35".startswith(head):
             os.remove(part)
             raise ValueError(f"{entry['log_id']}: not a ULog file")

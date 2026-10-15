@@ -248,3 +248,32 @@ def test_run_screen_repairs_missing_final_newline(tmp_path, monkeypatch):
     _fake_rows(monkeypatch)
     ls.run_screen(order, str(out), target_fifo_vehicles=100, workers=1, pause_s=0.0)
     assert [json.loads(x)["log_id"] for x in out.read_text().splitlines()] == ["L0", "L1"]
+
+
+class _NoRangeServer(_Server):
+    """A server that ignores Range and always sends the whole file (HTTP 200, Content-Length only)."""
+
+    def __call__(self, req, timeout):
+        self.ranges.append(req.get_header("Range"))
+        body = self.data[:self.cut] if (self.cut is not None and len(self.ranges) == 1) else self.data
+        r = _Resp(body)
+        r.headers = {"Content-Length": str(len(self.data))}
+        return r
+
+
+def test_download_restarts_when_server_ignores_range(tmp_path):
+    srv = _NoRangeServer(ULOG_BYTES, cut_first=3000)
+    path = ls.download_log(_entry(log_id="nr"), str(tmp_path), opener=srv, pause_s=0.0, chunk=1024)
+    assert open(path, "rb").read() == ULOG_BYTES                     # no duplicated prefix
+
+
+def test_download_retries_when_first_request_fails(tmp_path):
+    srv, calls = _Server(ULOG_BYTES), []
+
+    def flaky(req, timeout):
+        calls.append(1)
+        if len(calls) == 1:
+            raise urllib.error.URLError("connection reset")
+        return srv(req, timeout)
+    path = ls.download_log(_entry(log_id="fl"), str(tmp_path), opener=flaky, pause_s=0.0)
+    assert open(path, "rb").read() == ULOG_BYTES and len(calls) == 2
