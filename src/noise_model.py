@@ -48,18 +48,55 @@ def lorentz(f, A, f0, g):
     return A / (1 + ((f - f0) / g) ** 2)
 
 
-def model_psd(f, p, floor, band, motor_hz=None, n_harm=0, n_free=0, basis=None):
-    """p = [floor coefs | per harmonic (log10 A_h, log10 g_h) | per free peak (log10 A, f0, log10 g)]."""
-    k = n_floor(floor)
-    S = 10 ** floor_log(f, p[:k], floor, band, basis)
+def floor_basis(f, floor, band):
+    """Design matrix of the log10 floor: log10 floor = floor_basis @ coefs (all three shapes are linear)."""
+    lf = np.log10(f)
+    if floor == "flat":
+        return np.ones((len(f), 1))
+    if floor == "powerlaw":
+        return np.stack([np.ones_like(lf), lf - 2.0], 1)
+    if floor == "spline":
+        return _spline_basis(lf, np.log10(band[0]), np.log10(band[1]))
+    raise ValueError(floor)
+
+
+LN10 = np.log(10.0)
+
+
+def model_and_jac(f, p, Bf, motor_hz=None, n_harm=0, n_free=0):
+    """Model PSD S(f) and its exact Jacobian dS/dp (same parameter layout as model_psd)."""
+    k = Bf.shape[1]
+    F = 10 ** (Bf @ p[:k])
+    S = F.copy()
+    J = np.empty((len(f), len(p)))
+    J[:, :k] = (F * LN10)[:, None] * Bf
     for h in range(n_harm):
         A, g = 10 ** p[k + 2 * h], 10 ** p[k + 2 * h + 1]
+        dA = dg = 0.0
         for fm in motor_hz:
-            S = S + lorentz(f, A, (h + 1) * fm, g)
+            u = (f - (h + 1) * fm) / g
+            d = 1 + u * u
+            S = S + A / d
+            dA = dA + LN10 * A / d
+            dg = dg + LN10 * 2 * A * u * u / d ** 2
+        J[:, k + 2 * h], J[:, k + 2 * h + 1] = dA, dg
     j = k + 2 * n_harm
     for r in range(n_free):
-        S = S + lorentz(f, 10 ** p[j + 3 * r], p[j + 3 * r + 1], 10 ** p[j + 3 * r + 2])
-    return S
+        a, f0, q = p[j + 3 * r: j + 3 * r + 3]
+        A, g = 10 ** a, 10 ** q
+        u = (f - f0) / g
+        d = 1 + u * u
+        S = S + A / d
+        J[:, j + 3 * r] = LN10 * A / d
+        J[:, j + 3 * r + 1] = 2 * A * u / (g * d ** 2)
+        J[:, j + 3 * r + 2] = LN10 * 2 * A * u * u / d ** 2
+    return S, J
+
+
+def model_psd(f, p, floor, band, motor_hz=None, n_harm=0, n_free=0, basis=None):
+    """p = [floor coefs | per harmonic (log10 A_h, log10 g_h) | per free peak (log10 A, f0, log10 g)]."""
+    Bf = basis if basis is not None and floor == "spline" else floor_basis(f, floor, band)
+    return model_and_jac(f, p, Bf, motor_hz, n_harm, n_free)[0]
 
 
 def initial_floor(f, logP, floor, band, pct=20, width_dec=1 / 6):
@@ -116,15 +153,27 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
         hi += [5, f[i] + 10.0, np.log10(80.0)]
     p0 = np.clip(p0, np.array(lo) + 1e-9, np.array(hi) - 1e-9)
 
-    basis = _spline_basis(np.log10(f), np.log10(band[0]), np.log10(band[1])) if floor == "spline" else None
+    Bf = floor_basis(f, floor, band)
+    cache = {}
+
+    def _eval(p):
+        key = p.tobytes()
+        if key not in cache:
+            cache.clear()
+            cache[key] = model_and_jac(f, p, Bf, motor_hz, n_h, len(free))
+        return cache[key]
 
     def res(p):
-        return np.log10(model_psd(f, p, floor, band, motor_hz, n_h, len(free), basis)) - logP
+        return np.log10(_eval(p)[0]) - logP
 
-    sol = least_squares(res, p0, bounds=(lo, hi), x_scale="jac", max_nfev=4000)
+    def jac(p):
+        S, J = _eval(p)
+        return J / (S * LN10)[:, None]
+
+    sol = least_squares(res, p0, jac=jac, bounds=(lo, hi), x_scale="jac", max_nfev=4000)
     r = sol.fun
     k = n_floor(floor) + 2 * n_h
     return dict(params=sol.x, floor=floor, rms_db=float(10 * np.sqrt(np.mean(r ** 2))), n_free=len(free),
                 n_harm=n_h, motor_hz=None if not use_m else [float(x) for x in motor_hz],
-                peaks_hz=[float(sol.x[k + 3 * j + 1]) for j in range(len(free))], success=bool(sol.success),
+                peaks_hz=[float(sol.x[k + 3 * j + 1]) for j in range(len(free))], success=bool(sol.success), nfev=int(sol.nfev),
                 n_params=len(sol.x), n_bins=len(f))

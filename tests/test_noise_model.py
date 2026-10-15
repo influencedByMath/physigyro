@@ -57,3 +57,30 @@ def test_motor_frequencies_stay_fixed():
 def test_harmonics_above_band_are_dropped():
     fit = nm.fit_spectrum(F, synth(), BAND, floor="flat", motor_hz=[300.0], n_harm=3, prominence=5.0)
     assert fit["n_harm"] == 2                                 # 900 Hz is outside 20-780 Hz
+
+
+@pytest.mark.parametrize("floor", ["flat", "powerlaw", "spline"])
+def test_analytic_jacobian_matches_finite_differences(floor):
+    f = F[(F >= 20) & (F <= 780)]
+    Bf = nm.floor_basis(f, floor, BAND)
+    rng = np.random.default_rng(0)
+    motors = [101.0, 97.0, 108.0, 104.0]
+    p = np.r_[rng.normal(-6, 0.3, nm.n_floor(floor)),  # power law: slope about -6 (S spans 6 decades)
+            [-5.0, 0.5, -5.5, 0.7], [-5.2, 233.0, 0.6, -5.8, 410.0, 0.9]]
+    S, J = nm.model_and_jac(f, p, Bf, motors, 2, 2)
+    assert np.allclose(S, nm.model_psd(f, p, floor, BAND, motors, 2, 2))
+    eps = 1e-6
+    JL = J / (S * np.log(10))[:, None]                        # d log10 S / dp: what the fit uses, scale-free
+    for i in range(len(p)):
+        dp = np.zeros_like(p)
+        dp[i] = eps
+        num = (np.log10(nm.model_and_jac(f, p + dp, Bf, motors, 2, 2)[0])
+               - np.log10(nm.model_and_jac(f, p - dp, Bf, motors, 2, 2)[0])) / (2 * eps)
+        assert np.allclose(JL[:, i], num, rtol=1e-5, atol=1e-7), i
+
+
+def test_fit_converges_on_noisy_spectrum():
+    rng = np.random.default_rng(4)
+    noisy = synth() * rng.chisquare(50, len(F)) / 50
+    fit = nm.fit_spectrum(F, noisy, BAND, floor="spline", prominence=0.5)
+    assert fit["success"] and fit["nfev"] < 500
