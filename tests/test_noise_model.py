@@ -118,3 +118,25 @@ def test_fixed_floor_keeps_the_robust_floor_and_fits_peaks_on_top():
     fit = nm.fit_spectrum(F, S, BAND, floor="spline", prominence=0.3, fix_floor=True)
     assert np.allclose(fit["params"][:nm.n_floor("spline")], c0, atol=1e-6)
     assert sorted(fit["peaks_hz"]) == pytest.approx([120.0, 310.0], abs=1.0) and fit["rms_db"] < 1.0
+
+
+def test_chip_lowpass_needs_a_bic_gain_of_at_least_10():
+    rng = np.random.default_rng(7)
+    base = [synth(floor_coef=(-6.0 + 0.2 * i, -1.0 - 0.2 * i)) * rng.chisquare(50, len(F)) / 50 for i in range(3)]
+    grid = [(250.0, 3.0), (700.0, 6.0)]
+    res = nm.fit_chip_lowpass([(F, P, None) for P in base], grid, prominence=0.5, fix_floor=True, min_bic_gain=10.0)
+    gain = res["bic"]["None"] - min(v for k, v in res["bic"].items() if k != "None")   # best term vs none (can be < 0)
+    assert res["bic_gain"] == pytest.approx(gain)
+    assert (res["lowpass"] is None) == (gain < 10.0)              # rule D-26 (3)
+    huge = nm.fit_chip_lowpass([(F, P, None) for P in base], grid, prominence=0.5, fix_floor=True,
+                               min_bic_gain=1e12)
+    assert huge["lowpass"] is None and huge["bic_gain"] == pytest.approx(gain)
+
+
+def test_chip_lowpass_found_with_fixed_floor():
+    rng = np.random.default_rng(8)
+    base = [synth(floor_coef=(-6.0 + 0.2 * i, -1.0 - 0.2 * i)) * rng.chisquare(50, len(F)) / 50 for i in range(3)]
+    rolled = [(F, P * nm.lowpass_gain2(F, (300.0, 3.0)), None) for P in base]
+    res = nm.fit_chip_lowpass(rolled, [(250.0, 3.0), (300.0, 3.0), (700.0, 6.0)], prominence=0.5, fix_floor=True,
+                              min_bic_gain=10.0)
+    assert res["lowpass"] is not None and res["bic_gain"] >= 10.0

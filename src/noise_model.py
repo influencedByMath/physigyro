@@ -193,24 +193,27 @@ def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_ha
                 n_params=len(sol.x), n_bins=len(f))
 
 
-def fit_chip_lowpass(spectra, grid, floor="spline", prominence=0.5, band=(20.0, 780.0), max_free=6):
+def fit_chip_lowpass(spectra, grid, floor="spline", prominence=0.5, band=(20.0, 780.0), max_free=6, fix_floor=False,
+                     min_bic_gain=0.0):
     """One low-pass per IMU chip model (D-24 (1), P1), shared by all its vehicles: every (f_c, n) of ``grid`` and
-    "no term" are tried; the choice minimises the BIC of all the chip's spectra together (+2 parameters for a
-    term). ``spectra``: list of (f, P, motor_hz). Only the presence and magnitude are trusted (D-25): the corner
-    and order trade off against the spline floors and are not identifiable."""
-    bic, best = {}, None
+    "no term" are tried on all the chip's spectra together (+2 parameters for a term). The best term is kept
+    only if it lowers the BIC by at least ``min_bic_gain`` (D-26 (3): 10), else no term. ``spectra``: list of
+    (f, P, motor_hz). Only the presence and magnitude are used (D-25): the corner and order are not identifiable."""
+    bic, fits_by = {}, {}
     for lp in [None] + list(grid):
         sse, n, k, fits = 0.0, 0, 0, []
         for f, P, motors in spectra:
             r = fit_spectrum(f, P, band, floor=floor, motor_hz=motors, prominence=prominence, lowpass=lp,
-                             max_free=max_free)
+                             max_free=max_free, fix_floor=fix_floor)
             sse += (r["rms_db"] / 10) ** 2 * r["n_bins"]
             n += r["n_bins"]
             k += r["n_params"]
             fits.append(r)
         k += 0 if lp is None else 2
-        b = n * np.log(sse / n) + k * np.log(n)
-        bic[str(lp)] = float(b)
-        if best is None or b < best[0]:
-            best = (b, lp, fits)
-    return dict(lowpass=best[1], bic=bic, fits=best[2])
+        bic[str(lp)] = float(n * np.log(sse / n) + k * np.log(n))
+        fits_by[str(lp)] = (lp, fits)
+    best = min((key for key in bic if key != "None"), key=bic.get, default="None")
+    gain = bic["None"] - bic[best] if best != "None" else 0.0
+    chosen = best if gain >= min_bic_gain and best != "None" else "None"
+    lp, fits = fits_by[chosen]
+    return dict(lowpass=lp, bic=bic, bic_gain=float(gain), best_term=fits_by[best][0], fits=fits)
