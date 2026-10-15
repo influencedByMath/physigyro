@@ -254,28 +254,54 @@ def welch_count(gs: GyroStream, t0, t1, nperseg):
     return int(n)
 
 
-def axis_correlation(u, gs, f_motion=5.0):
+def axis_correlation(u, gs, f_motion=5.0, edge_s=1.0, min_std=0.03, min_seconds=10.0):
     """Gate Q7 check: 3x3 correlation of the FIFO body axes (rows) with the firmware's logged body rate
-    vehicle_angular_velocity (columns), both low-passed to flight motion (zero-phase, f_motion Hz), on the
-    longest gap-free segment. Correct rotation: diagonal positive and largest in each row. None if the
-    logged rate is missing or too short."""
+    vehicle_angular_velocity (columns), both low-passed to flight motion (zero-phase, f_motion Hz).
+
+    Uses every gap-free FIFO segment (``edge_s`` trimmed at both ends, against filter edge effects) inside
+    the airborne time (whole log if there is no land detector). Correct rotation: for roll and pitch (and
+    yaw if it moved), the diagonal is positive and the largest value in its row. ``diagonal_ok`` is None
+    (inconclusive) when roll or pitch moved less than ``min_std`` rad/s (std of the low-passed logged rate,
+    1.7 deg/s): then the correlations are mostly noise and say nothing about the axes. None if the logged
+    rate is missing or shorter than ``min_seconds``."""
     from scipy.signal import butter, sosfiltfilt
     v = u.get_dataset("vehicle_angular_velocity").data
     tv = _t(u, v["timestamp_sample"] if "timestamp_sample" in v else v["timestamp"])
-    a0, b0 = max(gs.segments, key=lambda s: s[1] - s[0])
-    seg_t = gs.t[a0:b0]
-    m = (tv > seg_t[0] + 1) & (tv < seg_t[-1] - 1)
-    if m.sum() < 50:
+    if len(tv) < 50:
         return None
-    rate = (m.sum() - 1) / (tv[m][-1] - tv[m][0])
-    fifo = sosfiltfilt(butter(2, f_motion, fs=gs.fs_measured, output="sos"), gs.gyro[a0:b0], axis=0)
+    rate = (len(tv) - 1) / (tv[-1] - tv[0])
     logged = sosfiltfilt(butter(2, min(f_motion, 0.4 * rate), fs=rate, output="sos"),
-                         np.stack([v[f"xyz[{i}]"][m].astype(float) for i in range(3)], 1), axis=0)
-    F = np.stack([np.interp(tv[m], seg_t, fifo[:, i]) for i in range(3)], 1)
-    C = np.array([[np.corrcoef(F[:, i], logged[:, j])[0, 1] for j in range(3)] for i in range(3)])
-    ok = all(np.argmax(np.abs(C[i])) == i and C[i, i] > 0 for i in range(3))
-    return dict(matrix=np.round(C, 3).tolist(), diagonal_ok=bool(ok), n=int(m.sum()),
-                seconds=round(float(seg_t[-1] - seg_t[0]), 1), logged_rate_hz=round(float(rate), 1))
+                         np.stack([v[f"xyz[{i}]"].astype(float) for i in range(3)], 1), axis=0)
+    try:
+        air = airborne_intervals(u)
+    except Exception:                                    # no land detector: whole log
+        air = [(tv[0], tv[-1])]
+    in_air = np.zeros(len(tv), bool)
+    for a, b in air:
+        in_air |= (tv >= a) & (tv <= b)
+    sos = butter(2, f_motion, fs=gs.fs_measured, output="sos")
+    F, L = [], []
+    for a, b in gs.segments:
+        if gs.t[b - 1] - gs.t[a] < 2 * edge_s + 1.0:
+            continue
+        m = in_air & (tv > gs.t[a] + edge_s) & (tv < gs.t[b - 1] - edge_s)
+        if not m.any():
+            continue
+        fifo = sosfiltfilt(sos, gs.gyro[a:b], axis=0)
+        F.append(np.stack([np.interp(tv[m], gs.t[a:b], fifo[:, i]) for i in range(3)], 1))
+        L.append(logged[m])
+    if not F or sum(len(x) for x in F) / rate < min_seconds:
+        return None
+    F, L = np.vstack(F), np.vstack(L)
+    C = np.array([[np.corrcoef(F[:, i], L[:, j])[0, 1] for j in range(3)] for i in range(3)])
+    std = L.std(0)
+    rows = [i for i in range(3) if std[i] >= min_std]
+    if 0 not in rows or 1 not in rows:
+        ok = None
+    else:
+        ok = all(np.argmax(np.abs(C[i])) == i and C[i, i] > 0 for i in rows)
+    return dict(matrix=np.round(C, 3).tolist(), diagonal_ok=ok, n=len(F), seconds=round(len(F) / rate, 1),
+                logged_std=np.round(std, 4).tolist(), logged_rate_hz=round(float(rate), 1))
 
 
 def esc_rpm(ulog, t0, t1, n_motors=None):

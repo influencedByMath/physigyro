@@ -26,8 +26,9 @@ LICENCE = "CC-BY 4.0, PX4 Flight Review (review.px4.io), PX4 maintainers"
 
 def axis_gate(rotation, check):
     """Gate Q7. The data check (noise_data.axis_correlation) decides when it exists; without it, only
-    rotations already verified on data are accepted."""
-    if check is not None:
+    rotations already verified on data are accepted. An inconclusive check (diagonal_ok None: too little
+    roll/pitch motion) counts as no check."""
+    if check is not None and check["diagonal_ok"] is not None:
         return ([], []) if check["diagonal_ok"] else (["Q7_axes"], [])
     if int(rotation) in VERIFIED_ROTATIONS:
         return [], ["Q7_not_checked"]

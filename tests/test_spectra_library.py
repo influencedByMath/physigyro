@@ -41,6 +41,8 @@ def test_select_windows_keeps_windows_without_throttle_data():
     (0, dict(diagonal_ok=False), ["Q7_axes"], []),
     (6, None, ["Q7_unverified"], []),
     (2, None, [], ["Q7_not_checked"]),
+    (0, dict(diagonal_ok=None), [], ["Q7_not_checked"]),   # inconclusive check (too little motion)
+    (6, dict(diagonal_ok=None), ["Q7_unverified"], []),
 ])
 def test_axis_gate_rules(rotation, check, rej, flags):
     assert sl.axis_gate(rotation, check) == (rej, flags)
@@ -118,3 +120,42 @@ def test_process_half_refuses_the_other_half(tmp_path):
 def test_window_funnel_counts_first_reason():
     cs = [cand(0, 20.0), cand(10, 1.0, n_avg=5), cand(20, 1.0, clipped=3, n_avg=5), cand(30, 1.0)]
     assert sl.window_reasons(cs, TH) == Counter(Q10_unsteady=1, Q13_few_averages=1, Q9_clipping=1)
+
+
+class _DS:
+    def __init__(self, data):
+        self.data = data
+
+
+class FakeULog:
+    """Minimal ULog stand-in: logged body rate only (no land detector: the whole log counts as airborne)."""
+    start_timestamp = 0
+
+    def __init__(self, t, xyz):
+        self._v = {"timestamp": (t * 1e6).astype(np.int64), **{f"xyz[{i}]": xyz[:, i] for i in range(3)}}
+
+    def get_dataset(self, name):
+        if name != "vehicle_angular_velocity":
+            raise KeyError(name)
+        return _DS(self._v)
+
+
+def motion(t, amp):
+    rng = np.random.default_rng(5)
+    return np.stack([amp * np.sin(2 * np.pi * f * t + p) for f, p in zip((0.7, 1.1, 0.4), rng.uniform(0, 6, 3))], 1)
+
+
+@pytest.mark.parametrize("amp,perm,expected", [(0.5, [0, 1, 2], True), (0.5, [1, 0, 2], False),
+                                               (0.001, [0, 1, 2], None)])
+def test_axis_correlation_pass_fail_inconclusive(amp, perm, expected):
+    fs, T = 1000.0, 60.0
+    t = np.arange(int(fs * T)) / fs
+    body = motion(t, amp)
+    rng = np.random.default_rng(2)
+    gyro = body[:, perm] + 0.02 * rng.standard_normal(body.shape)      # perm != identity: wrong rotation
+    segs = [(0, 20000), (20500, 40000), (40100, len(t))]                # gappy: no single long segment
+    gs = nd.GyroStream(t, gyro, np.zeros(gyro.shape, np.int16), fs, fs, 1, segs, 0.01)
+    tl = np.arange(0, T, 1 / 200.0)
+    u = FakeULog(tl, motion(tl, amp) + 0.002 * rng.standard_normal((len(tl), 3)))
+    c = nd.axis_correlation(u, gs)
+    assert c["diagonal_ok"] is expected
