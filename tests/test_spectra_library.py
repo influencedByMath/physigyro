@@ -199,3 +199,16 @@ def test_vehicle_spectra_power_means():
     assert np.allclose(vs[0]["P"], (2.0 + 100.0) / 2) and np.allclose(vs[1]["P"], 100.0)
     assert vs[0]["motor_hz"] == pytest.approx([101.0, 111.0]) and vs[1]["motor_hz"] is None
     assert vs[0]["n_windows"] == 2
+
+
+class FakeNoLandDetector:
+    start_timestamp = 0
+    last_timestamp = 100_000_000
+
+    def get_dataset(self, name):
+        raise IndexError("list index out of range")             # pyulog: topic not in the log
+
+
+def test_airborne_windows_without_land_detector_is_explicit():
+    with pytest.raises(nd.MissingTopic, match="vehicle_land_detected"):
+        nd.airborne_windows(FakeNoLandDetector())

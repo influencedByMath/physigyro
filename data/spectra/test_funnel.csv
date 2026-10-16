@@ -1,0 +1,8 @@
+stage,n_in,n_removed,n_out,reasons
+half vehicles (screened log each),105,0,105,{}
+downloaded and parsed,105,0,105,{}
+log gates Q4-Q7 (and Q10 topic),105,51,54,"{'Q4_dropout': 41, 'Q4_no_long_segment': 5, 'Q7_unverified': 3, 'Q5_rate': 1, 'Q10_no_land_detector': 1}"
+at least one good window (newest log),54,11,43,{'no_good_window': 11}
+fallback D-24: zero steady windows -> older FIFO log,6,6,0,"{'fallback_log_no_good_window': 4, 'fallback_no_older_fifo_log': 2}"
+"windows: gates Q10, Q9, Q13",7803,4392,3411,"{'Q10_unsteady': 3608, 'Q13_few_averages': 784}"
+windows: overlap and cap Q14 (3 per vehicle),3411,3299,112,{'not_selected': 3299}

@@ -212,7 +212,10 @@ def airborne_windows(ulog, W=10.0, t_edge=5.0, step=1.0):
     """All in-air windows on the grid of steady_windows, with their gate-Q10 metrics and NO limits
     (the pilot study looks at the distributions before any limit is chosen). No windows if the vehicle was
     never airborne; MissingTopic if it flew but the rate setpoint (gate Q10 activity) was not logged."""
-    air = airborne_intervals(ulog)
+    try:
+        air = airborne_intervals(ulog)
+    except (IndexError, KeyError) as e:              # no land detector: airborne time unknown (gate Q10)
+        raise MissingTopic("vehicle_land_detected") from e
     if not air:
         return []
     try:

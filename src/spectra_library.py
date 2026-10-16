@@ -116,8 +116,8 @@ def process_log(path, vehicle_key, th):
         clip = np.concatenate([[0], np.cumsum((np.abs(gs.raw_counts) >= 32000).any(axis=1))])
         try:
             cands = nd.airborne_windows(u, W=th.window_s, t_edge=th.t_edge_s, step=1.0)
-        except nd.MissingTopic:                       # flew, but Q10 activity cannot be measured
-            rec["log_rejections"] = ["Q10_no_rate_setpoint"]
+        except nd.MissingTopic as e:                  # Q10 cannot be applied: no land detector or rate setpoint
+            rec["log_rejections"] = ["Q10_no_land_detector" if "land_detected" in str(e) else "Q10_no_rate_setpoint"]
             rec["seconds"] = round(time.perf_counter() - t_start, 1)
             return rec, arrays
         for w in cands:

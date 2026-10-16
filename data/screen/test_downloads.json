@@ -1,0 +1,632 @@
+{
+ "1e09e5d1-abff-457d-8384-39ddc880af7e": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\1e09e5d1-abff-457d-8384-39ddc880af7e.ulg",
+  "mb": 29.1,
+  "seconds": 56.8
+ },
+ "e89f6a31-e041-49c1-901d-7792a65748d3": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\e89f6a31-e041-49c1-901d-7792a65748d3.ulg",
+  "mb": 34.4,
+  "seconds": 23.1
+ },
+ "1bd82430-2826-42c6-961f-410361a1d662": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\1bd82430-2826-42c6-961f-410361a1d662.ulg",
+  "mb": 31.6,
+  "seconds": 53.0
+ },
+ "7278db06-fdf7-4d9e-af0c-b768220888e6": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\7278db06-fdf7-4d9e-af0c-b768220888e6.ulg",
+  "mb": 87.0,
+  "seconds": 28.4
+ },
+ "97d07c09-9614-49e8-9adc-a63edf94d590": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\97d07c09-9614-49e8-9adc-a63edf94d590.ulg",
+  "mb": 38.5,
+  "seconds": 32.8
+ },
+ "fb96ab97-cb4d-4b46-add1-1b642ddb098d": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\fb96ab97-cb4d-4b46-add1-1b642ddb098d.ulg",
+  "mb": 31.4,
+  "seconds": 9.6
+ },
+ "a7c968ba-abf2-4639-993f-c313ffcff58b": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\a7c968ba-abf2-4639-993f-c313ffcff58b.ulg",
+  "mb": 61.7,
+  "seconds": 36.4
+ },
+ "9bea6fa6-e769-4ba7-a40d-3f5d6f9cbf44": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\9bea6fa6-e769-4ba7-a40d-3f5d6f9cbf44.ulg",
+  "mb": 22.8,
+  "seconds": 28.0
+ },
+ "e688fe33-e68c-491a-8091-3ca02f7d41a2": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\e688fe33-e68c-491a-8091-3ca02f7d41a2.ulg",
+  "mb": 40.6,
+  "seconds": 26.5
+ },
+ "47c5fc1a-7224-49cb-905b-67aee6dc872f": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\47c5fc1a-7224-49cb-905b-67aee6dc872f.ulg",
+  "mb": 25.8,
+  "seconds": 34.9
+ },
+ "efab2adf-c0c3-4649-9097-a22ab3f80295": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\efab2adf-c0c3-4649-9097-a22ab3f80295.ulg",
+  "mb": 60.7,
+  "seconds": 21.3
+ },
+ "9dc1c21d-12b7-4d18-a3c2-22639d434728": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\9dc1c21d-12b7-4d18-a3c2-22639d434728.ulg",
+  "mb": 206.9,
+  "seconds": 141.2
+ },
+ "79e93bd8-c223-40e2-8a77-fb5d57c8ce84": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\79e93bd8-c223-40e2-8a77-fb5d57c8ce84.ulg",
+  "mb": 38.7,
+  "seconds": 26.0
+ },
+ "0b5ef8e4-a132-4738-962d-6c8c09be72ed": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\0b5ef8e4-a132-4738-962d-6c8c09be72ed.ulg",
+  "mb": 94.9,
+  "seconds": 81.5
+ },
+ "ddec3993-6a0e-4466-8a46-ba978fb67ed1": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\ddec3993-6a0e-4466-8a46-ba978fb67ed1.ulg",
+  "mb": 73.5,
+  "seconds": 44.7
+ },
+ "fdfe3483-24fc-406f-8066-b579810eb696": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\fdfe3483-24fc-406f-8066-b579810eb696.ulg",
+  "mb": 49.5,
+  "seconds": 22.4
+ },
+ "d26ad673-6bcf-43e3-b104-de66e003fd58": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\d26ad673-6bcf-43e3-b104-de66e003fd58.ulg",
+  "mb": 107.4,
+  "seconds": 41.7
+ },
+ "73af4ad7-5337-4a49-9711-5c311c438741": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\73af4ad7-5337-4a49-9711-5c311c438741.ulg",
+  "mb": 32.2,
+  "seconds": 20.2
+ },
+ "588d1309-3158-4bd9-8fe5-338980cf6b48": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\588d1309-3158-4bd9-8fe5-338980cf6b48.ulg",
+  "mb": 52.4,
+  "seconds": 19.3
+ },
+ "e7313ad6-11c6-4ada-bdc3-cac5b4c93456": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\e7313ad6-11c6-4ada-bdc3-cac5b4c93456.ulg",
+  "mb": 33.1,
+  "seconds": 23.8
+ },
+ "f99d8779-a914-457a-8a4e-e87559616aeb": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\f99d8779-a914-457a-8a4e-e87559616aeb.ulg",
+  "mb": 194.6,
+  "seconds": 71.1
+ },
+ "c7d83413-2cbb-400b-a0a9-b89f82c7879a": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c7d83413-2cbb-400b-a0a9-b89f82c7879a.ulg",
+  "mb": 30.6,
+  "seconds": 46.1
+ },
+ "42efce20-c6dd-4477-9d56-58738a642992": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\42efce20-c6dd-4477-9d56-58738a642992.ulg",
+  "mb": 20.4,
+  "seconds": 10.4
+ },
+ "755239e3-c5c6-4deb-912d-3fa3dc72a9c0": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\755239e3-c5c6-4deb-912d-3fa3dc72a9c0.ulg",
+  "mb": 28.9,
+  "seconds": 25.2
+ },
+ "b050b6b7-de59-43e5-bdfc-e656abe9fea2": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\b050b6b7-de59-43e5-bdfc-e656abe9fea2.ulg",
+  "mb": 27.9,
+  "seconds": 16.2
+ },
+ "6727745b-0d13-4c30-a6a3-fc9649ef370f": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\6727745b-0d13-4c30-a6a3-fc9649ef370f.ulg",
+  "mb": 43.2,
+  "seconds": 33.7
+ },
+ "c8f04f71-5599-4f34-bfa4-6ee2ae57774b": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c8f04f71-5599-4f34-bfa4-6ee2ae57774b.ulg",
+  "mb": 35.9,
+  "seconds": 19.5
+ },
+ "2fa20ac7-60df-4ecd-b643-aca926b936a9": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\2fa20ac7-60df-4ecd-b643-aca926b936a9.ulg",
+  "mb": 86.9,
+  "seconds": 40.7
+ },
+ "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4.ulg",
+  "mb": 22.8,
+  "seconds": 45.3
+ },
+ "2705973a-b217-4f2d-b8df-ae2320a21375": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\2705973a-b217-4f2d-b8df-ae2320a21375.ulg",
+  "mb": 76.3,
+  "seconds": 60.7
+ },
+ "a515d8f0-9b7b-4a3d-a212-0abfb96439fe": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\a515d8f0-9b7b-4a3d-a212-0abfb96439fe.ulg",
+  "mb": 76.6,
+  "seconds": 220.7
+ },
+ "bab9d88e-84dc-4847-9d81-15e8a325ec4f": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\bab9d88e-84dc-4847-9d81-15e8a325ec4f.ulg",
+  "mb": 50.9,
+  "seconds": 22.6
+ },
+ "86296de8-8883-4007-b82e-90c76a9d9b7d": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\86296de8-8883-4007-b82e-90c76a9d9b7d.ulg",
+  "mb": 210.1,
+  "seconds": 116.6
+ },
+ "3deafd26-f321-4b8a-ac05-a4bd02b07d9e": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\3deafd26-f321-4b8a-ac05-a4bd02b07d9e.ulg",
+  "mb": 137.1,
+  "seconds": 398.6
+ },
+ "8c6f7526-f072-4c75-ad9e-ed3da6560de2": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\8c6f7526-f072-4c75-ad9e-ed3da6560de2.ulg",
+  "mb": 214.5,
+  "seconds": 139.8
+ },
+ "c10c0a91-2d9a-4b9b-a659-03bb7749b776": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c10c0a91-2d9a-4b9b-a659-03bb7749b776.ulg",
+  "mb": 26.9,
+  "seconds": 9.1
+ },
+ "b98012f4-0cee-4c44-9244-7274556249f0": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\b98012f4-0cee-4c44-9244-7274556249f0.ulg",
+  "mb": 37.0,
+  "seconds": 12.9
+ },
+ "a17352c6-2805-4c2b-a1de-9d051179fc49": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\a17352c6-2805-4c2b-a1de-9d051179fc49.ulg",
+  "mb": 15.9,
+  "seconds": 7.5
+ },
+ "bd962a64-33da-4b5a-9cb3-5b6f81e3c65a": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\bd962a64-33da-4b5a-9cb3-5b6f81e3c65a.ulg",
+  "mb": 12.6,
+  "seconds": 14.4
+ },
+ "c0526df9-d81c-4d55-bf1b-cee08758fab7": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c0526df9-d81c-4d55-bf1b-cee08758fab7.ulg",
+  "mb": 27.8,
+  "seconds": 13.9
+ },
+ "83bc7777-a99b-44fd-a2aa-0db1342c50ea": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\83bc7777-a99b-44fd-a2aa-0db1342c50ea.ulg",
+  "mb": 17.4,
+  "seconds": 11.2
+ },
+ "1bd88e9a-c9c9-4b11-b9d1-0470d952cf5f": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\1bd88e9a-c9c9-4b11-b9d1-0470d952cf5f.ulg",
+  "mb": 52.5,
+  "seconds": 48.1
+ },
+ "1a6e8946-58ef-44fe-8a2a-b1e09e337d78": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\1a6e8946-58ef-44fe-8a2a-b1e09e337d78.ulg",
+  "mb": 57.2,
+  "seconds": 13.9
+ },
+ "929b347b-6417-44f0-9bd4-600000d4e4f3": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\929b347b-6417-44f0-9bd4-600000d4e4f3.ulg",
+  "mb": 36.4,
+  "seconds": 9.7
+ },
+ "dbd58de2-cffa-4327-82ca-90a047595e85": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\dbd58de2-cffa-4327-82ca-90a047595e85.ulg",
+  "mb": 21.5,
+  "seconds": 47.9
+ },
+ "9e328a28-8d0f-46b6-b999-6594650f4c77": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\9e328a28-8d0f-46b6-b999-6594650f4c77.ulg",
+  "mb": 98.0,
+  "seconds": 31.3
+ },
+ "0754a50e-8d4e-45df-9d31-d8637127a920": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\0754a50e-8d4e-45df-9d31-d8637127a920.ulg",
+  "mb": 31.1,
+  "seconds": 10.4
+ },
+ "6ff05e7e-a381-473d-84c0-af43c39235c2": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\6ff05e7e-a381-473d-84c0-af43c39235c2.ulg",
+  "mb": 78.2,
+  "seconds": 22.2
+ },
+ "902c46c9-808d-42ce-9a21-0c20ecd99023": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\902c46c9-808d-42ce-9a21-0c20ecd99023.ulg",
+  "mb": 61.3,
+  "seconds": 32.1
+ },
+ "2aa2bda6-ae1b-41eb-bf8d-d65dbea885cf": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\2aa2bda6-ae1b-41eb-bf8d-d65dbea885cf.ulg",
+  "mb": 216.0,
+  "seconds": 146.3
+ },
+ "603b2aa6-5df3-4469-bd96-bea51fa258ea": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\603b2aa6-5df3-4469-bd96-bea51fa258ea.ulg",
+  "mb": 78.6,
+  "seconds": 20.0
+ },
+ "f5af01aa-f763-49c9-a87a-b27d5891d61e": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\f5af01aa-f763-49c9-a87a-b27d5891d61e.ulg",
+  "mb": 40.1,
+  "seconds": 23.0
+ },
+ "78039e95-cf04-4635-ae75-e4db9c0ef92d": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\78039e95-cf04-4635-ae75-e4db9c0ef92d.ulg",
+  "mb": 45.3,
+  "seconds": 17.7
+ },
+ "9b36955b-5cf1-4b96-bd0d-445ac9231ea0": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\9b36955b-5cf1-4b96-bd0d-445ac9231ea0.ulg",
+  "mb": 24.5,
+  "seconds": 25.0
+ },
+ "ceb1a318-607a-485d-b162-363393042a49": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\ceb1a318-607a-485d-b162-363393042a49.ulg",
+  "mb": 56.6,
+  "seconds": 14.0
+ },
+ "7b48dfd8-d5bb-4072-be66-d3c8206015ad": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\7b48dfd8-d5bb-4072-be66-d3c8206015ad.ulg",
+  "mb": 15.2,
+  "seconds": 7.5
+ },
+ "5d9029d5-9e5d-4e1c-925d-97438ae16914": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\5d9029d5-9e5d-4e1c-925d-97438ae16914.ulg",
+  "mb": 138.5,
+  "seconds": 93.0
+ },
+ "8527522c-79c8-4619-864e-75998efaca36": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\8527522c-79c8-4619-864e-75998efaca36.ulg",
+  "mb": 44.1,
+  "seconds": 17.7
+ },
+ "635343ee-bd52-416f-98a1-4f9ec9662fce": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\635343ee-bd52-416f-98a1-4f9ec9662fce.ulg",
+  "mb": 62.2,
+  "seconds": 39.5
+ },
+ "9157427c-8b9b-4f56-ad35-30a9739dc214": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\9157427c-8b9b-4f56-ad35-30a9739dc214.ulg",
+  "mb": 74.0,
+  "seconds": 43.3
+ },
+ "b0c97dcd-f4fb-412c-9fe5-73b3ec766878": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\b0c97dcd-f4fb-412c-9fe5-73b3ec766878.ulg",
+  "mb": 48.7,
+  "seconds": 29.7
+ },
+ "b3ca33f5-2387-424b-b35b-671e2bd09731": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\b3ca33f5-2387-424b-b35b-671e2bd09731.ulg",
+  "mb": 203.7,
+  "seconds": 103.2
+ },
+ "2485fd71-0182-4bb1-bca3-ce77e70d8f8c": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\2485fd71-0182-4bb1-bca3-ce77e70d8f8c.ulg",
+  "mb": 100.9,
+  "seconds": 23.7
+ },
+ "4979d336-a44d-4877-b7a1-8ca47067137e": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\4979d336-a44d-4877-b7a1-8ca47067137e.ulg",
+  "mb": 73.7,
+  "seconds": 84.4
+ },
+ "071020cc-f97a-4449-8d0a-82a27b713a07": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\071020cc-f97a-4449-8d0a-82a27b713a07.ulg",
+  "mb": 59.6,
+  "seconds": 76.6
+ },
+ "73701d7c-8116-4165-8a17-fc68aa59b0fd": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\73701d7c-8116-4165-8a17-fc68aa59b0fd.ulg",
+  "mb": 12.0,
+  "seconds": 5.7
+ },
+ "eb43d02a-857a-4306-b968-21fbf12c4bcd": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\eb43d02a-857a-4306-b968-21fbf12c4bcd.ulg",
+  "mb": 52.6,
+  "seconds": 22.6
+ },
+ "d10980b0-633e-4068-9c2a-dd362befc2aa": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\d10980b0-633e-4068-9c2a-dd362befc2aa.ulg",
+  "mb": 135.7,
+  "seconds": 76.3
+ },
+ "c30661df-a8c7-4562-ae48-08abdf3182da": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c30661df-a8c7-4562-ae48-08abdf3182da.ulg",
+  "mb": 37.8,
+  "seconds": 20.3
+ },
+ "9f1244ca-b93f-4fb5-bbb3-dcae1258874e": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\9f1244ca-b93f-4fb5-bbb3-dcae1258874e.ulg",
+  "mb": 117.6,
+  "seconds": 78.5
+ },
+ "91929571-1792-43de-81df-ef993f2b4782": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\91929571-1792-43de-81df-ef993f2b4782.ulg",
+  "mb": 302.9,
+  "seconds": 144.0
+ },
+ "9395fb23-6a17-4921-b85e-c03861cea395": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\9395fb23-6a17-4921-b85e-c03861cea395.ulg",
+  "mb": 59.0,
+  "seconds": 44.1
+ },
+ "05d6dc3e-eadf-4d5b-bca6-f844c60ba316": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\05d6dc3e-eadf-4d5b-bca6-f844c60ba316.ulg",
+  "mb": 40.6,
+  "seconds": 25.2
+ },
+ "5feaee66-d3f8-449a-9c77-4bf0d599ed93": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\5feaee66-d3f8-449a-9c77-4bf0d599ed93.ulg",
+  "mb": 199.2,
+  "seconds": 91.6
+ },
+ "b36882b7-f548-4e49-93a9-9b1d9f522bb8": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\b36882b7-f548-4e49-93a9-9b1d9f522bb8.ulg",
+  "mb": 151.3,
+  "seconds": 147.9
+ },
+ "6a5a3c49-e693-41de-8a97-6bca11c6a3f8": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\6a5a3c49-e693-41de-8a97-6bca11c6a3f8.ulg",
+  "mb": 222.5,
+  "seconds": 121.6
+ },
+ "37d0d2da-d76d-4dfe-9fee-460193ac1101": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\37d0d2da-d76d-4dfe-9fee-460193ac1101.ulg",
+  "mb": 178.0,
+  "seconds": 67.4
+ },
+ "fd4abc31-d03e-4b1f-9174-4835d7d3f92c": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\fd4abc31-d03e-4b1f-9174-4835d7d3f92c.ulg",
+  "mb": 157.9,
+  "seconds": 142.8
+ },
+ "8321ba94-c614-4aa8-963a-16334157765c": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\8321ba94-c614-4aa8-963a-16334157765c.ulg",
+  "mb": 72.1,
+  "seconds": 59.1
+ },
+ "ba958a4a-be6f-4e33-ad42-1d640678a83f": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\ba958a4a-be6f-4e33-ad42-1d640678a83f.ulg",
+  "mb": 67.0,
+  "seconds": 29.2
+ },
+ "eb3ab953-5df2-4cf3-9a7c-7b56e8500e21": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\eb3ab953-5df2-4cf3-9a7c-7b56e8500e21.ulg",
+  "mb": 302.7,
+  "seconds": 127.6
+ },
+ "c963361e-7571-4e8c-845a-ff973b1453a1": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c963361e-7571-4e8c-845a-ff973b1453a1.ulg",
+  "mb": 20.6,
+  "seconds": 14.4
+ },
+ "246fbc6a-01d6-4d31-a172-e50e2ebf3b42": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\246fbc6a-01d6-4d31-a172-e50e2ebf3b42.ulg",
+  "mb": 29.7,
+  "seconds": 35.9
+ },
+ "76ab5545-e4e4-49ac-9603-ba8d5b69f46b": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\76ab5545-e4e4-49ac-9603-ba8d5b69f46b.ulg",
+  "mb": 99.1,
+  "seconds": 50.4
+ },
+ "5baae823-a5fa-4b5d-97a8-61e531df3952": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\5baae823-a5fa-4b5d-97a8-61e531df3952.ulg",
+  "mb": 10.7,
+  "seconds": 14.9
+ },
+ "c479122d-7c3d-4a36-97a1-3b6172a2ff97": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c479122d-7c3d-4a36-97a1-3b6172a2ff97.ulg",
+  "mb": 35.7,
+  "seconds": 16.1
+ },
+ "11941f71-6c8d-4b34-ad4a-4b23b127ee50": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\11941f71-6c8d-4b34-ad4a-4b23b127ee50.ulg",
+  "mb": 41.6,
+  "seconds": 38.1
+ },
+ "c2e156d6-bb47-4f0e-917d-96b0d94d138d": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c2e156d6-bb47-4f0e-917d-96b0d94d138d.ulg",
+  "mb": 60.1,
+  "seconds": 49.8
+ },
+ "4695924f-fc7c-4513-8918-9e70a412dfb3": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\4695924f-fc7c-4513-8918-9e70a412dfb3.ulg",
+  "mb": 108.7,
+  "seconds": 61.6
+ },
+ "48506b01-5111-4f18-9eb7-92623e0574d8": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\48506b01-5111-4f18-9eb7-92623e0574d8.ulg",
+  "mb": 93.3,
+  "seconds": 41.2
+ },
+ "72b9c2e1-8593-4210-9ce9-14548987dd3e": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\72b9c2e1-8593-4210-9ce9-14548987dd3e.ulg",
+  "mb": 47.5,
+  "seconds": 28.1
+ },
+ "5331a093-7608-413c-a069-23ad33c65a8c": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\5331a093-7608-413c-a069-23ad33c65a8c.ulg",
+  "mb": 20.9,
+  "seconds": 16.4
+ },
+ "c479ca3b-f3bd-43e0-8c45-62816bda98ae": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\c479ca3b-f3bd-43e0-8c45-62816bda98ae.ulg",
+  "mb": 13.9,
+  "seconds": 10.8
+ },
+ "78795925-80d6-4b90-9fff-23913cd08fc1": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\78795925-80d6-4b90-9fff-23913cd08fc1.ulg",
+  "mb": 23.7,
+  "seconds": 55.2
+ },
+ "72ad9e10-be3a-4420-a2c7-decd49ab271f": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\72ad9e10-be3a-4420-a2c7-decd49ab271f.ulg",
+  "mb": 22.8,
+  "seconds": 10.6
+ },
+ "82099c94-353f-4bf5-9ab2-74d2507b3607": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\82099c94-353f-4bf5-9ab2-74d2507b3607.ulg",
+  "mb": 10.4,
+  "seconds": 7.2
+ },
+ "4a4630f1-a7ac-4d80-9569-b131d80263be": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\4a4630f1-a7ac-4d80-9569-b131d80263be.ulg",
+  "mb": 58.2,
+  "seconds": 21.4
+ },
+ "ba1252f8-d172-4cf1-b5fd-2386d3deaa2a": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\ba1252f8-d172-4cf1-b5fd-2386d3deaa2a.ulg",
+  "mb": 63.4,
+  "seconds": 81.2
+ },
+ "066f5e62-003c-444d-b51f-d87b95c4756a": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\066f5e62-003c-444d-b51f-d87b95c4756a.ulg",
+  "mb": 46.3,
+  "seconds": 16.2
+ },
+ "420ac01c-e243-4610-90ea-24ac1bc86f54": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\420ac01c-e243-4610-90ea-24ac1bc86f54.ulg",
+  "mb": 53.1,
+  "seconds": 20.6
+ },
+ "50199237-5ac0-453f-809d-139a90d2a03d": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\50199237-5ac0-453f-809d-139a90d2a03d.ulg",
+  "mb": 24.0,
+  "seconds": 12.2
+ },
+ "1b988e79-6544-4552-9be3-316fdd2e8fb4": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\1b988e79-6544-4552-9be3-316fdd2e8fb4.ulg",
+  "mb": 172.3,
+  "seconds": 121.5
+ },
+ "808d3c4f-7744-42d1-ac7e-e66f0af6e25c": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\808d3c4f-7744-42d1-ac7e-e66f0af6e25c.ulg",
+  "mb": 55.0,
+  "seconds": 37.2
+ },
+ "1388d408-ef0c-42a9-a031-02b6b6dfba4d": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\1388d408-ef0c-42a9-a031-02b6b6dfba4d.ulg",
+  "mb": 49.7,
+  "seconds": 52.0
+ },
+ "df1e6fd3-c0fc-4786-aa8a-7fbe4fc06d54": {
+  "ok": true,
+  "path": "D:\\research&thesis\\data\\raw_logs\\df1e6fd3-c0fc-4786-aa8a-7fbe4fc06d54.ulg",
+  "mb": 88.0,
+  "seconds": 21.7
+ }
+}
