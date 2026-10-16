@@ -212,3 +212,14 @@ class FakeNoLandDetector:
 def test_airborne_windows_without_land_detector_is_explicit():
     with pytest.raises(nd.MissingTopic, match="vehicle_land_detected"):
         nd.airborne_windows(FakeNoLandDetector())
+
+
+def test_clip_count_is_per_segment_and_survives_backward_time_jumps():
+    """Review finding LOW-4: sample times are fitted per segment, so the concatenation can step backwards."""
+    t = np.r_[np.arange(0, 10, 0.5), np.arange(8, 18, 0.5)]           # second segment starts BEFORE the first ends
+    counts = np.zeros((len(t), 3), dtype=np.int16)
+    counts[[2, 25], 0] = 32767                                         # one clipped sample in each segment
+    gs = nd.GyroStream(t, np.zeros((len(t), 3)), counts, 2.0, 2.0, 1, [(0, 20), (20, 40)], 0.0)
+    assert nd.clip_count(gs, 0.0, 9.0) == 1                            # t=1.0 (seg 1); seg 2 sample t=10.5 is outside
+    assert nd.clip_count(gs, 0.0, 11.0) == 2
+    assert nd.clip_count(gs, 12.0, 20.0) == 0

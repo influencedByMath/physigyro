@@ -113,7 +113,6 @@ def process_log(path, vehicle_key, th):
     arrays = {}
     if not rej:
         nper = dq.nperseg_for(gs.fs_measured, th.resolution_hz)
-        clip = np.concatenate([[0], np.cumsum((np.abs(gs.raw_counts) >= 32000).any(axis=1))])
         try:
             cands = nd.airborne_windows(u, W=th.window_s, t_edge=th.t_edge_s, step=1.0)
         except nd.MissingTopic as e:                  # Q10 cannot be applied: no land detector or rate setpoint
@@ -122,8 +121,7 @@ def process_log(path, vehicle_key, th):
             return rec, arrays
         for w in cands:
             w["n_averages"] = nd.welch_count(gs, w["t0"], w["t1"], nper)
-            i0, i1 = np.searchsorted(gs.t, [w["t0"], w["t1"]])   # all samples of the window (stricter than PSD)
-            w["clipped"] = int(clip[i1] - clip[i0])
+            w["clipped"] = nd.clip_count(gs, w["t0"], w["t1"])     # all samples of the window, per segment
         rec.update(nperseg=nper, n_candidates=len(cands), window_reasons=dict(window_reasons(cands, th)))
         for i, w in enumerate(select_windows(cands, th)):
             f, P, navg, _ = nd.window_psd(gs, w["t0"], w["t1"], nperseg=nper)

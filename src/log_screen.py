@@ -20,6 +20,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 
@@ -248,6 +249,10 @@ def download_log(entry, dest_dir, opener=urllib.request.urlopen, chunk=1 << 20, 
                         if not c:
                             break
                         fh.write(c)
+        except urllib.error.HTTPError as e:      # 416: nothing left to send; the server states the full size
+            cr = (getattr(e, "headers", None) or {}).get("Content-Range") or ""
+            if e.code == 416 and cr.split("/")[-1].isdigit():
+                total = int(cr.split("/")[-1])
         except OSError:                          # dropped connection, timeout: resume on the next try
             pass
         time.sleep(pause_s)

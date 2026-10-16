@@ -302,3 +302,26 @@ def test_run_screen_order_limit_is_a_resume_safe_prefix(tmp_path, monkeypatch):
     again = ls.run_screen(order, str(out), target_fifo_vehicles=None, order_limit=12, workers=2, pause_s=0.0)
     assert again["screened_now"] == 0 and res["total_rows"] == 12
     assert sorted(json.loads(x)["log_id"] for x in out.read_text().splitlines()) == sorted(f"L{i}" for i in range(12))
+
+
+def test_download_finishes_a_complete_part_file_on_http_416(tmp_path):
+    """Review finding LOW-3: interrupted after the last byte but before the rename -> the resume asks for
+    bytes=<size>-, the server answers 416 'bytes */<size>'; the complete .part must be accepted, not retried forever."""
+    part = tmp_path / "done.ulg.part"
+    part.write_bytes(ULOG_BYTES)
+
+    def http_416(req, timeout):
+        raise urllib.error.HTTPError(req.full_url, 416, "Range Not Satisfiable",
+                                     {"Content-Range": f"bytes */{len(ULOG_BYTES)}"}, None)
+    path = ls.download_log(_entry(log_id="done"), str(tmp_path), opener=http_416, pause_s=0.0, max_tries=2)
+    assert open(path, "rb").read() == ULOG_BYTES and not part.exists()
+
+
+def test_download_416_with_wrong_size_is_not_accepted(tmp_path):
+    (tmp_path / "bad.ulg.part").write_bytes(ULOG_BYTES[:100])
+
+    def http_416(req, timeout):
+        raise urllib.error.HTTPError(req.full_url, 416, "Range Not Satisfiable",
+                                     {"Content-Range": f"bytes */{len(ULOG_BYTES)}"}, None)
+    with pytest.raises(IOError):
+        ls.download_log(_entry(log_id="bad"), str(tmp_path), opener=http_416, pause_s=0.0, max_tries=2)

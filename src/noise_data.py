@@ -268,6 +268,17 @@ def welch_count(gs: GyroStream, t0, t1, nperseg):
     return int(n)
 
 
+def clip_count(gs: GyroStream, t0, t1, clip_counts=32000):
+    """Gate Q9: clipped samples (any axis at or beyond clip_counts) with t0 <= t < t1, counted per gap-free segment
+    (sample times are fitted per segment, so the concatenated times can step backwards between segments)."""
+    n = 0
+    for a, b in gs.segments:
+        i0, i1 = np.searchsorted(gs.t[a:b], [t0, t1])
+        if i1 > i0:
+            n += int((np.abs(gs.raw_counts[a + i0:a + i1]) >= clip_counts).any(axis=1).sum())
+    return n
+
+
 def axis_correlation(u, gs, f_motion=5.0, edge_s=1.0, min_std=0.03, min_seconds=10.0):
     """Gate Q7 check: 3x3 correlation of the FIFO body axes (rows) with the firmware's logged body rate
     vehicle_angular_velocity (columns), both low-passed to flight motion (zero-phase, f_motion Hz).
