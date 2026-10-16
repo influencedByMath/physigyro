@@ -81,7 +81,7 @@ def funnel(recs, n_vehicles, lib=None, fb_rows=None):
     D-24); ``fb_rows``: fallback search results by vehicle."""
     lib = recs if lib is None else lib
     F = dq.Funnel()
-    F.add("fit-half vehicles (screened log each)", n_vehicles, Counter())
+    F.add("half vehicles (screened log each)", n_vehicles, Counter())
     parsed = [r for r in recs if r["log_rejections"] != ["error"]]
     errs = Counter("not_downloaded" if "No such file" in r.get("error", "") or "FileNotFound" in r.get("error", "")
                    else "error" for r in recs if r["log_rejections"] == ["error"])
@@ -176,7 +176,7 @@ def run_fallback(recs, half):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["fit"], default="fit")   # test half: only after Part 2 (author)
+    ap.add_argument("--half", choices=["fit", "test"], default="fit")   # test half: author go-ahead 2026-10-16
     a = ap.parse_args()
     half = a.half
     os.makedirs(os.path.join(OUT, f"{half}_native"), exist_ok=True)

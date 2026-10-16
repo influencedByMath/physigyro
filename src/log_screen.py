@@ -367,6 +367,7 @@ def main(argv=None):
     sub.add_parser("summary")
     sub.add_parser("download-pilot")
     sub.add_parser("download-fit")
+    sub.add_parser("download-test")                # author go-ahead 2026-10-16 (after the fit half was finished)
     a = ap.parse_args(argv)
     if a.cmd == "fetch-index":
         print(json.dumps(fetch_index(), indent=1))
@@ -395,16 +396,17 @@ def main(argv=None):
         with open(os.path.join(ROOT, "data", "screen", "pilot_downloads.json"), "w") as fh:
             json.dump(res, fh, indent=1)
         print(f"{sum(r['ok'] for r in res.values())} of {len(res)} pilot logs downloaded")
-    elif a.cmd == "download-fit":                  # every fit-half vehicle of split.csv (never the test half)
+    elif a.cmd in ("download-fit", "download-test"):   # every vehicle of one half of split.csv
         import csv
+        half = a.cmd.split("-")[1]
         with open(SCREEN_JSONL) as fh:
             by_id = {r["log_id"]: r for r in (json.loads(x) for x in fh if x.strip())}
         with open(os.path.join(ROOT, "data", "screen", "split.csv"), newline="") as fh:
-            entries = half_entries(list(csv.DictReader(fh)), by_id, "fit")
+            entries = half_entries(list(csv.DictReader(fh)), by_id, half)
         res = download_many(entries, os.path.join(ROOT, "data", "raw_logs"))
-        with open(os.path.join(ROOT, "data", "screen", "fit_downloads.json"), "w") as fh:
+        with open(os.path.join(ROOT, "data", "screen", f"{half}_downloads.json"), "w") as fh:
             json.dump(res, fh, indent=1)
-        print(f"{sum(r['ok'] for r in res.values())} of {len(res)} fit-half logs downloaded")
+        print(f"{sum(r['ok'] for r in res.values())} of {len(res)} {half}-half logs downloaded")
 
 
 if __name__ == "__main__":
