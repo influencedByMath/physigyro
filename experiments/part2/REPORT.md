@@ -242,7 +242,7 @@ Status 2026-10-15. Everything is fit half only; the test half is not downloaded.
 
 ## 13. Final Part 2b results (after D-26 and D-27)
 
-All results are fit half only; the test half has not been downloaded.
+All results in this section are fit half only; the test half is in Section 15.
 
 **Model fits** (`model_fits.json`):
 - **Fit error:** median 3.31 dB with the fixed robust floor (Welch noise 0.36 dB).
@@ -270,18 +270,73 @@ The two IIM chips swapped compared with the free-floor run. With only 2 vehicles
   - frequency 0.65 % (log10 sd 0.0028). This rests on only 4 vehicles with valid RPM and at least 2 windows, a thin basis that is noted here;
   - height 1.1 dB (log10 sd 0.108, 49 vehicles).
 - **Realism, in-sample:** real-vs-synthetic AUC **0.495** (absolute levels) and **0.47** (shapes). 0.5 means the classifier cannot tell them apart. Band quantiles differ by a median of 2.4-2.8 dB (max 5.5-8.4 dB).
-- **Leave one vehicle out:** the held-out vehicle's nearest synthetic spectrum is 7.7 dB away, its nearest real vehicle 8.2 dB. **76 %** of vehicles are at least as close to a synthetic spectrum as to another real one, so the generator generalises about as well as a new real drone would.
-- **Novelty:** synthetic spectra are 10.2 dB from their source vehicle, farther than real nearest neighbours (8.2 dB). They are not copies.
+- **Leave one vehicle out** (corrected 2026-10-16 after the independent review; equal sample sizes, the jitter re-estimated without the held-out vehicle): the held-out vehicle's nearest synthetic spectrum is **8.36 dB** away, its nearest real vehicle **8.24 dB**. **56 %** of vehicles are at least as close to a synthetic spectrum as to another real one, so the generator generalises about as well as a new real drone. *The first version said 7.7 dB and 76 %: it compared the nearest of 200 synthetic draws with the nearest of 49 real vehicles, which favours the generator by construction.* The chip low-pass choice still used all fit vehicles.
+- **Novelty** (corrected): synthetic spectra are 10.2 dB from their own source vehicle, against a typical (median pairwise) distance of 15.5 dB between two real vehicles. **They are partly copies:** the peak sets are near-copies of the source (frequency jitter 0.65 %), and only the floor is a new draw. *The first version compared with nearest-neighbour distances and wrongly said "not copies".*
 - **Remaining limitation:** the median of non-ICM spectra at 20-100 Hz is still **+4.4 dB** high (ICM-4268x +1.2 dB; above 100 Hz +0.4 / +0.7 dB). The median of synthetic spectra is also smoother at the motor peak, because peak positions vary between vehicles.
 
 **Fig. 2:** `figures/fig2_real_vs_synthetic.png` / `.pdf`. Real vs synthetic, median and 10-90 % band, one panel for ICM-4268x and one for the other chips. Palette validated.
 
 **Test quality:**
 - Mutation checks: clustering 10/10 caught, generator 14/14 caught, Jacobian 3/3 caught.
-- 196 tests pass.
+- 200 tests pass (after the review fixes).
 
 ## 14. Open items for later phases (no decision needed now)
 
 - The chip delay of ICM-4268x drones enters the loop model as a T_d uncertainty (D-25). The datasheet VERIFY item stays open.
 - **The model misfit at the motor fundamental** (95-130 Hz, about 3 dB). A future refinement could model the motor peak as a sum of 4 peaks at the per-motor RPM with a speed spread. Out of scope now.
-- **Go/no-go:** the fit half gives 52 usable vehicles. The projected total of about 101 (92-111) meets the target of 100 only once the test half is processed. That waits for the author.
+- **Go/no-go:** see Section 15 (total 95 usable vehicles).
+
+
+---
+
+## 15. Test half and go/no-go (author go-ahead 2026-10-16)
+
+The test half was processed with exactly the frozen gates and rules (D-23 to D-27), including the fallback with the D-25 Q3 rule. Nothing was fitted or tuned on it.
+
+| Stage | In | Out | Reasons |
+|---|---|---|---|
+| Test-half vehicles | 105 | 105 | all 105 downloaded (7.6 GB) and parsed |
+| Log gates | 105 | 54 | Q4 dropout 41, Q4 no gap-free piece 5, Q7 unverified 3, Q5 rate 1, Q10 no land detector 1 |
+| At least one good window | 54 | 43 | 11 without a good window |
+| Fallback | 6 triggered | 0 recovered | 4 fallback logs again without a good window, 2 without an older FIFO log |
+| **Usable** | | **43** | **112 windows** |
+
+**Go/no-go (THESIS 7.4.2 H):**
+
+| Half | Usable vehicles | Windows |
+|---|---|---|
+| Fit | 52 of 111 | 142 |
+| Test | 43 of 105 | 112 |
+| **Total** | **95** | **254** |
+
+**95 usable vehicles: GO on the minimum of 30, 5 short of the target of 100.** The test half alone (43) is above the minimum.
+
+**Two things found while processing the test half:**
+1. **Log 635343ee has no `vehicle_land_detected`.** It crashed the window search. It is now rejected with the reason code `Q10_no_land_detector` (tested). Without a land detector the airborne time is unknown, so the count is unchanged. The fit half had no such log.
+2. **3 test vehicles pass every gate except Q7_unverified** (board rotations 6, 8 and 12, which were never verified on data).
+   - The axis check needs gap-free pieces of at least 3 s. Two vehicles have none: about 2 % dropout spread over 380-450 short gaps, longest piece 1.8 s and 0.9 s.
+   - The third moved too little (roll 0.028 < 0.03 rad/s).
+   - **The rule was not changed after seeing the test half**, because that would be tuning on test data. With a check that worked on shorter pieces, the total could be up to 98.
+
+## 16. Independent code review (fresh reviewer, 2026-10-16)
+
+Read-only review of the whole `phase3` branch against `main`.
+
+| Severity | Finding | Status |
+|---|---|---|
+| CRITICAL / HIGH | none | - |
+| MEDIUM 1 | The leave-one-vehicle-out check compared the nearest of 200 synthetic draws with the nearest of 49 real vehicles, which favours the generator (share 0.76 vs 0.48 at equal sizes) | **Fixed:** equal sample sizes, 20 repeats, jitter without the held-out vehicle: 8.36 vs 8.24 dB, share 56 % (Section 13 corrected) |
+| MEDIUM 2 | The novelty claim compared a fixed-pair distance with a nearest-neighbour minimum; "not copies" holds only for the floor | **Fixed:** compared with the typical pairwise distance (10.2 vs 15.5 dB). Peak sets are stated as near-copies |
+| LOW 3 | A download interrupted after the last byte but before the rename fails forever with HTTP 416 | **Fixed:** 416 with `bytes */N` accepts a complete `.part` (2 tests) |
+| LOW 4 | The window clip count used one `searchsorted` over concatenated sample times, which can step backwards between segments | **Fixed:** counted per segment (test). Only 1 log (86296de8) has non-monotonic times, and it was rejected for dropout before any window was counted: no result changes |
+| LOW 5 | BIC gains treat Welch bins as independent, but neighbouring bins are correlated, so the gains are inflated | **Stated as a caveat.** The big chip terms (ICM-4268x, gains 979-3,138) are robust; IIM-42652 (2 vehicles, gain 248) is weakly supported |
+| LOW 6 | Stale "fit-half vehicles" funnel label; REPORT said the test half was not downloaded | **Fixed:** library reassembled (only the label changed; every other file is byte-identical); REPORT updated |
+
+The reviewer also verified as correct, among others:
+- the Welch average count and its run-time assert;
+- the analytic Jacobian;
+- the Q3 and fallback rules;
+- the split (no vehicle in the wrong half);
+- **no leakage:** no Part 2 analysis reads test-half files, and the processing code did not change between the fit and test builds;
+- resume safety, seeds and ordering;
+- the report numbers against the output files.

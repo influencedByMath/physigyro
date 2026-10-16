@@ -5,7 +5,7 @@
 > This is the base document for the whole project. Read it at the start of every work session.
 > Update **Section 17 (Progress tracker and session log)** at the end of every session.
 >
-> Last updated: 2026-10-15 (Day 18). Phase 3 on branch `phase3`: thresholds frozen (D-23); fit-half library built (39 of 84 vehicles usable); **stopped for author decisions** on the IMU-chip landmine, clustering unit, floor model and more data (`experiments/part2/REPORT.md` Section 5). Plan: `notes/phase3_plan.md`. Feasibility test: `experiments/feasibility/REPORT.md`
+> Last updated: 2026-10-16 (Day 19). **Phase 3 done** on branch `phase3` (not merged): 95 usable vehicles (52 fit + 43 test; minimum 30 met, target 100 missed by 5); no stable noise types, one generator with the IMU chip as covariate (Section 7.5.1); independent code review passed (no critical/high findings). Next: Phase 4 plan (`notes/phase4_plan.md`, waiting for the author). Reports: `experiments/part2/REPORT.md`, `experiments/pilot_study/REPORT.md`, `experiments/feasibility/REPORT.md`
 
 ---
 
@@ -657,6 +657,41 @@ The three parts are a broadband floor, motor harmonic peaks, and frame resonance
 
 **Sanity check:** synthetic spectra must look like real ones. Compare statistics and centroid plots.
 
+#### 7.5.1 Phase 3 results (2026-10-16; fit half for every choice, test half only processed)
+
+Details and all numbers: `experiments/part2/REPORT.md`. Decisions D-23 to D-27.
+
+- **Data:**
+  - Screen of the first 4,327 vehicles of the D-21 order: 272 with raw gyro FIFO (6.3 %).
+  - 216 vehicles with a board ID: **111 fit / 105 test**.
+  - Usable after all gates (and the D-24 fallback): **52 fit-half vehicles (142 windows) and 43 test-half vehicles (112 windows): 95 in total.**
+  - Most losses are logger dropouts (Q4: 44 fit, 41 test).
+- **No stable noise types:**
+  - PCA + k-means on one spectrum per vehicle, chip roll-off divided out: silhouette 0.26, bootstrap ARI 0.57. That fails the D-24 P3 rule (≥ 0.5 and ≥ 0.8).
+  - The only stable split (ARI 0.84) is the IMU chip: ICM-42688-P/42686-P drones lose about 3 decades of noise above 500 Hz on the chip itself. That is a hardware label, not a noise type (gate Q12).
+  - **So one generator for all spectra, with the chip as a covariate.**
+- **Parametric model:**
+  - fixed robust spline floor;
+  - Lorentzian peaks, with motor harmonics at RPM/60 where valid;
+  - one low-pass magnitude per chip model, kept only if the BIC gain is at least 10.
+  - Median fit error **3.31 dB** (Welch noise 0.36 dB); 2 of 52 spectra dropped (> 5 dB).
+- **Generator verdict:**
+  - The floor is a Gaussian per chip class; peak sets are resampled whole from real vehicles, with jitter.
+  - A classifier cannot tell synthetic from real spectra: cross-validated **AUC 0.495** (absolute levels), 0.47 (shapes).
+  - **Leave one vehicle out** (equal sample sizes): nearest synthetic 8.36 dB vs nearest real 8.24 dB, so it generalises about as well as a new real drone.
+- **Limitations** (to be stated in the paper):
+  1. A remaining **+4.4 dB bias at 20-100 Hz** for non-ICM chips (median synthetic vs real; ICM-4268x +1.2 dB).
+  2. **About 3 dB model misfit at the motor band** (95-130 Hz): several motors at slightly different, changing speeds make wider or split peaks than one Lorentzian.
+  3. The frequency jitter (0.65 %) rests on only **4 drones** with valid RPM and at least 2 windows. The synthetic peak sets are therefore near-copies of real ones; only the floor is a new draw.
+  4. **Small chip groups:** IIM-42652 and IIM-42653 have 2 vehicles each, ICM-42686-P 3. Their low-pass terms are weakly supported. Also, BIC treats Welch bins as independent, which inflates the gains.
+- **Also recorded:**
+  - The chip low-pass corner and order are not identifiable, so the ICM chip delay enters the loop model as a T_d uncertainty (D-25; VERIFY datasheet).
+  - 3 test vehicles were lost only to the Q7 axis rule (rotations 6, 8, 12; too few long gap-free pieces). The rule was not changed after seeing the test half.
+- **Quality:**
+  - Mutation checks: clustering 10/10, generator 14/14, Jacobian 3/3.
+  - The independent code review (2026-10-16) found no critical or high defects. Its 2 medium findings (overstated generator-realism claims) and 4 low findings are fixed or stated.
+  - The feasibility regression reproduces all 1,705 non-timing values (rerun after the review fixes; only 3 run-time measurements differ).
+
 ### 7.6 Training set generation
 
 For each case $i = 1 \dots N$ (start with N = 1,000 to debug; final N = 10,000-30,000):
@@ -936,7 +971,7 @@ Learn first: PSD and Welch's method, pyulog, PCA, k-means.
 - [x] `fc_data.py`: extract actual and default parameters, PID gains, ESC RPM (with validity and unit checks), flags `has_rpm`/`has_highrate`/`has_sysid` (Section 7.4.5). In every library window (`fit_windows.csv`)
 - [x] Cluster the fit half with PCA and k-means; plot centroids (Fig. 2); cross-check clusters vs IMU chip. **Done 2026-10-16 (fit half, 52 vehicles): no stable clusters (silhouette 0.26, ARI 0.57; rule D-24 P3), so one generator with chip as covariate; Fig. 2 = real vs synthetic spectra.** Earlier note: **2026-10-15, first run: k = 2, weak (silhouette ≤ 0.35), and the small cluster is the ICM-4268x chips (on-chip roll-off of about 3 decades above 500 Hz): gate Q12 hit. Waiting for author decisions** (`experiments/part2/REPORT.md` Sections 3-5)
 - [x] Fit the parametric noise model (motor frequencies fixed from RPM where available); build the generator; compare synthetic and real spectra. **Done 2026-10-16 (D-26, D-27): fit 3.31 dB median; generator real-vs-synthetic AUC 0.495, leave-one-vehicle-out OK (76 %); `experiments/part2/REPORT.md` Section 13.** Earlier note: `src/noise_model.py` written and tested (flat / power-law / spline floor); the flat floor of 7.5 misfits by 6.8 dB median (spline 2.3 dB); final fits wait for the floor decision and need an analytic Jacobian (speed)
-- [ ] **Go/no-go on Day 23 (Oct 20):** at least 100 vehicles after all gates (minimum 30). If no-go, use fallback R1 (Section 13)
+- [x] **Go/no-go on Day 23 (Oct 20):** at least 100 vehicles after all gates (minimum 30). If no-go, use fallback R1 (Section 13). **Done 2026-10-16: 95 usable vehicles (fit 52 of 111, test 43 of 105; 254 windows): GO on the minimum, 5 short of the target.** Further screening (R1 a) is possible but needs a new author decision
 - **Done when:** the spectra library is saved, the generator produces realistic spectra, and Table 1 (data funnel) is drafted.
 
 ### Phase 4: Optimizer and training data (Days 24-26, Oct 21-23)
@@ -1263,7 +1298,7 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 | 0 Topic selection | 1-3 | Sep 28-30 | Done |
 | 1 Setup, literature, proposal | 4-7 → 17-18 | Oct 14-15 | Done 2026-10-14 except author tasks: accounts, GitHub push, Zotero import, send proposal |
 | 2 Physics model | 8-12 | Oct 5-9 | Core done 2026-10-10 (feasibility test); Tier 1 priors and Fig. 1 moved to Phase 4 |
-| 3 Real noise and clustering | 19-23 | Oct 16-20 | Part 1 done 2026-10-15 (screen, split, pilot): thresholds proposed, waiting for approval; Part 2 (library, clustering, generator, go/no-go) after the freeze |
+| 3 Real noise and clustering | 19-23 | Oct 16-20 | **Done 2026-10-16** (D-23 to D-27): 95 usable vehicles (52 fit + 43 test), one generator with chip covariate (AUC 0.495), independent review passed; branch `phase3` not merged (author) |
 | 4 Optimizer and training data | 24-26 | Oct 21-23 | Optimizer done and checked (feasibility test); dataset generation not started |
 | 5 ML tuner | 27-32 | Oct 24-29 | Not started |
 | 6 Deployment and validation | 33-35 | Oct 30-Nov 1 | Not started |
@@ -1328,3 +1363,4 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 | 2026-10-15 | 18 | **Phase 3 Part 2 started; stopped for author decisions.** Author approved the pilot thresholds and excluded no-ID vehicles: **D-23** (numbers re-derived by `verify_numbers.py` first: 3 report claims corrected, no threshold changed). All 84 fit-half logs downloaded (4.45 GB). Library (`data/spectra/fit_*`): **39 of 84 vehicles usable (46 %), 106 windows**; projected total about 73 (66-81). Fixed: Q7 axis check false alarms (inconclusive without motion), crash on a log without rate setpoint, gate-then-select windows, slow spline fit. **New landmine (Q12):** the clusters follow the IMU chip (ICM-4268x on-chip roll-off); windows of one vehicle are near-copies; flat floor misfits. 159 tests | Author: decisions 1-5 of `experiments/part2/REPORT.md` Section 5 (chip roll-off, clustering unit, floor, continuum vs clusters, more data); then D-24, clustering, model fits, generator | Author decisions |
 | 2026-10-15 | 18 | **Part 2b (D-24, D-25); stopped again for author decisions.** Author checks done: (a) clustering tests mutation-checked (4 of 9 breaks missed first, all 10 tests now proven); (b) analytic Jacobian, fits about 60x faster; (c) plan differed, asked first (P1-P4). Extended screen to 4,327 vehicles: split 216 (111 fit / 105 test); fallback (2 vehicles recovered); Q3 bug found (`time_ref_utc` is the time-zone offset) and fixed as D-25. Fit half: **52 of 111 usable, 142 windows, projected total about 101 (92-111)**. Model fits 2.85 dB (Welch noise 0.36 dB). Clustering after chip correction: silhouette 0.19, ARI 0.65, so one generator (P3). **New landmine:** free floor not identified vs broad peaks; the generator with independent Gaussian peaks is 32-59 dB too high (whole real peak sets: 2.5 dB). 188 tests | Author: floor mode, generator design, BIC margin, prominence, fit-error limit (`experiments/part2/REPORT.md` Section 12) | Author decisions |
 | 2026-10-16 | 19 | **Phase 3 Part 2b finished on the fit half.** D-26 (fixed robust floor, whole-peak-set generator, BIC gain >= 10, prominence 0.5, drop > 5 dB) and D-27 (floor mean per chip class). Model fits 3.31 dB; 2 of 52 dropped. Clustering unstable -> one generator. Generator: AUC 0.495 / 0.47, leave-one-vehicle-out 76 % at least as close as real, not copies (10.2 vs 8.2 dB); remaining +4.4 dB at 20-100 Hz for non-ICM chips. Fig. 2. Mutation checks: clustering 10/10, generator 14/14, Jacobian 3/3. 196 tests | Author: go-ahead to download and process the test half (go/no-go, projected about 101 vehicles), then Phase 4 | Test half waits for the author |
+| 2026-10-16 | 19 | **Phase 3 finished.** Test half processed (author go-ahead) with the frozen rules: 43 of 105 usable; **total 95** (fit 52 + test 43; minimum 30 met, target 100 missed by 5). Fix: log without `vehicle_land_detected` -> reason code. 3 test vehicles lost only to the Q7 axis rule (not changed after seeing test data). Independent code review of the branch: no critical/high; 2 medium (generator-realism claims overstated: leave-one-out 76 % -> 56 % at equal sample size; 'not copies' -> peak sets are near-copies) and 4 low, all fixed or stated. THESIS 7.5.1 with results and 4 limitations. 200 tests | Author: review the Phase 4 plan (`notes/phase4_plan.md`); merge `phase3` into `main` when the author asks | Phase 4 plan approval |

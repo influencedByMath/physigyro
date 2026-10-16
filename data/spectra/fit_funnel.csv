@@ -1,5 +1,5 @@
 stage,n_in,n_removed,n_out,reasons
-fit-half vehicles (screened log each),111,0,111,{}
+half vehicles (screened log each),111,0,111,{}
 downloaded and parsed,111,0,111,{}
 log gates Q4-Q7 (and Q10 topic),111,47,64,"{'Q4_no_long_segment': 3, 'Q4_dropout': 44}"
 at least one good window (newest log),64,14,50,{'no_good_window': 14}
