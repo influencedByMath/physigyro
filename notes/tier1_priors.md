@@ -1,6 +1,6 @@
 # Tier 1 plant priors: evidence table (Phase 4 Task 1)
 
-Made 2026-10-18 (Day 21), branch `phase4`. Written for: the author, to decide A1 (and inputs to A4). THESIS 7.1.1 is updated only after the decision.
+Made 2026-10-18 (Day 21), branch `phase4`. Written for: the author, to decide A1 (and inputs to A4). **A1 decided 2026-10-18 as D-28** (the four proposals of Section 3 for f_c, τ_m, T_d and the rates; THESIS 7.1.1 updated). The FPV row is not decided.
 
 **Rules followed**
 - No number without a source that was read. What could not be found stays **VERIFY**, with the reason.
@@ -107,7 +107,7 @@ Nominal: 2,000 Hz: 54; 6,400: 14; 8,000: 15; 8,192: 3; about 8,371: 25. Measured
 | Parameter | THESIS candidate | Evidence (above) | Proposal |
 |---|---|---|---|
 | Control loop rate | 800 Hz; 400, 1000, 2000 | Measured rates 250-1,070 Hz; 39 of 99 off the setting | Sample from the **measured fit-half rates** (empirical); real-gain cases use the log's measured rate |
-| FIFO rate | 2-8 kHz | 2,000 / 6,400 / 8,000 / 8,192 / 8,371 Hz | Sample (FIFO rate, control rate) **pairs** from the fit-half logs, so the pair stays physical |
+| FIFO rate | 2-8 kHz | 2,000 / 6,400 / 8,000 / 8,192 / 8,371 Hz | Sample (FIFO rate, control rate) **pairs** from the fit-half logs, so the pair stays physical. Ruling after A1: only logs whose logged FIFO IMU is the control IMU (38 of 111) and whose controller rate is logged at full rate; other pairs mix two IMUs |
 | f_c (large) | 3-15 Hz | 6.8 Hz (Xu), 10-11 Hz (ours); constraint f_c ≥ 4 Hz | **4-15 Hz** log-uniform |
 | τ_m (large) | 30-100 ms | 23-50 ms (Bangura), 29-34 ms (ours); nothing above 50 ms | **20-60 ms** log-uniform (100 ms has no source) |
 | T_d (large) | 0.5-5 ms | PWM 1-4.5 ms (derived), DShot < 0.11 ms + ESC (VERIFY), IO chip +5.4 ms, PWM most common | **0.5-5 ms**; the IO-chip case (up to about 10 ms) only as a sensitivity check |

@@ -6,13 +6,13 @@ Written for: the author, as the source when writing the paper. **The full wordin
 - the small **implementation rulings** made during the work;
 - every **correction** of an earlier claim.
 
-Keep it updated in every phase. Last update: 2026-10-18 (end of Phase 3).
+Keep it updated in every phase. Last update: 2026-10-18 (Phase 4, D-28).
 
 Status values: **active** (in force), **extended** (still in force, with additions by a later decision), **partly superseded** (one part replaced; named), **done** (a one-off action).
 
 ---
 
-## A. Decisions D-01 to D-27
+## A. Decisions D-01 to D-28
 
 | ID | Date | Decision (short) | Evidence or reason | Status | Paper section |
 |---|---|---|---|---|---|
@@ -43,6 +43,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | D-25 | 10-15 | (1) Q3 duplicate = same date + duration + **file size**; (2) chip low-pass for **magnitude only**; the delay goes into the T_d uncertainty | (1) `time_ref_utc` is the time-zone offset (PX4 `logger.cpp`) and wrongly rejected 5 flights; (2) a known synthetic filter was not recovered: corner and order are not identifiable | active | Data (Q3); Methods; Limitations |
 | D-26 | 10-15 | Fixed robust floor; whole-peak-set generator; BIC gain ≥ 10 for a chip term; prominence 0.5; drop > 5 dB | A free floor is not identified (41 of 52 floors at the bound); independent Gaussian peaks gave spectra 32-59 dB too high; BMI088 term won by a BIC gain of only 1 | active | Methods 7.5 |
 | D-27 | 10-16 | Generator floor mean per chip class, shared covariance | Pooled floor: +6.8 / −3.8 dB bias at 20-100 Hz; class mean: +4.4 / +1.2 dB | active | Methods 7.5; Limitations |
+| D-28 | 10-18 | Tier 1 priors (A1): f_c 4-15 Hz, τ_m 20-60 ms, T_d 0.5-5 ms (IO chip only as sensitivity); control and FIFO rate as empirical pairs with the **measured** controller rate | `notes/tier1_priors.md`: Xu 2019, Bangura 2017, PX4 docs and source, Tier 2 b27d09e3; f_c ≥ 4 Hz from the 20 Hz band edge; controller rate ≠ `IMU_GYRO_RATEMAX` in 39 of 99 fit logs | active | Methods 7.1.1; Data |
 
 ---
 
@@ -85,6 +86,9 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | Generator jitter measured within vehicles: frequency 0.65 % (4 drones), height 1.1 dB (49 drones) | Data-driven, not guessed | `generator_check.jitter` |
 | The extended screen is "the exact first N of the D-21 order" (resume-safe) | `--max-logs` would overshoot on restart | `log_screen.run_screen(order_limit)` |
 | The Q7 rule was not changed after seeing the test half (3 vehicles lost) | That would be tuning on test data | REPORT 15 |
+| (Phase 4) The empirical (FIFO rate, controller rate) pairs of D-28 come only from logs whose logged FIFO IMU is the control IMU (38 of 111 fit logs) and whose controller rate is logged at full rate | Otherwise the pair mixes two IMUs (e.g. 8 kHz filters with a 667 Hz controller from a 2 kHz IMU), which PX4 never runs | `notes/tier1_priors.md` 1.4; Task 4 |
+| (Phase 4) Hover f_m of synthetic drones = source vehicle's RPM/60 times the spectrum's frequency scale, not an independent draw | The generator resamples whole real peak sets (D-26); an independent f_m would put the ESC notch away from the noise peaks | `notes/tier1_priors.md` 1.6; Task 4 |
+| (Phase 4) Chip-filter delay = group delay of the minimum-phase (analog Butterworth) filter with the fitted magnitude, at 20-100 Hz | The magnitude is all that is identified (D-25); a causal filter with that magnitude cannot lag less, so it is a lower bound | `src/priors.py` |
 
 ## D. Corrections of earlier claims (state honestly; useful for Limitations)
 
@@ -100,7 +104,8 @@ Status values: **active** (in force), **extended** (still in force, with additio
 
 ## E. Open for Phase 4 (to be decided; see `notes/phase4_plan.md`)
 
-- A1: Tier 1 prior ranges.
+- ~~A1: Tier 1 prior ranges.~~ Decided as D-28 (2026-10-18).
+- A4 input (found in Task 1): the plan's "BIC within 10" rule gives a falsely narrow ICM chip-delay range (BIC gains inflated, LOW 5); the 1.5 % fit-error rule gives ICM-42688-P 0.91-1.37 ms. ICM-42686-P is not bounded below (optimum moved from the 150 Hz grid edge to 116 Hz; 90 Hz within BIC 10): delay ≥ 2.0 ms, no upper limit from the data.
 - A2: PM floor.
 - A3: M_s,max.
 - A4: uncertainty set, including the ICM chip-delay range (D-25).
