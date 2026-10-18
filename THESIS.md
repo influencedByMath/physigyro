@@ -5,7 +5,7 @@
 > This is the base document for the whole project. Read it at the start of every work session.
 > Update **Section 17 (Progress tracker and session log)** at the end of every session.
 >
-> Last updated: 2026-10-16 (Day 19). **Phase 3 done** on branch `phase3` (not merged): 95 usable vehicles (52 fit + 43 test; minimum 30 met, target 100 missed by 5); no stable noise types, one generator with the IMU chip as covariate (Section 7.5.1); independent code review passed (no critical/high findings). Next: Phase 4 plan (`notes/phase4_plan.md`, waiting for the author). Reports: `experiments/part2/REPORT.md`, `experiments/pilot_study/REPORT.md`, `experiments/feasibility/REPORT.md`
+> Last updated: 2026-10-18 (Day 21). **Phase 3 COMPLETE** on branch `phase3` (not merged; the author decides after Phase 4; no GitHub push until the author asks): 95 usable vehicles (52 fit + 43 test; minimum 30 met, target 100 missed by 5); Table 1 data funnel in Section 7.4.7; no stable noise types, one generator with the IMU chip as covariate (Section 7.5.1); independent code review passed. Decision log for the paper: `notes/decision_log.md`. **Next: Phase 4** (`notes/phase4_plan.md`, approved by the author 2026-10-18; start in a new session, see `notes/session_handoff.md`).
 
 ---
 
@@ -77,6 +77,8 @@ Tip: to preview this file with rendered equations in VS Code, press `Ctrl+Shift+
 ---
 
 ## 2. Fixed decisions and constraints
+
+> **For the paper:** `notes/decision_log.md` lists every decision with the experiment or evidence that caused it, what later changed or superseded it, the implementation rulings, and every correction of an earlier claim. Update it whenever a decision is added or changed (author's instruction, 2026-10-18).
 
 | ID | Date | Decision | Reason |
 |---|---|---|---|
@@ -637,6 +639,48 @@ rpm0 = ulog.get_dataset("esc_status").data["esc[0].esc_rpm"]  # motor 1 RPM, if 
 
 `get_dataset` raises an error when the topic is missing, so wrap it in `try/except`. Some drones have several gyros, which appear as multiple instances (gate Q8).
 
+#### 7.4.7 Data funnel (Table 1, draft 2026-10-18)
+
+Every number is recomputed from the committed data files by `experiments/part2/table1.py` (outputs `table1.md` and `table1.csv`).
+
+**Shared stages:**
+
+| Stage | Count |
+|---|---|
+| Public logs in the Flight Review index (snapshot 2026-10-14) | 477,079 logs |
+| Index filter, gates Q1-Q2 (multirotor, real hardware, ≥ 60 s, since 2021) | 182,209 logs (26,163 vehicles) |
+| Header screen: newest log of the first 4,327 vehicles in the D-21 random order | 4,327 vehicles (4,326 read; 1 HTTP 403) |
+| Raw gyro FIFO logged (`sensor_gyro_fifo`) | 272 vehicles (6.3 %) = 258 vehicle keys |
+| Excluded: no board ID (D-23) | 42 vehicle keys |
+| Split 50/50 by vehicle (D-20) | **216 vehicles: 111 fit / 105 test** |
+
+**Per half:**
+
+| Stage | Fit half | Test half |
+|---|---|---|
+| Vehicles (one screened log each), downloaded and parsed | 111 | 105 |
+| Removed by log gates: Q4 dropout > 20 % | 44 | 41 |
+| Removed: Q4 no gap-free piece ≥ one Welch segment | 3 | 5 |
+| Removed: Q7 board rotation not verifiable | 0 | 3 |
+| Removed: Q5 sample rate too low for 780 Hz | 0 | 1 |
+| Removed: Q10 topic missing (no land detector) | 0 | 1 |
+| Pass the log gates | 64 | 54 |
+| Removed: no steady window passing Q9, Q10, Q13 | 14 | 11 |
+| Next-newest-log fallback (D-24): triggered / recovered | 14 / 2 | 6 / 0 |
+| **Usable vehicles** | **52** | **43** |
+| Library windows (≤ 3 per vehicle, Q14) | 142 | 112 |
+
+**Total: 95 usable vehicles and 254 windows** (target 100, minimum 30; Section 7.4.2 H).
+
+**Window-level gates:**
+
+| Half | Candidate windows | Q10 unsteady | Q13 < 20 averages | Q9 clipping | Pass | Selected |
+|---|---|---|---|---|---|---|
+| Fit | 8,213 | 2,646 | 417 | 0 | 5,150 | 142 |
+| Test | 7,803 | 3,608 | 784 | 0 | 3,411 | 112 |
+
+The fallback triggers only when the newest log has zero windows passing Q10. In the test half, 5 of the 11 vehicles without a good window had steady windows that failed Q13, so they did not trigger it.
+
 ### 7.5 Noise archetypes and synthetic noise generator (unsupervised ML)
 
 **Clustering finds typical noise types:**
@@ -967,12 +1011,12 @@ Learn first: PSD and Welch's method, pyulog, PCA, k-means.
 - [x] `log_screen.py`: index filter + header screen (Section 7.4.2, steps A-B). Done 2026-10-15: 3,177 logs read, **200 FIFO vehicles**; FIFO share per vehicle 6.3 % (95 % CI 5.5-7.2 %). `data/screen/screen_summary.csv`, `screen_results.jsonl.gz`
 - [x] Split vehicles 50/50 (step C, D-20). Done 2026-10-15: 158 vehicles with a board ID, **84 fit / 74 test** (`data/screen/split.csv`). 33 vehicles without a board ID (21 VOXL2, 11 Navio2, 1 redacted) are **excluded** (D-23; listed in `split_pending_no_id.csv`)
 - [x] Pilot study on 20-30 fit-half logs; fix all TBD thresholds of the gates; record them as a decision in Section 2 (Section 7.4.3). Done 2026-10-15: 29 fit-half logs (`experiments/pilot_study/REPORT.md`), approved and frozen as **D-23**; no-ID vehicles excluded
-- [ ] `data_quality.py` + `noise_data.py`: apply gates Q1-Q16 to all logs; rebuild gyro (body axes), select windows, compute PSDs, save the library with metadata. **Fit half done 2026-10-15** (`src/spectra_library.py`, `experiments/part2/build_library.py`, `data/spectra/fit_*`): 84 vehicles, **39 usable, 106 windows**; funnel `fit_funnel.csv`. Test half: not downloaded (author)
+- [x] `data_quality.py` + `noise_data.py`: apply gates Q1-Q16 to all logs; rebuild gyro (body axes), select windows, compute PSDs, save the library with metadata. **Fit half done 2026-10-15** (`src/spectra_library.py`, `experiments/part2/build_library.py`, `data/spectra/fit_*`): 84 vehicles, **39 usable, 106 windows**; funnel `fit_funnel.csv`. Test half: not downloaded (author) **Test half done 2026-10-16 (author go-ahead): 43 of 105 usable, 112 windows; Table 1 in Section 7.4.7.**
 - [x] `fc_data.py`: extract actual and default parameters, PID gains, ESC RPM (with validity and unit checks), flags `has_rpm`/`has_highrate`/`has_sysid` (Section 7.4.5). In every library window (`fit_windows.csv`)
 - [x] Cluster the fit half with PCA and k-means; plot centroids (Fig. 2); cross-check clusters vs IMU chip. **Done 2026-10-16 (fit half, 52 vehicles): no stable clusters (silhouette 0.26, ARI 0.57; rule D-24 P3), so one generator with chip as covariate; Fig. 2 = real vs synthetic spectra.** Earlier note: **2026-10-15, first run: k = 2, weak (silhouette ≤ 0.35), and the small cluster is the ICM-4268x chips (on-chip roll-off of about 3 decades above 500 Hz): gate Q12 hit. Waiting for author decisions** (`experiments/part2/REPORT.md` Sections 3-5)
 - [x] Fit the parametric noise model (motor frequencies fixed from RPM where available); build the generator; compare synthetic and real spectra. **Done 2026-10-16 (D-26, D-27): fit 3.31 dB median; generator real-vs-synthetic AUC 0.495, leave-one-vehicle-out OK (76 %); `experiments/part2/REPORT.md` Section 13.** Earlier note: `src/noise_model.py` written and tested (flat / power-law / spline floor); the flat floor of 7.5 misfits by 6.8 dB median (spline 2.3 dB); final fits wait for the floor decision and need an analytic Jacobian (speed)
 - [x] **Go/no-go on Day 23 (Oct 20):** at least 100 vehicles after all gates (minimum 30). If no-go, use fallback R1 (Section 13). **Done 2026-10-16: 95 usable vehicles (fit 52 of 111, test 43 of 105; 254 windows): GO on the minimum, 5 short of the target.** Further screening (R1 a) is possible but needs a new author decision
-- **Done when:** the spectra library is saved, the generator produces realistic spectra, and Table 1 (data funnel) is drafted.
+- **Done when:** the spectra library is saved, the generator produces realistic spectra, and Table 1 (data funnel) is drafted. **All three done (2026-10-16/18): library `data/spectra/`, generator Section 7.5.1, Table 1 Section 7.4.7.**
 
 ### Phase 4: Optimizer and training data (Days 24-26, Oct 21-23)
 
@@ -1364,3 +1408,4 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 | 2026-10-15 | 18 | **Part 2b (D-24, D-25); stopped again for author decisions.** Author checks done: (a) clustering tests mutation-checked (4 of 9 breaks missed first, all 10 tests now proven); (b) analytic Jacobian, fits about 60x faster; (c) plan differed, asked first (P1-P4). Extended screen to 4,327 vehicles: split 216 (111 fit / 105 test); fallback (2 vehicles recovered); Q3 bug found (`time_ref_utc` is the time-zone offset) and fixed as D-25. Fit half: **52 of 111 usable, 142 windows, projected total about 101 (92-111)**. Model fits 2.85 dB (Welch noise 0.36 dB). Clustering after chip correction: silhouette 0.19, ARI 0.65, so one generator (P3). **New landmine:** free floor not identified vs broad peaks; the generator with independent Gaussian peaks is 32-59 dB too high (whole real peak sets: 2.5 dB). 188 tests | Author: floor mode, generator design, BIC margin, prominence, fit-error limit (`experiments/part2/REPORT.md` Section 12) | Author decisions |
 | 2026-10-16 | 19 | **Phase 3 Part 2b finished on the fit half.** D-26 (fixed robust floor, whole-peak-set generator, BIC gain >= 10, prominence 0.5, drop > 5 dB) and D-27 (floor mean per chip class). Model fits 3.31 dB; 2 of 52 dropped. Clustering unstable -> one generator. Generator: AUC 0.495 / 0.47, leave-one-vehicle-out 76 % at least as close as real, not copies (10.2 vs 8.2 dB); remaining +4.4 dB at 20-100 Hz for non-ICM chips. Fig. 2. Mutation checks: clustering 10/10, generator 14/14, Jacobian 3/3. 196 tests | Author: go-ahead to download and process the test half (go/no-go, projected about 101 vehicles), then Phase 4 | Test half waits for the author |
 | 2026-10-16 | 19 | **Phase 3 finished.** Test half processed (author go-ahead) with the frozen rules: 43 of 105 usable; **total 95** (fit 52 + test 43; minimum 30 met, target 100 missed by 5). Fix: log without `vehicle_land_detected` -> reason code. 3 test vehicles lost only to the Q7 axis rule (not changed after seeing test data). Independent code review of the branch: no critical/high; 2 medium (generator-realism claims overstated: leave-one-out 76 % -> 56 % at equal sample size; 'not copies' -> peak sets are near-copies) and 4 low, all fixed or stated. THESIS 7.5.1 with results and 4 limitations. 200 tests | Author: review the Phase 4 plan (`notes/phase4_plan.md`); merge `phase3` into `main` when the author asks | Phase 4 plan approval |
+| 2026-10-18 | 21 | **Phase 3 complete (closing checks).** Table 1 data funnel drafted from the data (`experiments/part2/table1.py`, THESIS 7.4.7): 477,079 -> 182,209 -> 4,327 screened -> 272 FIFO -> 216 split (111/105) -> **95 usable (52 + 43), 254 windows**. Phase 3 checklist: all items done. Decision log for the paper `notes/decision_log.md` (D-01..D-27, changes caused by experiments, rulings, corrections, limitations). Session handoff `notes/session_handoff.md`. Phase 4 plan approved by the author | Phase 4 in a new session: Task 1 Tier 1 priors, Task 2 Fig. 1 (branch `phase4` from `phase3`) | - |

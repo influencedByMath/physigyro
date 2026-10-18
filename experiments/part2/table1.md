@@ -1,0 +1,25 @@
+| Stage | Count | Unit |
+|---|---|---|
+| Public logs in the Flight Review index (snapshot 2026-10-14) | 477,079 | logs |
+| Index filter (Q1, Q2): multirotor, real hardware, >= 60 s, since 2021 | 182,209 | logs |
+|   of which distinct vehicles (vehicle_uuid groups) | 26,163 | vehicles |
+| Header screen (newest log per vehicle, D-21 order, first 4,327 vehicles) | 4,327 | vehicles |
+|   read successfully (1 unreadable: HTTP 403) | 4,326 | vehicles |
+| Raw gyro FIFO logged (sensor_gyro_fifo) | 272 | vehicles (index groups) |
+|   distinct vehicle keys (header board ID, or gate-Q14 fallback key without an ID) | 258 | vehicle keys |
+|   FIFO vehicle keys without a board ID: excluded (D-23) | 42 | vehicle keys |
+| FIFO vehicles with a board ID, split 50/50 by vehicle (D-20) | 216 | vehicles |
+| FIT half: vehicles (one screened log each), downloaded and parsed | 111 | vehicles |
+|   fit: pass the log gates (removed: {'Q4_no_long_segment': 3, 'Q4_dropout': 44}) | 64 | vehicles |
+|   fit: at least one steady window passing Q9/Q10/Q13 (removed: {'no_good_window': 14}) | 50 | vehicles |
+|   fit: next-newest-log fallback (D-24): 14 triggered, recovered | 2 | vehicles |
+|   fit: USABLE vehicles | 52 | vehicles |
+|   fit: windows in the library (<= 3 per vehicle, Q14) | 142 | windows |
+| TEST half: vehicles (one screened log each), downloaded and parsed | 105 | vehicles |
+|   test: pass the log gates (removed: {'Q4_dropout': 41, 'Q4_no_long_segment': 5, 'Q7_unverified': 3, 'Q5_rate': 1, 'Q10_no_land_detector': 1}) | 54 | vehicles |
+|   test: at least one steady window passing Q9/Q10/Q13 (removed: {'no_good_window': 11}) | 43 | vehicles |
+|   test: next-newest-log fallback (D-24): 6 triggered, recovered | 0 | vehicles |
+|   test: USABLE vehicles | 43 | vehicles |
+|   test: windows in the library (<= 3 per vehicle, Q14) | 112 | windows |
+| TOTAL usable vehicles (fit + test) | 95 | vehicles |
+| TOTAL library windows | 254 | windows |
