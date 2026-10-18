@@ -1,0 +1,920 @@
+{
+ "protocols": {
+  "counts": {
+   "pwm": 55,
+   "unknown": 3,
+   "mixed": 39,
+   "dshot": 10,
+   "can": 3,
+   "oneshot": 1
+  },
+  "by_group": {
+   "legacy:pwm": 14,
+   "PWM_MAIN:pwm": 30,
+   "-:unknown": 3,
+   "PWM_AUX+PWM_MAIN:mixed": 4,
+   "PWM_AUX:pwm": 9,
+   "legacy:dshot": 7,
+   "HIL_ACT+PWM_MAIN:mixed": 1,
+   "PWM_AUX+UAVCAN_EC:mixed": 1,
+   "PWM_MAIN:dshot": 3,
+   "PWM_AUX:mixed": 8,
+   "PWM_AUX+PWM_MAIN:pwm": 2,
+   "PWM_MAIN:mixed": 25,
+   "UAVCAN_EC:can": 3,
+   "legacy:oneshot": 1
+  },
+  "note": "coarse: group-level timer types; MAIN outputs on boards with an IO chip (+5.4 ms, PX4 docs) are not resolved"
+ },
+ "rates": {
+  "n_logs": 111,
+  "ratemax_counts": {
+   "0.0": 1,
+   "1000.0": 9,
+   "2000.0": 11,
+   "250.0": 2,
+   "400.0": 14,
+   "800.0": 74
+  },
+  "n_full_rate_logged": 99,
+  "measured_rate_by_ratemax": {
+   "1000": {
+    "n": 8,
+    "quantiles": {
+     "0": 996.0,
+     "0.1": 996.0,
+     "0.25": 997.5,
+     "0.5": 1000.0,
+     "0.75": 1008.05,
+     "0.9": 1030.1,
+     "1": 1067.2
+    }
+   },
+   "2000": {
+    "n": 10,
+    "quantiles": {
+     "0": 1003.0,
+     "0.1": 1003.9,
+     "0.25": 1005.5,
+     "0.5": 1045.45,
+     "0.75": 1050.125,
+     "0.9": 1069.5,
+     "1": 1069.5
+    }
+   },
+   "250": {
+    "n": 2,
+    "quantiles": {
+     "0": 249.8,
+     "0.1": 249.83,
+     "0.25": 249.875,
+     "0.5": 249.95,
+     "0.75": 250.025,
+     "0.9": 250.07,
+     "1": 250.1
+    }
+   },
+   "400": {
+    "n": 11,
+    "quantiles": {
+     "0": 399.4,
+     "0.1": 399.4,
+     "0.25": 399.6,
+     "0.5": 400.0,
+     "0.75": 400.0,
+     "0.9": 400.8,
+     "1": 402.1
+    }
+   },
+   "800": {
+    "n": 68,
+    "quantiles": {
+     "0": 664.0,
+     "0.1": 664.9,
+     "0.25": 666.575,
+     "0.5": 798.4,
+     "0.75": 800.0,
+     "0.9": 807.98,
+     "1": 819.0
+    }
+   }
+  },
+  "n_rate_off_by_more_than_5pct": 39,
+  "rate_off": [
+   {
+    "log": "4c4351af",
+    "ratemax": 800.0,
+    "measured": 666.2,
+    "fifo_chip": "MPU6000",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V3"
+   },
+   {
+    "log": "b3f718ff",
+    "ratemax": 800.0,
+    "measured": 666.2,
+    "fifo_chip": "MPU6000",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V2"
+   },
+   {
+    "log": "742fafcd",
+    "ratemax": 800.0,
+    "measured": 668.9,
+    "fifo_chip": "MPU6000",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V3"
+   },
+   {
+    "log": "022c2e77",
+    "ratemax": 800.0,
+    "measured": 667.6,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "FOXCONN_A1"
+   },
+   {
+    "log": "deb6098a",
+    "ratemax": 800.0,
+    "measured": 667.1,
+    "fifo_chip": "ICM42688P",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6X"
+   },
+   {
+    "log": "b79d2e3d",
+    "ratemax": 800.0,
+    "measured": 665.3,
+    "fifo_chip": "BMI055",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6C"
+   },
+   {
+    "log": "4c570092",
+    "ratemax": 800.0,
+    "measured": 665.8,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "DRONEYEE_ZYFC_H7"
+   },
+   {
+    "log": "9ca62be3",
+    "ratemax": 800.0,
+    "measured": 664.5,
+    "fifo_chip": "BMI055",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6C"
+   },
+   {
+    "log": "fcdef3a8",
+    "ratemax": 800.0,
+    "measured": 667.1,
+    "fifo_chip": "BMI055",
+    "fifo_is_control": true,
+    "hw": "PX4_FMU_V6C"
+   },
+   {
+    "log": "cb8020f3",
+    "ratemax": 800.0,
+    "measured": 670.7,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "LSAS_DOMF20_AIOV2"
+   },
+   {
+    "log": "b0af518f",
+    "ratemax": 2000.0,
+    "measured": 1004.0,
+    "fifo_chip": "ICM42688P",
+    "fifo_is_control": false,
+    "hw": "CUAV_X7PRO"
+   },
+   {
+    "log": "05eae866",
+    "ratemax": 2000.0,
+    "measured": 1049.3,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "UCAS_YANQIH7"
+   },
+   {
+    "log": "79cf5a86",
+    "ratemax": 2000.0,
+    "measured": 1007.0,
+    "fifo_chip": "ICM42688P",
+    "fifo_is_control": true,
+    "hw": "UCAS_YANQIH7"
+   },
+   {
+    "log": "a3bb82bf",
+    "ratemax": 800.0,
+    "measured": 665.3,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "MICOAIR_H743_V2"
+   },
+   {
+    "log": "9fa198ee",
+    "ratemax": 800.0,
+    "measured": 667.1,
+    "fifo_chip": "BMI055",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6C"
+   },
+   {
+    "log": "18454291",
+    "ratemax": 800.0,
+    "measured": 666.2,
+    "fifo_chip": "ICM42688P",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6X"
+   },
+   {
+    "log": "43bcd4dc",
+    "ratemax": 2000.0,
+    "measured": 1003.0,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "HKUST_NXT_DUAL"
+   },
+   {
+    "log": "d2ae3ac9",
+    "ratemax": 2000.0,
+    "measured": 1046.0,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "HKUST_NXT_DUAL"
+   },
+   {
+    "log": "97436c52",
+    "ratemax": 2000.0,
+    "measured": 1050.4,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "MICOAIR_H743_V2"
+   },
+   {
+    "log": "50b00c42",
+    "ratemax": 800.0,
+    "measured": 666.7,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "DRONEYEE_ZYFC_H7"
+   },
+   {
+    "log": "b9f6dde0",
+    "ratemax": 800.0,
+    "measured": 664.5,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "DRONEYEE_ZYFC_H7"
+   },
+   {
+    "log": "dfc68892",
+    "ratemax": 800.0,
+    "measured": 665.3,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "DRONEYEE_ZYFC_H7"
+   },
+   {
+    "log": "ad87638b",
+    "ratemax": 800.0,
+    "measured": 664.5,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "DRONEYEE_ZYFC_H7"
+   },
+   {
+    "log": "e09edaa4",
+    "ratemax": 800.0,
+    "measured": 664.9,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "DRONEYEE_ZYFC_H7"
+   },
+   {
+    "log": "43e8a177",
+    "ratemax": 800.0,
+    "measured": 665.8,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "DRONEYEE_ZYFC_H7"
+   },
+   {
+    "log": "32857765",
+    "ratemax": 2000.0,
+    "measured": 1044.9,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "HKUST_NXT_DUAL"
+   },
+   {
+    "log": "42ec9694",
+    "ratemax": 800.0,
+    "measured": 664.9,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6X"
+   },
+   {
+    "log": "421643a5",
+    "ratemax": 800.0,
+    "measured": 670.7,
+    "fifo_chip": "IIM42652",
+    "fifo_is_control": true,
+    "hw": "PX4_FMU_V6X"
+   },
+   {
+    "log": "91ca43aa",
+    "ratemax": 800.0,
+    "measured": 664.0,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "MICOAIR_H743_V2"
+   },
+   {
+    "log": "f689356f",
+    "ratemax": 800.0,
+    "measured": 750.2,
+    "fifo_chip": "ICM42688P",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6X"
+   },
+   {
+    "log": "c27bca6d",
+    "ratemax": 800.0,
+    "measured": 664.9,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "MICOAIR_H743_V2"
+   },
+   {
+    "log": "179b1387",
+    "ratemax": 800.0,
+    "measured": 666.7,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "MICOAIR_H743"
+   },
+   {
+    "log": "ed8cba58",
+    "ratemax": 800.0,
+    "measured": 666.7,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "MICOAIR_H743"
+   },
+   {
+    "log": "2405a4c1",
+    "ratemax": 2000.0,
+    "measured": 1005.0,
+    "fifo_chip": "ICM42688P",
+    "fifo_is_control": true,
+    "hw": "HKUST_NXT"
+   },
+   {
+    "log": "ed574888",
+    "ratemax": 800.0,
+    "measured": 664.5,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "CUAV_X7PRO"
+   },
+   {
+    "log": "d8bd837d",
+    "ratemax": 1000.0,
+    "measured": 1067.2,
+    "fifo_chip": "ICM45686",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6X"
+   },
+   {
+    "log": "51734e3d",
+    "ratemax": 800.0,
+    "measured": 665.3,
+    "fifo_chip": "BMI088",
+    "fifo_is_control": true,
+    "hw": "PX4_FMU_V6X"
+   },
+   {
+    "log": "a25c41f1",
+    "ratemax": 2000.0,
+    "measured": 1069.5,
+    "fifo_chip": "ICM45686",
+    "fifo_is_control": true,
+    "hw": "PX4_FMU_V6X"
+   },
+   {
+    "log": "2516452a",
+    "ratemax": 2000.0,
+    "measured": 1069.5,
+    "fifo_chip": "ICM45686",
+    "fifo_is_control": false,
+    "hw": "PX4_FMU_V6X"
+   }
+  ],
+  "measured_rate_all": {
+   "0": 249.7502,
+   "0.1": 400.0,
+   "0.25": 665.5575,
+   "0.5": 799.3605,
+   "0.75": 808.0809,
+   "0.9": 1005.2273,
+   "1": 1069.5187
+  },
+  "fifo_nominal_counts": {
+   "2000": 54,
+   "6400": 14,
+   "8000": 15,
+   "8192": 3,
+   "8371": 25
+  },
+  "fifo_measured_low_dropout": {
+   "0": 1000.0002,
+   "0.1": 1994.5006,
+   "0.25": 1996.9589,
+   "0.5": 6352.5916,
+   "0.75": 7997.3915,
+   "0.9": 8089.9915,
+   "1": 8192.0229
+  }
+ },
+ "gains": {
+  "roll": {
+   "Kp": {
+    "0": 0.0263,
+    "0.1": 0.0525,
+    "0.25": 0.075,
+    "0.5": 0.12,
+    "0.75": 0.15,
+    "0.9": 0.15,
+    "1": 0.5
+   },
+   "Ki": {
+    "0": 0.0,
+    "0.1": 0.0525,
+    "0.25": 0.0725,
+    "0.5": 0.165,
+    "0.75": 0.2,
+    "0.9": 0.2152,
+    "1": 0.69
+   },
+   "Kd": {
+    "0": 0.0,
+    "0.1": 0.0004,
+    "0.25": 0.001,
+    "0.5": 0.0024,
+    "0.75": 0.003,
+    "0.9": 0.0045,
+    "1": 0.0099
+   }
+  },
+  "pitch": {
+   "Kp": {
+    "0": 0.0375,
+    "0.1": 0.061,
+    "0.25": 0.081,
+    "0.5": 0.135,
+    "0.75": 0.15,
+    "0.9": 0.1786,
+    "1": 0.45
+   },
+   "Ki": {
+    "0": 0.0,
+    "0.1": 0.05,
+    "0.25": 0.09,
+    "0.5": 0.17,
+    "0.75": 0.2,
+    "0.9": 0.2264,
+    "1": 0.525
+   },
+   "Kd": {
+    "0": 0.0,
+    "0.1": 0.0005,
+    "0.25": 0.0011,
+    "0.5": 0.0024,
+    "0.75": 0.003,
+    "0.9": 0.0045,
+    "1": 0.0099
+   }
+  },
+  "px4_v116_default": {
+   "Kp": 0.15,
+   "Ki": 0.2,
+   "Kd": 0.003,
+   "n_roll_equal_to_default": 28,
+   "n": 111
+  },
+  "actual_filters": {
+   "f_gyro": {
+    "0": 15.0,
+    "0.1": 30.0,
+    "0.25": 40.0,
+    "0.5": 40.0,
+    "0.75": 40.0,
+    "0.9": 80.0,
+    "1": 120.0
+   },
+   "f_dterm": {
+    "0": 0.0,
+    "0.1": 20.0,
+    "0.25": 25.0,
+    "0.5": 30.0,
+    "0.75": 30.0,
+    "0.9": 40.0,
+    "1": 80.0
+   },
+   "n_dnf_esc": 14
+  }
+ },
+ "gains_usable": {
+  "roll": {
+   "Kp": {
+    "0": 0.045,
+    "0.1": 0.0621,
+    "0.25": 0.08,
+    "0.5": 0.13,
+    "0.75": 0.15,
+    "0.9": 0.1505,
+    "1": 0.5
+   },
+   "Ki": {
+    "0": 0.0,
+    "0.1": 0.059,
+    "0.25": 0.1,
+    "0.5": 0.1422,
+    "0.75": 0.2,
+    "0.9": 0.25,
+    "1": 0.381
+   },
+   "Kd": {
+    "0": 0.0,
+    "0.1": 0.0004,
+    "0.25": 0.001,
+    "0.5": 0.003,
+    "0.75": 0.0038,
+    "0.9": 0.0054,
+    "1": 0.0081
+   }
+  },
+  "pitch": {
+   "Kp": {
+    "0": 0.05,
+    "0.1": 0.0669,
+    "0.25": 0.09,
+    "0.5": 0.14,
+    "0.75": 0.15,
+    "0.9": 0.1965,
+    "1": 0.45
+   },
+   "Ki": {
+    "0": 0.0,
+    "0.1": 0.05,
+    "0.25": 0.1,
+    "0.5": 0.16,
+    "0.75": 0.2,
+    "0.9": 0.2676,
+    "1": 0.35
+   },
+   "Kd": {
+    "0": 0.0,
+    "0.1": 0.0004,
+    "0.25": 0.0012,
+    "0.5": 0.003,
+    "0.75": 0.0037,
+    "0.9": 0.0057,
+    "1": 0.0081
+   }
+  },
+  "px4_v116_default": {
+   "Kp": 0.15,
+   "Ki": 0.2,
+   "Kd": 0.003,
+   "n_roll_equal_to_default": 11,
+   "n": 50
+  },
+  "actual_filters": {
+   "f_gyro": {
+    "0": 20.0,
+    "0.1": 30.0,
+    "0.25": 31.25,
+    "0.5": 40.0,
+    "0.75": 40.0,
+    "0.9": 50.5,
+    "1": 90.0
+   },
+   "f_dterm": {
+    "0": 10.0,
+    "0.1": 19.5,
+    "0.25": 20.0,
+    "0.5": 30.0,
+    "0.75": 30.0,
+    "0.9": 35.0,
+    "1": 50.0
+   },
+   "n_dnf_esc": 6
+  }
+ },
+ "hover_motor": {
+  "n_vehicles": 6,
+  "n_usable": 52,
+  "quantiles": {
+   "0": 46.27,
+   "0.1": 48.965,
+   "0.25": 55.7625,
+   "0.5": 84.76,
+   "0.75": 102.62,
+   "0.9": 114.71,
+   "1": 126.41
+  },
+  "per_vehicle": [
+   {
+    "vehicle_key": "uuid:000600000000323633313233510a00230039",
+    "hover_hz": 46.27,
+    "mav_type": "Quadrotor"
+   },
+   {
+    "vehicle_key": "uuid:000600000000303736303532510c002b0024",
+    "hover_hz": 51.66,
+    "mav_type": "Quadrotor"
+   },
+   {
+    "vehicle_key": "uuid:000600000000393439333033510a002c002c",
+    "hover_hz": 68.07,
+    "mav_type": "Quadrotor"
+   },
+   {
+    "vehicle_key": "uuid:000600000000313138373333510f00290030",
+    "hover_hz": 101.45,
+    "mav_type": "Quadrotor"
+   },
+   {
+    "vehicle_key": "uuid:000600000000383832353233510d002e0040",
+    "hover_hz": 103.01,
+    "mav_type": "Quadrotor"
+   },
+   {
+    "vehicle_key": "uuid:000600000000383236313533511100370018",
+    "hover_hz": 126.41,
+    "mav_type": "Quadrotor"
+   }
+  ]
+ },
+ "chip_delay": {
+  "ICM42688P": {
+   "n_vehicles": 13,
+   "best_term_bic": [
+    323.0,
+    3.0
+   ],
+   "best_term_rms": [
+    323.0,
+    3.0
+   ],
+   "best_rms_db": 3.4271,
+   "no_term_rms_db": 4.3372,
+   "best_on_grid_edge": false,
+   "best_on_original_grid_edge": false,
+   "bic": {
+    "tol": 10.0,
+    "n_terms": 1,
+    "terms": [
+     [
+      323.0,
+      3.0
+     ]
+    ],
+    "delay_ms": [
+     0.987,
+     1.041
+    ]
+   },
+   "rms": {
+    "tol": 0.015,
+    "n_terms": 3,
+    "terms": [
+     [
+      194.0,
+      2.0
+     ],
+     [
+      250.0,
+      2.0
+     ],
+     [
+      323.0,
+      3.0
+     ]
+    ],
+    "delay_ms": [
+     0.906,
+     1.372
+    ]
+   },
+   "best_term_delay_ms": [
+    0.987,
+    1.041
+   ]
+  },
+  "ICM42686P": {
+   "n_vehicles": 3,
+   "best_term_bic": [
+    116.0,
+    2.0
+   ],
+   "best_term_rms": [
+    116.0,
+    2.0
+   ],
+   "best_rms_db": 2.3013,
+   "no_term_rms_db": 3.2938,
+   "best_on_grid_edge": false,
+   "best_on_original_grid_edge": false,
+   "bic": {
+    "tol": 10.0,
+    "n_terms": 2,
+    "terms": [
+     [
+      90.0,
+      2.0
+     ],
+     [
+      116.0,
+      2.0
+     ]
+    ],
+    "delay_ms": [
+     1.996,
+     3.019
+    ]
+   },
+   "rms": {
+    "tol": 0.015,
+    "n_terms": 2,
+    "terms": [
+     [
+      90.0,
+      2.0
+     ],
+     [
+      116.0,
+      2.0
+     ]
+    ],
+    "delay_ms": [
+     1.996,
+     3.019
+    ]
+   },
+   "best_term_delay_ms": [
+    1.996,
+    2.342
+   ]
+  },
+  "ICM45686": {
+   "n_vehicles": 9,
+   "best_term_bic": [
+    696.0,
+    6.0
+   ],
+   "best_term_rms": [
+    696.0,
+    6.0
+   ],
+   "best_rms_db": 4.113,
+   "no_term_rms_db": 4.1881,
+   "best_on_grid_edge": false,
+   "best_on_original_grid_edge": false,
+   "bic": {
+    "tol": 10.0,
+    "n_terms": 1,
+    "terms": [
+     [
+      696.0,
+      6.0
+     ]
+    ],
+    "delay_ms": [
+     0.884,
+     0.89
+    ]
+   },
+   "rms": {
+    "tol": 0.015,
+    "n_terms": 10,
+    "terms": [
+     [
+      539.0,
+      2.0
+     ],
+     [
+      539.0,
+      3.0
+     ],
+     [
+      539.0,
+      4.0
+     ],
+     [
+      696.0,
+      2.0
+     ],
+     [
+      696.0,
+      3.0
+     ],
+     [
+      696.0,
+      4.0
+     ],
+     [
+      696.0,
+      6.0
+     ],
+     [
+      899.0,
+      2.0
+     ],
+     [
+      899.0,
+      3.0
+     ],
+     [
+      899.0,
+      4.0
+     ]
+    ],
+    "delay_ms": [
+     0.25,
+     0.89
+    ]
+   },
+   "best_term_delay_ms": [
+    0.884,
+    0.89
+   ]
+  },
+  "IIM42652": {
+   "n_vehicles": 2,
+   "best_term_bic": [
+    539.0,
+    6.0
+   ],
+   "best_term_rms": [
+    539.0,
+    6.0
+   ],
+   "best_rms_db": 3.208,
+   "no_term_rms_db": 3.6879,
+   "best_on_grid_edge": false,
+   "best_on_original_grid_edge": false,
+   "bic": {
+    "tol": 10.0,
+    "n_terms": 1,
+    "terms": [
+     [
+      539.0,
+      6.0
+     ]
+    ],
+    "delay_ms": [
+     1.141,
+     1.156
+    ]
+   },
+   "rms": {
+    "tol": 0.015,
+    "n_terms": 1,
+    "terms": [
+     [
+      539.0,
+      6.0
+     ]
+    ],
+    "delay_ms": [
+     1.141,
+     1.156
+    ]
+   },
+   "best_term_delay_ms": [
+    1.141,
+    1.156
+   ]
+  }
+ },
+ "settings": {
+  "chip_band_hz": [
+   20.0,
+   100.0
+  ],
+  "rms_tol": 0.015,
+  "bic_tol": 10.0,
+  "px4_v116_rate_gains": {
+   "P": 0.15,
+   "I": 0.2,
+   "D": 0.003,
+   "K": 1.0
+  }
+ }
+}
