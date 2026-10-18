@@ -202,8 +202,7 @@ Writing the code and tests for S1-S4 takes about one working day.
 - **The kept synthetic population leans to low crossovers** (8-10 Hz: 1.7 %), so results are also reported per bin.
 - **The Phase 5 question stays open:** a fallback for flagged real drones (THESIS 17).
 
-**Planning scripts** (in the scratchpad, not in the repo):
-- `task3_numbers.py`: Sections 2 and 3;
-- `task3_timing2.py` and `task3_timing3.py`: Section 7.
-
-All three are in `C:\Users\RAFI\AppData\Local\Temp\claude\d--research-thesis\af1a907e-f265-4915-8bfd-7c46fbe929fd\scratchpad\`.
+**Planning scripts** (session scratchpad, not in the repo):
+- Sections 2 and 3: `C:\Users\RAFI\AppData\Local\Temp\claude\d--research-thesis\af1a907e-f265-4915-8bfd-7c46fbe929fd\scratchpad\task3_numbers.py`
+- Section 7, cost components: `C:\Users\RAFI\AppData\Local\Temp\claude\d--research-thesis\af1a907e-f265-4915-8bfd-7c46fbe929fd\scratchpad\task3_timing2.py`
+- Section 7, fast vs full grid: `C:\Users\RAFI\AppData\Local\Temp\claude\d--research-thesis\af1a907e-f265-4915-8bfd-7c46fbe929fd\scratchpad\task3_timing3.py`
