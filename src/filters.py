@@ -116,6 +116,10 @@ def derivative_response(f, fs):
 
 
 def phase_delay(H, f):
-    """Equivalent delay tau(f) = phase lag / (2 pi f) in seconds (phase unwrapped along f)."""
+    """Equivalent delay tau(f) = phase lag / (2 pi f) in seconds (phase unwrapped along f).
+
+    Valid below the first notch centre. A notch has a zero on the unit circle, so its phase jumps by 180 deg at
+    f0 and np.unwrap may resolve the jump either way; above a notch, sum the phases of the single factors instead
+    (experiments/phase4/fig1_bode.py, ``factors``)."""
     lag = -np.unwrap(np.angle(H), axis=-1)
     return lag / (2.0 * np.pi * np.asarray(f))

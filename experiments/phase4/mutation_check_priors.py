@@ -35,7 +35,7 @@ def sha(path):
     return hashlib.sha256(open(path, "rb").read()).hexdigest()
 
 
-def main():
+def main(SRC=SRC, MUTANTS=MUTANTS, TEST="tests/test_priors.py"):
     orig = open(SRC, "rb").read()
     h0 = sha(SRC)
     caught = 0
@@ -45,7 +45,7 @@ def main():
             if text.count(old) != 1:
                 raise RuntimeError(f"mutant {name!r}: pattern found {text.count(old)} times")
             open(SRC, "wb").write(text.replace(old, new).encode())
-            r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", "tests/test_priors.py"], cwd=ROOT,
+            r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", TEST], cwd=ROOT,
                                capture_output=True, text=True)
             ok = r.returncode != 0
             caught += ok
