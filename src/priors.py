@@ -84,6 +84,14 @@ def publication_rate(ts_us):
     return float(1e6 / np.median(dt))
 
 
+def full_rate_logged(fc):
+    """True if vehicle_angular_velocity is logged at full rate, i.e. its intervals measure the controller rate.
+
+    PX4 v1.16.0 logged_topics.cpp: the default profile logs it every 20 ms (line 135); the high-rate profile
+    (line 269) and the system-identification profile (line 355) log every sample."""
+    return bool(fc.get("has_highrate") or fc.get("has_sysid"))
+
+
 def hover_motor_hz(df):
     """Mean motor rotation frequency [Hz] per vehicle over its windows with valid ESC RPM (RPM/60, all motors).
     Vehicles without any valid window are left out."""

@@ -159,3 +159,11 @@ def test_protocol_motor_function_range_is_101_to_112():
         assert pr.motor_output_protocol({"PWM_MAIN_FUNC1": f, "PWM_MAIN_TIM0": 400})["protocol"] == "unknown"
     for f in (101, 112):
         assert pr.motor_output_protocol({"PWM_MAIN_FUNC1": f, "PWM_MAIN_TIM0": 400})["protocol"] == "pwm"
+
+
+def test_full_rate_logging_follows_the_logger_profile():
+    # PX4 v1.16.0 logged_topics.cpp: default profile 20 ms (line 135); high rate (269) and sysid (355) full rate
+    assert pr.full_rate_logged(dict(has_highrate=True, has_sysid=False))
+    assert pr.full_rate_logged(dict(has_highrate=False, has_sysid=True))
+    assert not pr.full_rate_logged(dict(has_highrate=False, has_sysid=False))
+    assert not pr.full_rate_logged(dict())

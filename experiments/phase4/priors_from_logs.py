@@ -57,15 +57,15 @@ def rates_and_gains(logs):
                          version=fc.get("version"), hw=fc.get("hw"), ratemax=fc.get("f_ctrl"),
                          fs_nominal=st.get("fs_nominal"), fs_measured=st.get("fs_measured"),
                          dropout=st.get("dropout_fraction"), fifo_is_control=fc.get("fifo_is_control_gyro"),
-                         pub_rate=rate, protocol=proto["protocol"], motor_groups=proto["groups"], gains_roll=g, gains_pitch=fc["gains_pitch"],
+                         pub_rate=rate, full_rate=pr.full_rate_logged(fc), protocol=proto["protocol"], motor_groups=proto["groups"], gains_roll=g, gains_pitch=fc["gains_pitch"],
                          f_gyro=fc["actual"]["f_gyro"], f_dterm=fc["actual"]["f_dterm"],
                          dnf_esc=fc["actual"]["dnf_esc"], usable=not r["log_rejections"] and bool(r["windows"])))
     return rows
 
 
 def summarize_rates(rows):
-    full = [r for r in rows if r["pub_rate"] and r["ratemax"] and r["pub_rate"] >= 0.5 * r["ratemax"]]
-    off = [r for r in full if abs(r["pub_rate"] / r["ratemax"] - 1) > 0.05]
+    full = [r for r in rows if r["pub_rate"] and r["full_rate"]]           # high-rate or sysid logger profile
+    off = [r for r in full if not r["ratemax"] or abs(r["pub_rate"] / r["ratemax"] - 1) > 0.05]
     by_setting = {}
     for r in full:
         key = f"{int(r['ratemax'])}"

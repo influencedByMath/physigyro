@@ -43,7 +43,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | D-25 | 10-15 | (1) Q3 duplicate = same date + duration + **file size**; (2) chip low-pass for **magnitude only**; the delay goes into the T_d uncertainty | (1) `time_ref_utc` is the time-zone offset (PX4 `logger.cpp`) and wrongly rejected 5 flights; (2) a known synthetic filter was not recovered: corner and order are not identifiable | active | Data (Q3); Methods; Limitations |
 | D-26 | 10-15 | Fixed robust floor; whole-peak-set generator; BIC gain ≥ 10 for a chip term; prominence 0.5; drop > 5 dB | A free floor is not identified (41 of 52 floors at the bound); independent Gaussian peaks gave spectra 32-59 dB too high; BMI088 term won by a BIC gain of only 1 | active | Methods 7.5 |
 | D-27 | 10-16 | Generator floor mean per chip class, shared covariance | Pooled floor: +6.8 / −3.8 dB bias at 20-100 Hz; class mean: +4.4 / +1.2 dB | active | Methods 7.5; Limitations |
-| D-28 | 10-18 | Tier 1 priors (A1): f_c 4-15 Hz, τ_m 20-60 ms, T_d 0.5-5 ms (IO chip only as sensitivity); control and FIFO rate as empirical pairs with the **measured** controller rate | `notes/tier1_priors.md`: Xu 2019, Bangura 2017, PX4 docs and source, Tier 2 b27d09e3; f_c ≥ 4 Hz from the 20 Hz band edge; controller rate ≠ `IMU_GYRO_RATEMAX` in 39 of 99 fit logs | active | Methods 7.1.1; Data |
+| D-28 | 10-18 | Tier 1 priors (A1): f_c 4-15 Hz, τ_m 20-60 ms, T_d 0.5-5 ms (IO chip only as sensitivity); control and FIFO rate as empirical pairs with the **measured** controller rate | `notes/tier1_priors.md`: Xu 2019, Bangura 2017, PX4 docs and source, Tier 2 b27d09e3; f_c ≥ 4 Hz from the 20 Hz band edge; controller rate ≠ `IMU_GYRO_RATEMAX` in 42 of 102 fit logs | active | Methods 7.1.1; Data |
 
 ---
 
@@ -101,6 +101,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | Generator: leave-one-vehicle-out "76 %, 7.7 dB" | 56 %, 8.36 vs 8.24 dB at equal sample sizes | independent code review |
 | Generator: "not copies" | Peak sets are near-copies; only the floor is new | independent code review |
 | Test count "197" in an early report draft | 196 at that time (200 after the review fixes) | test run |
+| (Phase 4) Controller rate off `IMU_GYRO_RATEMAX` in "39 of 99" fit logs (shown to the author at the A1 STOP) | **42 of 102**. "Logged at full rate" was first judged by measured ≥ 0.5 × setting, which dropped 3 full-rate logs (settings 2000 → 999 Hz, 1000 → 499 Hz, 0 → 795 Hz); now by the logger profile (PX4 `logged_topics.cpp`). D-28 is unchanged | self-check before the Task 2 report |
 
 ## E. Open for Phase 4 (to be decided; see `notes/phase4_plan.md`)
 

@@ -27,6 +27,8 @@ MUTANTS = [
     ("timers of all groups", "if _PWM_TIM.match(k) and _PWM_TIM.match(k).group(1) == g}", "if _PWM_TIM.match(k)}"),
     ("legacy dshot ignored", 'if params.get("DSHOT_CONFIG", 0) > 0:', 'if False:'),
     ("can as pwm", 'types.add("can")', 'types.add("pwm")'),
+    ("full rate from high-rate only", 'return bool(fc.get("has_highrate") or fc.get("has_sysid"))',
+     'return bool(fc.get("has_highrate"))'),
     ("mixed groups collapse", 'protocol=types.pop() if len(types) == 1 else "mixed")', 'protocol=types.pop())'),
 ]
 

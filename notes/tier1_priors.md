@@ -51,10 +51,10 @@ Not found: a measured τ_m above about 50 ms for a brushless multirotor. The THE
 | What | Value |
 |---|---|
 | `IMU_GYRO_RATEMAX` setting | 800 Hz: 74; 400: 14; 2000: 11; 1000: 9; 250: 2; 0: 1 |
-| Measured rate = median interval of `vehicle_angular_velocity` (99 logs logged at full rate) | 250 Hz to 1,070 Hz; median 799 Hz |
+| Measured rate = median interval of `vehicle_angular_velocity` (102 logs logged at full rate: high-rate or sysid logger profile, PX4 `logged_topics.cpp` lines 135, 269, 355) | 250 Hz to 1,070 Hz; median 799 Hz |
 | Setting 800 Hz → measured | 664-819 Hz; **25 % quantile 667 Hz** |
-| Setting 2000 Hz → measured | 1,003-1,070 Hz (never 2 kHz) |
-| **Measured more than 5 % away from the setting** | **39 of 99 logs** |
+| Setting 2000 Hz → measured | 999-1,070 Hz (never 2 kHz); setting 1000 Hz → 499-1,067 Hz |
+| **Measured more than 5 % away from the setting** | **42 of 102 logs** (first count 39 of 99 used a ratio rule that wrongly dropped 3 full-rate logs; corrected) |
 
 **New finding (landmine for the loop model, THESIS L2).** The real controller rate is often not `IMU_GYRO_RATEMAX`.
 - **Mechanism, checked in the PX4 v1.16.0 source:** `BMI088_Gyroscope::ConfigureSampleRate` rounds the FIFO interval to whole samples (`roundf((1e6 / rate) / FIFO_SAMPLE_DT)`), so a 2 kHz IMU asked for 800 Hz reads 3 samples per batch = **666.7 Hz**. `VehicleAngularVelocity::Run()` calls `CalibrateAndPublish` once per FIFO message (with the last filtered sample), and that publishes only if the interval check at line 925 passes; so it publishes at most once per FIFO batch. The rate controller runs on each publication.
@@ -106,7 +106,7 @@ Nominal: 2,000 Hz: 54; 6,400: 14; 8,000: 15; 8,192: 3; about 8,371: 25. Measured
 
 | Parameter | THESIS candidate | Evidence (above) | Proposal |
 |---|---|---|---|
-| Control loop rate | 800 Hz; 400, 1000, 2000 | Measured rates 250-1,070 Hz; 39 of 99 off the setting | Sample from the **measured fit-half rates** (empirical); real-gain cases use the log's measured rate |
+| Control loop rate | 800 Hz; 400, 1000, 2000 | Measured rates 250-1,070 Hz; 42 of 102 off the setting | Sample from the **measured fit-half rates** (empirical); real-gain cases use the log's measured rate |
 | FIFO rate | 2-8 kHz | 2,000 / 6,400 / 8,000 / 8,192 / 8,371 Hz | Sample (FIFO rate, control rate) **pairs** from the fit-half logs, so the pair stays physical. Ruling after A1: only logs whose logged FIFO IMU is the control IMU (38 of 111) and whose controller rate is logged at full rate; other pairs mix two IMUs |
 | f_c (large) | 3-15 Hz | 6.8 Hz (Xu), 10-11 Hz (ours); constraint f_c ≥ 4 Hz | **4-15 Hz** log-uniform |
 | τ_m (large) | 30-100 ms | 23-50 ms (Bangura), 29-34 ms (ours); nothing above 50 ms | **20-60 ms** log-uniform (100 ms has no source) |
