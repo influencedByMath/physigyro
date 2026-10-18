@@ -96,3 +96,26 @@ def test_markers_use_decision_d28_and_the_frozen_band():
     assert fb.FC_RANGE == (4.0, 15.0)              # D-28
     assert fb.NOISE_BAND_MAX == 780.0              # D-23 f_max
     assert fb.FC_LABEL.lower().find("candidate") < 0   # decided, not a candidate any more
+
+
+# ------------------------------------------------------------- ESC bank off vs on (author's request)
+
+def test_variants_are_the_px4_default_and_the_default_with_the_esc_bank():
+    assert fb.VARIANTS["off"] == lm.PX4_V116_MC_DEFAULT
+    assert fb.VARIANTS["on"] == replace(lm.PX4_V116_MC_DEFAULT, dnf_esc=True) == fb.SETTINGS
+
+
+def test_off_variant_has_no_notch_and_lowpass_only_gyro_path():
+    r = fb.responses(F, fb.FS, fb.VARIANTS["off"], fb.MOTOR_HZ)
+    assert np.allclose(r["esc_bank"], 1.0)
+    assert np.max(np.abs(r["gyro_path"] - r["gyro_lpf"])) < 1e-15
+    d = fb.delays_ms(np.array([10.0]), fb.FS, fb.VARIANTS["off"], fb.MOTOR_HZ)
+    assert d["gyro_path"][0] == pytest.approx(d["gyro_lpf"][0])
+
+
+def test_comparison_figure_is_written(tmp_path):
+    out = fb.make_comparison(str(tmp_path))
+    for ext in ("png", "pdf"):
+        assert (tmp_path / f"fig1_compare_esc_off_on.{ext}").stat().st_size > 10_000
+    # the delay table it returns: the ESC bank adds its delay to both paths at the crossover
+    assert out["on"]["gyro_path"][1] - out["off"]["gyro_path"][1] == pytest.approx(out["on"]["esc_bank"][1], rel=1e-9)

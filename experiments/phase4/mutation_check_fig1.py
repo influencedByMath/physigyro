@@ -24,6 +24,8 @@ MUTANTS = [
      "return {k: 1e3 * -np.unwrap(np.angle(np.prod(facs, axis=0))) / (2 * np.pi * f)"),
     ("candidate f_c range", "FC_RANGE = (4.0, 15.0)", "FC_RANGE = (3.0, 15.0)"),
     ("band edge", "NOISE_BAND_MAX = 780.0", "NOISE_BAND_MAX = 800.0"),
+    ("off variant has the bank", 'VARIANTS = {"off": lm.PX4_V116_MC_DEFAULT, "on": SETTINGS}',
+     'VARIANTS = {"off": SETTINGS, "on": SETTINGS}'),
 ]
 
 if __name__ == "__main__":

@@ -8,7 +8,8 @@ the 2nd-order gyro low-pass IMU_GYRO_CUTOFF) and the D-term path F_g F_d D(z) / 
 Settings: PX4_V116_MC_DEFAULT (D-09), with the ESC-RPM bank switched on at its default BW / HMC / MIN, for four
 motors at the fit-half median hover frequency (priors_from_logs.json; only 6 vehicles with valid RPM).
 Delay = phase lag / (2 pi f) (THESIS 4.4, the definition of tau_F). Marked: crossover range f_c of D-28 and the
-noise band 5 f_c ... 780 Hz (D-23 f_max). Writes figures/fig1_filter_stack.{png,pdf}.
+noise band 5 f_c ... 780 Hz (D-23 f_max). Writes figures/fig1_filter_stack.{png,pdf} (bank on) and
+figures/fig1_compare_esc_off_on.{png,pdf} (the PX4 default with the bank off next to the bank on).
 """
 import json
 import os
@@ -24,6 +25,7 @@ import filters as flt               # noqa: E402
 import loop_model as lm             # noqa: E402
 
 SETTINGS = replace(lm.PX4_V116_MC_DEFAULT, dnf_esc=True)
+VARIANTS = {"off": lm.PX4_V116_MC_DEFAULT, "on": SETTINGS}    # PX4 default (ESC bank off) and with the bank on
 FS = lm.Rates().fs
 _HOVER = json.load(open(os.path.join(HERE, "priors_from_logs.json")))["hover_motor"]["quantiles"]["0.5"]
 MOTOR_HZ = np.full(4, float(_HOVER))
@@ -71,71 +73,119 @@ def delays_ms(f, fs, s, motor_hz):
     return {k: 1e3 * sum(-np.angle(h) for h in facs) / (2 * np.pi * f) for k, facs in factors(f, fs, s, motor_hz).items()}
 
 
+def _style(ax):
+    ax.axvspan(*FC_RANGE, color=BAND, zorder=0)
+    ax.axvspan(5 * FC_RANGE[0], NOISE_BAND_MAX, facecolor=BAND, alpha=0.55, zorder=0, hatch="////",
+               edgecolor="#d5d8dc", linewidth=0)
+    ax.axvspan(5 * FC_RANGE[1], NOISE_BAND_MAX, color=BAND, zorder=0)
+    ax.grid(True, which="major", color=GRID, linewidth=0.8)
+    ax.tick_params(colors=MUTED, labelsize=9)
+    for sp in ax.spines.values():
+        sp.set_color(GRID)
+    ax.set_xscale("log")
+
+
+def _draw(ax1, ax2, s, f):
+    """Magnitude (ax1) and delay (ax2) of every filter and path of setting s; returns the legend handles."""
+    r = responses(f, FS, s, MOTOR_HZ)
+    series = [  # key, label, colour, line style, width
+        ("gyro_lpf", f"gyro low-pass, 2nd order, {s.f_gyro:.0f} Hz", BLUE, (0, (4, 2)), 1.2),
+        ("esc_bank", f"ESC-RPM notch bank, 4 motors x {s.dnf_hmc} harmonics, BW {s.dnf_bw:.0f} Hz",
+         AQUA, (0, (4, 2)), 1.2),
+        ("dterm_pt1", f"D-term low-pass, PT1, {s.f_dterm:.0f} Hz", ORANGE, (0, (4, 2)), 1.2),
+        ("gyro_path", "gyro path $F_g$ (P and I terms)", BLUE, "-", 2.0),
+        ("dterm_path", "D-term path $F_g F_d$ (with the derivative)", ORANGE, "-", 2.0),
+    ]
+    if not s.dnf_esc and not s.notches:
+        series = [x for x in series if x[0] != "esc_bank"]
+    for ax in (ax1, ax2):
+        _style(ax)
+    mag = {k: 20 * np.log10(np.maximum(np.abs(r[k]), 1e-12)) for k, *_ in series}
+    dl = delays_ms(f, FS, s, MOTOR_HZ)
+    for k, lab, col, ls, lw in series:
+        ax1.plot(f, mag[k], color=col, linestyle=ls, linewidth=lw, label=lab)
+        ax2.plot(f, dl[k], color=col, linestyle=ls, linewidth=lw)
+    ax1.set_ylim(-60, 6)
+    ax2.set_ylim(-2, 16)
+    ax2.set_xlim(1.0, 1000.0)
+    for k, dy in (("gyro_path", 0.5), ("dterm_path", 0.9)):
+        y = np.interp(2.0, f, dl[k])
+        ax2.text(1.15, y + dy, "gyro path" if k == "gyro_path" else "D-term path", color=INK, fontsize=8.5)
+    for k, txt, x in (("gyro_lpf", "gyro LPF", 300.0), ("dterm_pt1", "D-term PT1", 300.0)):
+        ax1.text(x, np.interp(x, f, mag[k]) + 1.5, txt, color=INK, fontsize=8)
+    if s.dnf_esc:
+        ax1.text(330.0, -5.0, "ESC notches", color=INK, fontsize=8, ha="left")
+    ax1.text(np.sqrt(FC_RANGE[0] * FC_RANGE[1]), 2.0, FC_LABEL, color=MUTED, fontsize=8, ha="center")
+    ax1.text(np.sqrt(5 * FC_RANGE[0] * NOISE_BAND_MAX), 2.0, "noise band $5 f_c$ ... 780 Hz", color=MUTED,
+             fontsize=8, ha="center")
+    from matplotlib.ticker import FuncFormatter
+    ax2.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
+    return ax1.get_legend_handles_labels()
+
+
+def _probe(s):
+    probe = np.array([4.0, 10.0, 15.0])
+    return {k: [round(float(x), 3) for x in v] for k, v in delays_ms(probe, FS, s, MOTOR_HZ).items()}
+
+
+def _save(fig, out_dir, name):
+    import matplotlib.pyplot as plt
+    os.makedirs(out_dir, exist_ok=True)
+    for ext in ("png", "pdf"):
+        fig.savefig(os.path.join(out_dir, f"{name}.{ext}"), dpi=200, bbox_inches="tight")
+    plt.close(fig)
+
+
 def make_figure(out_dir):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     f = np.geomspace(1.0, 1000.0, 4000)
-    r = responses(f, FS, SETTINGS, MOTOR_HZ)
-    series = [  # key, label, colour, line style, width
-        ("gyro_lpf", f"gyro low-pass, 2nd order, {SETTINGS.f_gyro:.0f} Hz", BLUE, (0, (4, 2)), 1.2),
-        ("esc_bank", f"ESC-RPM notch bank, 4 motors x {SETTINGS.dnf_hmc} harmonics, BW {SETTINGS.dnf_bw:.0f} Hz",
-         AQUA, (0, (4, 2)), 1.2),
-        ("dterm_pt1", f"D-term low-pass, PT1, {SETTINGS.f_dterm:.0f} Hz", ORANGE, (0, (4, 2)), 1.2),
-        ("gyro_path", "gyro path $F_g$ (P and I terms)", BLUE, "-", 2.0),
-        ("dterm_path", "D-term path $F_g F_d$ (with the derivative)", ORANGE, "-", 2.0),
-    ]
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(7.2, 6.4), sharex=True, gridspec_kw=dict(hspace=0.12))
-    for ax in (ax1, ax2):
-        ax.axvspan(*FC_RANGE, color=BAND, zorder=0)
-        ax.axvspan(5 * FC_RANGE[0], NOISE_BAND_MAX, facecolor=BAND, alpha=0.55, zorder=0, hatch="////",
-                   edgecolor="#d5d8dc", linewidth=0)
-        ax.axvspan(5 * FC_RANGE[1], NOISE_BAND_MAX, color=BAND, zorder=0)
-        ax.grid(True, which="major", color=GRID, linewidth=0.8)
-        ax.tick_params(colors=MUTED, labelsize=9)
-        for sp in ax.spines.values():
-            sp.set_color(GRID)
-        ax.set_xscale("log")
-    mag = {k: 20 * np.log10(np.maximum(np.abs(r[k]), 1e-12)) for k, *_ in series}
-    dl = delays_ms(f, FS, SETTINGS, MOTOR_HZ)
-    for k, lab, col, ls, lw in series:
-        ax1.plot(f, mag[k], color=col, linestyle=ls, linewidth=lw, label=lab)
-        ax2.plot(f, dl[k], color=col, linestyle=ls, linewidth=lw)
-    ax1.set_ylim(-60, 6)
+    h, lab = _draw(ax1, ax2, SETTINGS, f)
     ax1.set_ylabel("Magnitude [dB]", color=MUTED)
     ax1.set_title("(a) Magnitude", color=INK, fontsize=10, loc="left")
-    ax2.set_ylim(-2, 16)
     ax2.set_ylabel("Delay = phase lag / $2\\pi f$ [ms]", color=MUTED)
     ax2.set_title("(b) Delay", color=INK, fontsize=10, loc="left")
     ax2.set_xlabel("Frequency [Hz]", color=MUTED)
-    ax2.set_xlim(1.0, 1000.0)
-    # direct labels on the two paths (delay panel, inside the crossover band) and band captions
-    for k, dy in (("gyro_path", 0.5), ("dterm_path", 0.9)):
-        y = np.interp(2.0, f, dl[k])
-        ax2.text(1.15, y + dy, "gyro path" if k == "gyro_path" else "D-term path", color=INK, fontsize=8.5)
-    for k, txt, x in (("gyro_lpf", "gyro LPF", 300.0), ("dterm_pt1", "D-term PT1", 300.0)):
-        ax1.text(x, np.interp(x, f, mag[k]) + 1.5, txt, color=INK, fontsize=8)
-    ax1.text(330.0, -5.0, "ESC notches", color=INK, fontsize=8, ha="left")
-    ax1.text(np.sqrt(FC_RANGE[0] * FC_RANGE[1]), 2.0, FC_LABEL, color=MUTED, fontsize=8, ha="center")
-    ax1.text(np.sqrt(5 * FC_RANGE[0] * NOISE_BAND_MAX), 2.0, "noise band $5 f_c$ ... 780 Hz", color=MUTED,
-             fontsize=8, ha="center")
-    from matplotlib.ticker import FuncFormatter
-    ax2.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
-    h, lab = ax1.get_legend_handles_labels()
     fig.legend(h, lab, frameon=False, fontsize=8, labelcolor=INK, loc="upper left", ncol=2,
                bbox_to_anchor=(0.07, 0.035))
     fig.text(0.07, -0.085, f"PX4 v1.16 multicopter defaults (ESC-RPM bank on at its defaults), filters at {FS:.0f} Hz; "
              f"motors at {MOTOR_HZ[0]:.1f} Hz (fit-half median hover). Hatched: noise band starts between 20 and 75 Hz.",
              color=MUTED, fontsize=7)
-    os.makedirs(out_dir, exist_ok=True)
-    for ext in ("png", "pdf"):
-        fig.savefig(os.path.join(out_dir, f"fig1_filter_stack.{ext}"), dpi=200, bbox_inches="tight")
-    plt.close(fig)
-    probe = np.array([4.0, 10.0, 15.0])
-    return {k: [round(float(x), 3) for x in v] for k, v in delays_ms(probe, FS, SETTINGS, MOTOR_HZ).items()}
+    _save(fig, out_dir, "fig1_filter_stack")
+    return _probe(SETTINGS)
+
+
+def make_comparison(out_dir):
+    """The PX4 default (ESC bank off) next to the same stack with the bank on (same axes, same scales)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    f = np.geomspace(1.0, 1000.0, 4000)
+    fig, axes = plt.subplots(2, 2, figsize=(12.0, 6.4), sharex=True, sharey="row",
+                             gridspec_kw=dict(hspace=0.12, wspace=0.06))
+    handles = {}
+    for col, (key, title) in enumerate((("off", "PX4 v1.16 default: ESC-RPM notch bank OFF"),
+                                        ("on", "ESC-RPM notch bank ON (defaults: BW 15 Hz, 3 harmonics)"))):
+        h, lab = _draw(axes[0, col], axes[1, col], VARIANTS[key], f)
+        handles.update(zip(lab, h))
+        axes[0, col].set_title(f"({'ab'[col]}) {title}", color=INK, fontsize=10, loc="left")
+        axes[1, col].set_xlabel("Frequency [Hz]", color=MUTED)
+    axes[0, 0].set_ylabel("Magnitude [dB]", color=MUTED)
+    axes[1, 0].set_ylabel("Delay = phase lag / $2\\pi f$ [ms]", color=MUTED)
+    fig.legend(list(handles.values()), list(handles.keys()), frameon=False, fontsize=8, labelcolor=INK,
+               loc="upper left", ncol=3, bbox_to_anchor=(0.06, 0.035))
+    fig.text(0.06, -0.06, f"Filters at {FS:.0f} Hz; motors at {MOTOR_HZ[0]:.1f} Hz (fit-half median hover; bank on only). "
+             "Hatched: noise band starts between 20 and 75 Hz (5 f_c). In (a) the gyro path equals the gyro low-pass "
+             "(its dashed line lies under the solid one).", color=MUTED, fontsize=7)
+    _save(fig, out_dir, "fig1_compare_esc_off_on")
+    return {k: _probe(v) for k, v in VARIANTS.items()}
 
 
 if __name__ == "__main__":
     d = make_figure(os.path.join(HERE, "figures"))
     print("delay [ms] at f = 4, 10, 15 Hz:", json.dumps(d))
+    print("off / on:", json.dumps(make_comparison(os.path.join(HERE, "figures"))))
