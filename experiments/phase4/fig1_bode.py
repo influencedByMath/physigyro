@@ -1,6 +1,6 @@
 """Fig. 1 (experiment E1): magnitude and delay of the PX4 v1.16 multicopter gyro filter stack (Phase 4 Task 2; D-29).
 
-    .venv/Scripts/python experiments/phase4/fig1_bode.py
+    .venv/Scripts/python experiments/phase4/fig1_bode.py [output folder; default figures/]
 
 Exactly the filter chain of the loop model (Review Focus 3): src/loop_model.gyro_stack (ESC-RPM notch bank, then
 the 2nd-order gyro low-pass IMU_GYRO_CUTOFF) and the D-term path F_g F_d D(z) / (j 2 pi f) of LoopCase.evaluate
@@ -8,7 +8,7 @@ the 2nd-order gyro low-pass IMU_GYRO_CUTOFF) and the D-term path F_g F_d D(z) / 
 Two panels (author's decision D-29): (a, main) PX4_V116_MC_DEFAULT (D-09), ESC-RPM notch bank off; (b) the same stack
 with the bank on at its default BW / HMC / MIN, for four motors at the fit-half median hover frequency
 (priors_from_logs.json; only 6 vehicles with valid RPM). Delay = phase lag / (2 pi f) (THESIS 4.4, the definition of
-tau_F). Marked: crossover range f_c of D-28 and the noise band 5 f_c ... 780 Hz (D-23 f_max).
+tau_F). Marked: crossover range f_c of D-36 (3-10 Hz) and the noise band max(5 f_c, 20 Hz) ... 780 Hz (D-36, D-23 Q5).
 Writes figures/fig1_filter_stack.{png,pdf} and the caption figures/fig1_caption.md (numbers computed, not typed).
 """
 import json
@@ -29,9 +29,9 @@ VARIANTS = {"off": lm.PX4_V116_MC_DEFAULT, "on": SETTINGS}    # PX4 default (ESC
 FS = lm.Rates().fs
 _HOVER = json.load(open(os.path.join(HERE, "priors_from_logs.json")))["hover_motor"]["quantiles"]["0.5"]
 MOTOR_HZ = np.full(4, float(_HOVER))
-FC_RANGE = (4.0, 15.0)              # D-28
-FC_LABEL = "crossover $f_c$ (D-28)"
-NOISE_BAND_MAX = 780.0              # D-23
+FC_RANGE = (3.0, 10.0)              # D-36 (5)
+FC_LABEL = "crossover $f_c$ (D-36)"
+NOISE_BAND_MIN, NOISE_BAND_MAX = 20.0, 780.0     # D-23 Q5
 
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"      # validated (dataviz validator, all pairs)
 INK, MUTED, GRID, BAND = "#1f2328", "#5b6470", "#e6e8eb", "#f1f2f4"
@@ -73,11 +73,23 @@ def delays_ms(f, fs, s, motor_hz):
     return {k: 1e3 * sum(-np.angle(h) for h in facs) / (2 * np.pi * f) for k, facs in factors(f, fs, s, motor_hz).items()}
 
 
+def noise_band_start(fc):
+    """Lower edge f_lo of the noise band for crossover fc: max(5 f_c, 20 Hz) (D-36 (5))."""
+    return max(5.0 * fc, NOISE_BAND_MIN)
+
+
+def spans():
+    """Shaded frequency spans: the crossover band, and the noise band, hatched where its start depends on f_c."""
+    return dict(crossover=FC_RANGE, noise_hatched=(noise_band_start(FC_RANGE[0]), NOISE_BAND_MAX),
+                noise_solid=(noise_band_start(FC_RANGE[1]), NOISE_BAND_MAX))
+
+
 def _style(ax):
-    ax.axvspan(*FC_RANGE, color=BAND, zorder=0)
-    ax.axvspan(5 * FC_RANGE[0], NOISE_BAND_MAX, facecolor=BAND, alpha=0.55, zorder=0, hatch="////",
+    sp = spans()
+    ax.axvspan(*sp["crossover"], color=BAND, zorder=0)
+    ax.axvspan(*sp["noise_hatched"], facecolor=BAND, alpha=0.55, zorder=0, hatch="////",
                edgecolor="#d5d8dc", linewidth=0)
-    ax.axvspan(5 * FC_RANGE[1], NOISE_BAND_MAX, color=BAND, zorder=0)
+    ax.axvspan(*sp["noise_solid"], color=BAND, zorder=0)
     ax.grid(True, which="major", color=GRID, linewidth=0.8)
     ax.tick_params(colors=MUTED, labelsize=9)
     for sp in ax.spines.values():
@@ -116,8 +128,8 @@ def _draw(ax1, ax2, s, f):
     if s.dnf_esc:
         ax1.text(330.0, -5.0, "ESC notches", color=INK, fontsize=8, ha="left")
     ax1.text(np.sqrt(FC_RANGE[0] * FC_RANGE[1]), 2.0, FC_LABEL, color=MUTED, fontsize=8, ha="center")
-    ax1.text(np.sqrt(5 * FC_RANGE[0] * NOISE_BAND_MAX), 2.0, "noise band $5 f_c$ ... 780 Hz", color=MUTED,
-             fontsize=8, ha="center")
+    ax1.text(np.sqrt(noise_band_start(FC_RANGE[0]) * NOISE_BAND_MAX), 2.0, "noise band max($5 f_c$, 20 Hz) ... 780 Hz",
+             color=MUTED, fontsize=8, ha="center")
     from matplotlib.ticker import FuncFormatter
     ax2.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
     return ax1.get_legend_handles_labels()
@@ -145,9 +157,10 @@ def caption():
             f"(a) PX4 default (D-09): gyro low-pass {s.f_gyro:.0f} Hz (2nd order) and D-term low-pass {s.f_dterm:.0f} Hz "
             f"(PT1); the ESC-RPM notch bank is off. (b) The same stack with the ESC-RPM notch bank on at its defaults "
             f"(bandwidth {SETTINGS.dnf_bw:.0f} Hz, {SETTINGS.dnf_hmc} harmonics) for 4 motors at {MOTOR_HZ[0]:.1f} Hz, the "
-            f"fit-half median hover frequency. Shaded: the crossover band f_c = {FC_RANGE[0]:g}-{FC_RANGE[1]:g} Hz (D-28) "
-            f"and the noise band from 5 f_c to {NOISE_BAND_MAX:.0f} Hz (hatched from {5 * FC_RANGE[0]:g} to "
-            f"{5 * FC_RANGE[1]:g} Hz, where its start depends on f_c). The spikes in the delay curves of (b) sit at the "
+            f"fit-half median hover frequency. Shaded: the crossover band f_c = {FC_RANGE[0]:g}-{FC_RANGE[1]:g} Hz (D-36) "
+            f"and the noise band from max(5 f_c, {NOISE_BAND_MIN:g} Hz) to {NOISE_BAND_MAX:.0f} Hz (hatched from "
+            f"{noise_band_start(FC_RANGE[0]):g} to {noise_band_start(FC_RANGE[1]):g} Hz, where its start depends on f_c). "
+            f"The spikes in the delay curves of (b) sit at the "
             f"notch centres ({', '.join(f'{x:.1f}' for x in centres[:-1])} and {centres[-1]:.1f} Hz): the phase of each "
             f"notch swings from lag to lead where its magnitude is almost zero. They lie far above the crossover band, so "
             f"they do not affect the stability margins at crossover. The bank does lower the margins a little: the tails "
@@ -187,7 +200,8 @@ def make_figure(out_dir):
     fig.legend(list(handles.values()), list(handles.keys()), frameon=False, fontsize=8, labelcolor=INK,
                loc="upper left", ncol=3, bbox_to_anchor=(0.06, 0.035))
     fig.text(0.06, -0.06, f"Filters at {FS:.0f} Hz; motors at {MOTOR_HZ[0]:.1f} Hz (fit-half median hover; panel b only). "
-             "Hatched: noise band starts between 20 and 75 Hz (5 f_c). In (a) the gyro path equals the gyro low-pass "
+             f"Hatched: noise band starts between {noise_band_start(FC_RANGE[0]):g} and {noise_band_start(FC_RANGE[1]):g} Hz "
+             "(max(5 f_c, 20 Hz)). In (a) the gyro path equals the gyro low-pass "
              "(its dashed line lies under the solid one).", color=MUTED, fontsize=7)
     _save(fig, out_dir, "fig1_filter_stack")
     with open(os.path.join(out_dir, "fig1_caption.md"), "w", encoding="utf-8", newline="\n") as fh:
@@ -196,6 +210,7 @@ def make_figure(out_dir):
 
 
 if __name__ == "__main__":
-    d = make_figure(os.path.join(HERE, "figures"))
+    sys.stdout.reconfigure(encoding="utf-8")     # the caption has π and °; a Windows cp1252 console cannot print them
+    d = make_figure(sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "figures"))
     print("delay [ms] at f = 4, 10, 15 Hz:", json.dumps(d))
     print(caption())

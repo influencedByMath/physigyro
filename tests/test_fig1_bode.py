@@ -92,10 +92,18 @@ def test_notch_gives_phase_lead_just_above_its_centre():
     assert np.allclose(d, 1e3 * (-4 * np.angle(flt.notch_response(f, f0, s.dnf_bw, fb.FS))) / (2 * np.pi * f))
 
 
-def test_markers_use_decision_d28_and_the_frozen_band():
-    assert fb.FC_RANGE == (4.0, 15.0)              # D-28
-    assert fb.NOISE_BAND_MAX == 780.0              # D-23 f_max
+def test_markers_use_decision_d36_and_the_frozen_band():
+    assert fb.FC_RANGE == (3.0, 10.0)              # D-36 (5): f_c 3-10 Hz (replaces 4-15 Hz of D-28)
+    assert "D-36" in fb.FC_LABEL
+    assert (fb.NOISE_BAND_MIN, fb.NOISE_BAND_MAX) == (20.0, 780.0)   # D-23 Q5 band
     assert fb.FC_LABEL.lower().find("candidate") < 0   # decided, not a candidate any more
+
+
+def test_noise_band_starts_at_max_of_5_fc_and_20_hz():
+    """D-36 (5): f_lo = max(5 f_c, 20 Hz); the hatched part is where the start depends on f_c."""
+    assert fb.noise_band_start(3.0) == 20.0 and fb.noise_band_start(4.0) == 20.0
+    assert fb.noise_band_start(10.0) == pytest.approx(50.0)
+    assert fb.spans() == dict(crossover=(3.0, 10.0), noise_hatched=(20.0, 780.0), noise_solid=(50.0, 780.0))
 
 
 # ------------------------------------------------------------- ESC bank off vs on (author's request)
@@ -126,6 +134,16 @@ def test_figure_has_the_default_panel_first_and_the_esc_bank_second(tmp_path):
     assert out["on"]["gyro_path"][1] - out["off"]["gyro_path"][1] == pytest.approx(out["on"]["esc_bank"][1], rel=1e-9)
 
 
+def test_script_runs_on_a_cp1252_console(tmp_path):
+    """The caption contains π and °; run as a script on a Windows cp1252 console it must still finish and write."""
+    import subprocess
+    env = dict(os.environ, PYTHONIOENCODING="cp1252")
+    r = subprocess.run([sys.executable, os.path.join(os.path.dirname(fb.__file__), "fig1_bode.py"), str(tmp_path)],
+                       capture_output=True, env=env, timeout=300)
+    assert r.returncode == 0, r.stderr.decode("utf-8", "replace")[-600:]
+    assert (tmp_path / "fig1_caption.md").read_text(encoding="utf-8") == fb.caption() + "\n"
+
+
 def test_bank_delay_in_the_crossover_band_is_the_analytic_notch_tail():
     """Below a notch centre f0 the notch lags by about f BW / f0^2 rad, i.e. a delay of BW / (2 pi f0^2)."""
     f0s = flt.esc_notch_frequencies(fb.MOTOR_HZ, fb.SETTINGS.dnf_hmc, fb.SETTINGS.dnf_bw, fb.SETTINGS.dnf_min)
@@ -144,4 +162,6 @@ def test_caption_states_the_computed_numbers():
     assert f"{lag[0]:.1f}°" in cap and f"{lag[1]:.1f}°" in cap
     for f0 in f0s:
         assert f"{f0:.1f}" in cap
-    assert "D-09" in cap and "D-28" in cap and f"{fb.MOTOR_HZ[0]:.1f} Hz" in cap
+    assert "D-09" in cap and "D-36" in cap and "D-28" not in cap and f"{fb.MOTOR_HZ[0]:.1f} Hz" in cap
+    assert "f_c = 3-10 Hz" in cap and "hatched from 20 to 50 Hz" in cap and "max(5 f_c, 20 Hz)" in cap
+    assert f"at {fb.FC_RANGE[0]:g} Hz" in cap and f"at {fb.FC_RANGE[1]:g} Hz" in cap

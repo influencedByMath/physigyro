@@ -1,6 +1,6 @@
 # Tier 1 plant priors: evidence table (Phase 4 Task 1)
 
-Made 2026-10-18 (Day 21), branch `phase4`. Written for: the author, to decide A1 (and inputs to A4). **A1 decided 2026-10-18 as D-28** (the four proposals of Section 3 for f_c, τ_m, T_d and the rates; THESIS 7.1.1 updated). The FPV row is not decided.
+Made 2026-10-18 (Day 21), branch `phase4`. Written for: the author, to decide A1 (and inputs to A4). **A1 decided 2026-10-18 as D-28** (the four proposals of Section 3 for f_c, τ_m, T_d and the rates; THESIS 7.1.1 updated). The FPV row is not decided. **Revised the same day by D-36** after the Tier 2 identifications (`notes/followup_A4_F1_F4.md` Section 7): f_c 3-10 Hz, τ_m 15-60 ms, T_d 0.3-8 ms (net of the chip filter); the rate pairs and hover f_m are unchanged.
 
 **Rules followed**
 - No number without a source that was read. What could not be found stays **VERIFY**, with the reason.

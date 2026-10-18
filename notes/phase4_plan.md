@@ -82,6 +82,8 @@ Steps (test first):
 
 ## Task 3: RQ1 results (E3: Fig. 3, Fig. 4, Table 2). Needs A2-A4
 
+> **2026-10-18:** A2-A4 and F1-F4 are decided (D-30 to D-36). The detailed plan is `notes/task3_plan.md` (waits for the author's approval; Task 3 not started).
+
 - **Synthetic noise from the Phase 3 generator:** default vs optimal settings, modes A/B/C, reporting $\tilde N$, $\tau_F$ and PM together.
 - **Real test-half spectra:** default vs the pilot's actual setting vs optimal, with the real gains (D-15).
 - **Rule:** the test half is used only for evaluation (Phase 3 rule).
