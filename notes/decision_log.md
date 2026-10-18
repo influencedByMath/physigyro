@@ -6,13 +6,13 @@ Written for: the author, as the source when writing the paper. **The full wordin
 - the small **implementation rulings** made during the work;
 - every **correction** of an earlier claim.
 
-Keep it updated in every phase. Last update: 2026-10-18 (Phase 4, D-28).
+Keep it updated in every phase. Last update: 2026-10-18 (Phase 4, D-35).
 
 Status values: **active** (in force), **extended** (still in force, with additions by a later decision), **partly superseded** (one part replaced; named), **done** (a one-off action).
 
 ---
 
-## A. Decisions D-01 to D-28
+## A. Decisions D-01 to D-35
 
 | ID | Date | Decision (short) | Evidence or reason | Status | Paper section |
 |---|---|---|---|---|---|
@@ -44,6 +44,13 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | D-26 | 10-15 | Fixed robust floor; whole-peak-set generator; BIC gain ≥ 10 for a chip term; prominence 0.5; drop > 5 dB | A free floor is not identified (41 of 52 floors at the bound); independent Gaussian peaks gave spectra 32-59 dB too high; BMI088 term won by a BIC gain of only 1 | active | Methods 7.5 |
 | D-27 | 10-16 | Generator floor mean per chip class, shared covariance | Pooled floor: +6.8 / −3.8 dB bias at 20-100 Hz; class mean: +4.4 / +1.2 dB | active | Methods 7.5; Limitations |
 | D-28 | 10-18 | Tier 1 priors (A1): f_c 4-15 Hz, τ_m 20-60 ms, T_d 0.5-5 ms (IO chip only as sensitivity); control and FIFO rate as empirical pairs with the **measured** controller rate | `notes/tier1_priors.md`: Xu 2019, Bangura 2017, PX4 docs and source, Tier 2 b27d09e3; f_c ≥ 4 Hz from the 20 Hz band edge; controller rate ≠ `IMU_GYRO_RATEMAX` in 42 of 102 fit logs | active | Methods 7.1.1; Data |
+| D-29 | 10-18 | Fig. 1 with both ESC-bank variants: (a, main) PX4 default, bank off; (b) bank on (capability); caption explains the notch-centre spikes and the 1.8 ms the bank adds in the crossover band | Author's choice after the side-by-side figure; bank delay computed and checked analytically (1.81 ms) | active | Results (E1), Fig. 1 |
+| D-30 | 10-18 | A2: PM floor 30° (nominal plant) | Evidence pack: never binds for real drones (Ms binds first) | active | Methods 7.8 |
+| D-31 | 10-18 | A3: Ms_max 2.0 (6 dB) nominal, GM ≥ 6 dB | 23 of 28 real flown settings; Skogestad and Postlethwaite 2005 Sec. 2.4.3 | active | Methods 7.8 |
+| D-32 | 10-18 | Separate worst-case limits (concept; value open): every plant of the set stable with Ms ≤ Ms_wc and its implied PM/GM | Same limits keep 39 % of nominally passing real settings, separate (Ms_wc 3) 78 % | active, **value open (A4)** | Methods 7.8 |
+| D-33 | 10-18 | ICM chip delay by the 1.5 % fit-error rule: lower bound as nominal Td shift, rest in the delay step (synthetic); real identified plants FIFO → control correction only | BIC rule falsely narrow; rule changes pass rates ≤ 2 points | active; **refines D-25 (2)** | Methods 7.1.1, 7.8 |
+| D-34 | 10-18 | Author accepted all implementation rulings made without asking (Section C, ledger); provisional identification gates frozen with A4 | Author | active | - |
+| D-35 | 10-18 | The 31 fit logs with logger dropouts are not identified (cut list) | Author; new path with its own risks | active | Limitations |
 
 ---
 
@@ -77,6 +84,8 @@ Status values: **active** (in force), **extended** (still in force, with additio
 
 ## C. Implementation rulings (made during the work, reported to the author)
 
+All rulings in this table up to the evidence pack were accepted by the author on 2026-10-18 (D-34). The rows marked (follow-up) were made afterwards and are reported in `notes/followup_A4_F1_F4.md` Section 10.
+
 | Ruling | Why | Where |
 |---|---|---|
 | Windows are gated first, then the quietest non-overlapping ones selected (≤ 3) | Selecting first let a gappy window block a good one | `spectra_library.select_windows` |
@@ -96,6 +105,12 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | (evidence pack) Provisional acceptance gates for identifications: fit error <= 3 dB / 15 deg, tau_m and Td not on a fit bound, D-14 instrument agreement in Position/auto modes | Evidence settings, not decisions; gate sensitivity 24 / 25 / 25 rows at 2 / 3 / 4 dB | `plant_variation.accept`; evidence pack 1.1 |
 | (evidence pack) Repeatability = first vs second half of the usable time of one flight, also compared as the plant gain and phase at 10 Hz | tau_m and Td trade off below the 20 Hz band edge; the margins depend on the response near the crossover | `evidence_tables.half_diff` |
 | (evidence pack) Separate worst-case limits are expressed by Ms_wc with the PM and GM it guarantees (PM >= 2 asin(1/(2 Ms)), GM >= Ms/(Ms-1)) | Distance from the Nyquist curve to -1 is 1/Ms (Astrom and Murray Sec. 12.2); one number keeps PM, GM and Ms consistent | `experiments/phase4/robust_limits.py` |
+| (follow-up) The identification variants of the author's question 2 (band to 40 Hz, coherence 0.3, 2.56 s segments, combinations) were run on all 28 included cases, not only the 5 failing ones | Selecting the 5 would select on the outcome; 40 Hz covers every critical frequency (at most 25.5 Hz) | `experiments/phase4/a4_followup.py` |
+| (follow-up) Filter feasibility of flagged references: 24 x 18 grid over the optimizer ranges, notches as flown or all off, stability limits only | Answers whether a safe label exists; noise belongs to Task 3 | `a4_followup.feasible_filters` |
+| (follow-up) Identified Td compared with Td priors net of the chip filter (lower bound of the control chip, else of the FIFO chip) | D-33 adds the chip delay to synthetic drones separately; no double counting | `f_options.net_td` |
+| (follow-up) F-option populations evaluated without the ICM chip delay (as in robust_limits); the option 'identified plants' at a 50 % share with net Td | Comparability between the options | `experiments/phase4/f_options.py` |
+| (follow-up) The author's F4 options read as: 3 f_c for every drone; 10 Hz only where 5 f_c < 20 Hz | A fixed 10 Hz for every drone would put f_lo inside the control band of every drone above 2 Hz | `f_options.f_lo_rules` |
+| (follow-up) A5 estimate from the fit half only; the test-half RPM count was not opened | The test half is only for evaluation | `notes/followup_A4_F1_F4.md` Section 8 |
 
 ## D. Corrections of earlier claims (state honestly; useful for Limitations)
 
@@ -110,6 +125,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | Test count "197" in an early report draft | 196 at that time (200 after the review fixes) | test run |
 | (Phase 4) Controller rate off `IMU_GYRO_RATEMAX` in "39 of 99" fit logs (shown to the author at the A1 STOP) | **42 of 102**. "Logged at full rate" was first judged by measured ≥ 0.5 × setting, which dropped 3 full-rate logs (settings 2000 → 999 Hz, 1000 → 499 Hz, 0 → 795 Hz); now by the logger profile (PX4 `logged_topics.cpp`). D-28 is unchanged | self-check before the Task 2 report |
 | (Phase 4) Evidence pack v1 (committed 250aef6): "±15 % is about twice the measured repeatability"; "F3: 0 % in every design"; real-gain margins "with the control IMU's filter rate"; "never count twice" without the FIFO/control caveat | Compared only at 10 Hz; at each drone's own M_s peak ±15 % covers 16 and ±20 % 17 of 18 pairs, so the recommendation is ±20 %. F3 is rare-not-impossible (6.5 % with faster priors). vehicle_imu_status was never loaded (all cases used the FIFO rate; now matched in 23 of 30). The caveat and a Td correction were added | independent review, 2026-10-18 |
+| (Phase 4, `notes/tier1_priors.md` 1.6) Scenario B synthetic drones possible with the 6 fit vehicles that have valid RPM | Only 5 can be generator sources: 51603946 has valid RPM in 1 of its 3 windows, and the vehicle spectrum keeps motor frequencies only if every window has them (`spectra_library.vehicle_spectra`); 5 of the 50 generator entries carry motor harmonics | A5 count in the follow-up, 2026-10-18 |
 
 ## E. Open for Phase 4 (to be decided; see `notes/phase4_plan.md`)
 
@@ -117,11 +133,12 @@ Status values: **active** (in force), **extended** (still in force, with additio
 - A4 input (found in Task 1): the plan's "BIC within 10" rule gives a falsely narrow ICM chip-delay range (BIC gains inflated, LOW 5); the 1.5 % fit-error rule gives ICM-42688-P 0.91-1.37 ms. ICM-42686-P is not bounded below (optimum moved from the 150 Hz grid edge to 116 Hz; 90 Hz within BIC 10): delay ≥ 2.0 ms, no upper limit from the data.
 - **Evidence pack for A2-A4 (2026-10-18; revised after the independent review): `notes/evidence_pack_A2_A4.md`** (tables `experiments/phase4/evidence_tables.md`). Recommendations: PM floor 30 deg; Ms_max 2.0; ±20 % on b and tau_m with a delay step of 1 sample (changed from ±15 % after the frequency-resolved comparison); separate worst-case limit Ms <= 3.0; chip delay by the fit-error rule (near-crossover lower bound as nominal shift, rest in the delay step) for every chip with a fitted term; identified real plants get only the FIFO -> control chip correction.
 - New findings for the author (evidence pack Section 5): F1 the D-28 plant priors are slower than 9 of 30 identified plants; F2 the Tier 3a gain design (PM window 45-75 deg, integral corner 0.1) is unlike the real drones (median unfiltered PM 72.8 deg, corner 0.030); F3 (restated) synthetic drones with f_c >= 10 Hz are rare, not impossible, at the PX4 defaults (0 of 117-196 in designs a-c, 6.5 % with faster priors); F4 4 of 30 real crossovers below 4 Hz make f_lo < 20 Hz; F5 single identifications can be wrong.
-- Fig. 1 variant: ESC-RPM bank on (current Fig. 1) or off (PX4 default); both side by side in `experiments/phase4/figures/fig1_compare_esc_off_on.png` (author asked to decide).
-- A2: PM floor.
-- A3: M_s,max.
-- A4: uncertainty set, including the ICM chip-delay range (D-25).
-- A5: training-set size.
+- ~~Fig. 1 variant.~~ Decided as D-29 (both panels: default off as the main panel, bank on as the second).
+- ~~A2: PM floor.~~ Decided as D-30 (30°).
+- ~~A3: M_s,max.~~ Decided as D-31 (2.0).
+- A4: separate worst-case limits (concept, D-32) and the chip-delay rule (D-33) decided. **Open: the set width, the delay step and the value of Ms_wc.** The author's four questions are answered in `notes/followup_A4_F1_F4.md` Sections 2-6 (recommendation: ±20 %, 1 sample, Ms_wc 3.0; keep the D-14 identification settings; report the flagged drones).
+- A5: training-set size and Scenario B share (preliminary estimate in `notes/followup_A4_F1_F4.md` Section 8: 5 generator RPM sources, natural share 10 %; about 5 test vehicles with RPM). Waits for F1-F4.
+- **F1-F4: open; options with pass/fail impact in `notes/followup_A4_F1_F4.md` Section 7.** Recommendations: F1 tau_m 15-60 ms with Td 0.3-8 ms; F2 PM window 60-95 deg with integral corner 0.03; F3 sample f_c in 4-10 Hz (3-10 Hz with F4); F4 f_lo = max(5 f_c, 20 Hz) (follows from D-23 Q5), optionally f_c from 3 Hz.
 - VERIFY: the ICM-42688-P on-chip filter path (datasheet vs PX4 driver; 585 Hz AAF cannot explain the measured roll-off).
 
 ## F. Limitations to state in the paper (Phase 3)

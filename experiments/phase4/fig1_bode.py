@@ -1,15 +1,15 @@
-"""Fig. 1 (experiment E1): magnitude and delay of the PX4 v1.16 multicopter gyro filter stack (Phase 4 Task 2).
+"""Fig. 1 (experiment E1): magnitude and delay of the PX4 v1.16 multicopter gyro filter stack (Phase 4 Task 2; D-29).
 
     .venv/Scripts/python experiments/phase4/fig1_bode.py
 
 Exactly the filter chain of the loop model (Review Focus 3): src/loop_model.gyro_stack (ESC-RPM notch bank, then
 the 2nd-order gyro low-pass IMU_GYRO_CUTOFF) and the D-term path F_g F_d D(z) / (j 2 pi f) of LoopCase.evaluate
 (PT1 IMU_DGYRO_CUTOFF on the backward-difference derivative), all at the loop model's filter rate Rates().fs.
-Settings: PX4_V116_MC_DEFAULT (D-09), with the ESC-RPM bank switched on at its default BW / HMC / MIN, for four
-motors at the fit-half median hover frequency (priors_from_logs.json; only 6 vehicles with valid RPM).
-Delay = phase lag / (2 pi f) (THESIS 4.4, the definition of tau_F). Marked: crossover range f_c of D-28 and the
-noise band 5 f_c ... 780 Hz (D-23 f_max). Writes figures/fig1_filter_stack.{png,pdf} (bank on) and
-figures/fig1_compare_esc_off_on.{png,pdf} (the PX4 default with the bank off next to the bank on).
+Two panels (author's decision D-29): (a, main) PX4_V116_MC_DEFAULT (D-09), ESC-RPM notch bank off; (b) the same stack
+with the bank on at its default BW / HMC / MIN, for four motors at the fit-half median hover frequency
+(priors_from_logs.json; only 6 vehicles with valid RPM). Delay = phase lag / (2 pi f) (THESIS 4.4, the definition of
+tau_F). Marked: crossover range f_c of D-28 and the noise band 5 f_c ... 780 Hz (D-23 f_max).
+Writes figures/fig1_filter_stack.{png,pdf} and the caption figures/fig1_caption.md (numbers computed, not typed).
 """
 import json
 import os
@@ -128,6 +128,34 @@ def _probe(s):
     return {k: [round(float(x), 3) for x in v] for k, v in delays_ms(probe, FS, s, MOTOR_HZ).items()}
 
 
+def bank_delay_ms(f):
+    """Delay [ms] of the ESC-RPM notch bank alone (panel b settings) at frequencies f."""
+    return delays_ms(np.asarray(f, dtype=float), FS, SETTINGS, MOTOR_HZ)["esc_bank"]
+
+
+def caption():
+    """Caption of Fig. 1; every number is computed from the plotted settings."""
+    d = bank_delay_ms(np.array(FC_RANGE))
+    lag = 360.0 * np.array(FC_RANGE) * d * 1e-3
+    f0 = flt.esc_notch_frequencies(MOTOR_HZ, SETTINGS.dnf_hmc, SETTINGS.dnf_bw, SETTINGS.dnf_min)
+    centres = sorted(set(np.round(f0, 1)))
+    s = VARIANTS["off"]
+    return (f"Fig. 1. Magnitude (top) and delay (bottom; phase lag / 2πf) of the PX4 v1.16 multicopter gyro filter "
+            f"stack, computed with the loop model's own filter functions at its filter rate ({FS:.0f} Hz). "
+            f"(a) PX4 default (D-09): gyro low-pass {s.f_gyro:.0f} Hz (2nd order) and D-term low-pass {s.f_dterm:.0f} Hz "
+            f"(PT1); the ESC-RPM notch bank is off. (b) The same stack with the ESC-RPM notch bank on at its defaults "
+            f"(bandwidth {SETTINGS.dnf_bw:.0f} Hz, {SETTINGS.dnf_hmc} harmonics) for 4 motors at {MOTOR_HZ[0]:.1f} Hz, the "
+            f"fit-half median hover frequency. Shaded: the crossover band f_c = {FC_RANGE[0]:g}-{FC_RANGE[1]:g} Hz (D-28) "
+            f"and the noise band from 5 f_c to {NOISE_BAND_MAX:.0f} Hz (hatched from {5 * FC_RANGE[0]:g} to "
+            f"{5 * FC_RANGE[1]:g} Hz, where its start depends on f_c). The spikes in the delay curves of (b) sit at the "
+            f"notch centres ({', '.join(f'{x:.1f}' for x in centres[:-1])} and {centres[-1]:.1f} Hz): the phase of each "
+            f"notch swings from lag to lead where its magnitude is almost zero. They lie far above the crossover band, so "
+            f"they do not affect the stability margins at crossover. The bank does lower the margins a little: the tails "
+            f"of its {len(f0)} notches add {d.mean():.1f} ms of delay throughout the crossover band ({lag[0]:.1f}° of "
+            f"phase lag at {FC_RANGE[0]:g} Hz, {lag[1]:.1f}° at {FC_RANGE[1]:g} Hz). Whenever the bank is on, the margins "
+            f"in this work include this lag, because the figure and the loop model use the same code.")
+
+
 def _save(fig, out_dir, name):
     import matplotlib.pyplot as plt
     os.makedirs(out_dir, exist_ok=True)
@@ -137,29 +165,8 @@ def _save(fig, out_dir, name):
 
 
 def make_figure(out_dir):
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
-    f = np.geomspace(1.0, 1000.0, 4000)
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(7.2, 6.4), sharex=True, gridspec_kw=dict(hspace=0.12))
-    h, lab = _draw(ax1, ax2, SETTINGS, f)
-    ax1.set_ylabel("Magnitude [dB]", color=MUTED)
-    ax1.set_title("(a) Magnitude", color=INK, fontsize=10, loc="left")
-    ax2.set_ylabel("Delay = phase lag / $2\\pi f$ [ms]", color=MUTED)
-    ax2.set_title("(b) Delay", color=INK, fontsize=10, loc="left")
-    ax2.set_xlabel("Frequency [Hz]", color=MUTED)
-    fig.legend(h, lab, frameon=False, fontsize=8, labelcolor=INK, loc="upper left", ncol=2,
-               bbox_to_anchor=(0.07, 0.035))
-    fig.text(0.07, -0.085, f"PX4 v1.16 multicopter defaults (ESC-RPM bank on at its defaults), filters at {FS:.0f} Hz; "
-             f"motors at {MOTOR_HZ[0]:.1f} Hz (fit-half median hover). Hatched: noise band starts between 20 and 75 Hz.",
-             color=MUTED, fontsize=7)
-    _save(fig, out_dir, "fig1_filter_stack")
-    return _probe(SETTINGS)
-
-
-def make_comparison(out_dir):
-    """The PX4 default (ESC bank off) next to the same stack with the bank on (same axes, same scales)."""
+    """Fig. 1 (D-29): (a, main) the PX4 default with the ESC bank off next to (b) the bank on (same axes and scales).
+    Also writes the caption. Returns the panel order and the delay table of each panel at 4, 10, 15 Hz."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -168,8 +175,9 @@ def make_comparison(out_dir):
     fig, axes = plt.subplots(2, 2, figsize=(12.0, 6.4), sharex=True, sharey="row",
                              gridspec_kw=dict(hspace=0.12, wspace=0.06))
     handles = {}
-    for col, (key, title) in enumerate((("off", "PX4 v1.16 default: ESC-RPM notch bank OFF"),
-                                        ("on", "ESC-RPM notch bank ON (defaults: BW 15 Hz, 3 harmonics)"))):
+    panels = (("off", "PX4 v1.16 default (D-09): ESC-RPM notch bank off"),
+              ("on", "ESC-RPM notch bank on (defaults: BW 15 Hz, 3 harmonics)"))
+    for col, (key, title) in enumerate(panels):
         h, lab = _draw(axes[0, col], axes[1, col], VARIANTS[key], f)
         handles.update(zip(lab, h))
         axes[0, col].set_title(f"({'ab'[col]}) {title}", color=INK, fontsize=10, loc="left")
@@ -178,14 +186,16 @@ def make_comparison(out_dir):
     axes[1, 0].set_ylabel("Delay = phase lag / $2\\pi f$ [ms]", color=MUTED)
     fig.legend(list(handles.values()), list(handles.keys()), frameon=False, fontsize=8, labelcolor=INK,
                loc="upper left", ncol=3, bbox_to_anchor=(0.06, 0.035))
-    fig.text(0.06, -0.06, f"Filters at {FS:.0f} Hz; motors at {MOTOR_HZ[0]:.1f} Hz (fit-half median hover; bank on only). "
+    fig.text(0.06, -0.06, f"Filters at {FS:.0f} Hz; motors at {MOTOR_HZ[0]:.1f} Hz (fit-half median hover; panel b only). "
              "Hatched: noise band starts between 20 and 75 Hz (5 f_c). In (a) the gyro path equals the gyro low-pass "
              "(its dashed line lies under the solid one).", color=MUTED, fontsize=7)
-    _save(fig, out_dir, "fig1_compare_esc_off_on")
-    return {k: _probe(v) for k, v in VARIANTS.items()}
+    _save(fig, out_dir, "fig1_filter_stack")
+    with open(os.path.join(out_dir, "fig1_caption.md"), "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(caption() + "\n")
+    return dict(panels=[k for k, _ in panels], **{k: _probe(VARIANTS[k]) for k, _ in panels})
 
 
 if __name__ == "__main__":
     d = make_figure(os.path.join(HERE, "figures"))
     print("delay [ms] at f = 4, 10, 15 Hz:", json.dumps(d))
-    print("off / on:", json.dumps(make_comparison(os.path.join(HERE, "figures"))))
+    print(caption())

@@ -64,6 +64,23 @@ def robust_metrics(plant, gains, rates, s, motor_hz, delta_b, delta_tau, delta_d
     return dict(nominal=nominal, worst=worst(slice(None)), worst_corners=worst(slice(1, None)))
 
 
+def corner_metrics(plant, gains, rates, s, motor_hz, delta_b, delta_tau, delta_d, n_stab=1500):
+    """Margins and critical frequencies (f_Ms, f_180 of critical_frequencies) of every plant of the set, in the
+    order of corner_plants: the nominal plant, then the corners labelled like 'b+ tau- Td+d'."""
+    f = stability_grid(rates, n_stab)
+    plants = corner_plants(plant, delta_b, delta_tau, delta_d)
+    L = np.stack([open_loop(f, p, gains, rates, s, motor_hz) for p in plants])
+    m = margins(f, L, n_integrators(gains))
+    labels = ["nominal"] + [f"b{'-+'[sb > 0]} tau{'-+'[st > 0]} {'Td+d' if dd else 'Td'}"
+                            for sb in (-1, 1) for st in (-1, 1) for dd in (0, 1)]
+    rows = []
+    for i, p in enumerate(plants):
+        f_ms, f180 = critical_frequencies(f, L[i])
+        rows.append(dict(label=labels[i], b=p.b, tau_m=p.tau_m, Td=p.Td, PM=float(m["PM"][i]), GM=float(m["GM"][i]),
+                         Ms=float(m["Ms"][i]), fc=float(m["fc"][i]), stable=bool(m["stable"][i]), f_Ms=f_ms, f_180=f180))
+    return rows
+
+
 def passes(rm, PM_min, Ms_max, GM_min=6.0, wc=None):
     """True if the nominal plant meets (PM_min, Ms_max, GM_min) and every plant of the set meets the worst-case
     limits: the same ones (wc None) or separate, looser ones wc = dict(PM=, Ms=, GM=). Every plant must be

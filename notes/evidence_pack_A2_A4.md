@@ -1,6 +1,6 @@
 # Evidence pack for decisions A2, A3 and A4 (Phase 4, before Task 3)
 
-Made 2026-10-18 (Day 21), branch `phase4`; **revised the same day after an independent review.** Written for: the author, to decide A2 (PM floor), A3 ($M_{s,max}$) and A4 (plant uncertainty set, worst-case limits, ICM chip delay). **Nothing here is decided yet**; Task 3 waits for these decisions.
+Made 2026-10-18 (Day 21), branch `phase4`; **revised the same day after an independent review.** Written for: the author, to decide A2 (PM floor), A3 ($M_{s,max}$) and A4 (plant uncertainty set, worst-case limits, ICM chip delay). **Status 2026-10-18 (author):** A2 = D-30 (PM floor 30°), A3 = D-31 ($M_{s,max}$ 2.0), separate worst-case limits = D-32 (concept; value open), chip-delay rule = D-33. The rest of A4 and the findings F1-F4 wait for the author; the author's follow-up questions are answered in `notes/followup_A4_F1_F4.md`.
 
 **Rules followed**
 - Fit half only. Every input goes through `priors.require_fit_half` / `require_fit_rows`.

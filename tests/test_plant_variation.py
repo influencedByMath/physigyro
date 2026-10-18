@@ -106,3 +106,23 @@ def test_hold_bridges_the_periodic_controller_pauses_at_the_d14_resolution():
         keep[k:k + 5] = False
     pieces = sysid.uniform_pieces(t[keep], Tc, max_hold=pv.MAX_HOLD)
     assert len(pieces) == 1 and len(pieces[0][0]) == len(t)
+
+
+def _sim_pieces():
+    from test_sysid_pieces import _closed_loop          # same simulated PI loop as the sysid tests
+    r, u, w, Tc = _closed_loop()
+    return [dict(t=np.arange(len(r)) * Tc, u=u, w=w, att_sp=r, rate_sp=r)], Tc
+
+
+def test_fit_pieces_honours_band_and_coherence_settings():
+    """Author's A4 question 2: the band can be widened and the coherence gate relaxed; defaults stay D-14."""
+    pieces, Tc = _sim_pieces()
+    base = pv.fit_pieces(pieces, Tc, 1024, "att_sp")
+    assert base == pv.fit_pieces(pieces, Tc, 1024, "att_sp", f_band=pv.F_BAND, min_coh=pv.MIN_COH)
+    assert base["f_used"][1] <= pv.F_BAND[1]
+    wide = pv.fit_pieces(pieces, Tc, 1024, "att_sp", f_band=(0.5, 40.0), min_coh=0.3)
+    assert wide["f_used"][1] > pv.F_BAND[1] and wide["n_freq"] > base["n_freq"]
+    # the coherence gate reaches the fit, not only the agreement check (46 vs 29 frequencies here)
+    assert wide["n_freq"] > pv.fit_pieces(pieces, Tc, 1024, "att_sp", f_band=(0.5, 40.0), min_coh=0.5)["n_freq"]
+    both = pv.fit_pieces(pieces, Tc, 1024, "both", f_band=(0.5, 40.0), min_coh=0.3)
+    assert both["agree"]["n"] > pv.fit_pieces(pieces, Tc, 1024, "both")["agree"]["n"]   # the D-14 check uses the same band

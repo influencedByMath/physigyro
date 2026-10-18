@@ -108,3 +108,24 @@ def test_robust_metrics_report_where_the_margins_bind():
     rm = rb.robust_metrics(P0, G0, R0, S0, M0, 0.2, 0.2, 1 / 800)
     assert 5.0 < rm["nominal"]["f_Ms"] < 40.0 and 5.0 < rm["nominal"]["f_180"] < 60.0
     assert rm["nominal"]["f_Ms"] > rm["nominal"]["fc"]
+
+
+def test_corner_metrics_list_every_plant_with_its_critical_frequencies():
+    """Q1 of the author's A4 questions: which corner fails, and where its margins bind."""
+    d = 1 / 800
+    rows = rb.corner_metrics(P0, G0, R0, S0, M0, 0.2, 0.2, d)
+    rm = rb.robust_metrics(P0, G0, R0, S0, M0, 0.2, 0.2, d)
+    assert len(rows) == 9 and rows[0]["label"] == "nominal"
+    assert [r["label"] for r in rows[1:]] == ["b- tau- Td", "b- tau- Td+d", "b- tau+ Td", "b- tau+ Td+d",
+                                              "b+ tau- Td", "b+ tau- Td+d", "b+ tau+ Td", "b+ tau+ Td+d"]
+    assert max(r["Ms"] for r in rows) == pytest.approx(rm["worst"]["Ms"], rel=1e-12)
+    assert min(r["PM"] for r in rows) == pytest.approx(rm["worst"]["PM"], rel=1e-12)
+    assert min(r["GM"] for r in rows) == pytest.approx(rm["worst"]["GM"], rel=1e-12)
+    assert rows[0]["Ms"] == pytest.approx(rm["nominal"]["Ms"], rel=1e-12)
+    assert rows[0]["f_Ms"] == rm["nominal"]["f_Ms"]
+    fg = rb.stability_grid(R0)
+    for r, p in zip(rows, rb.corner_plants(P0, 0.2, 0.2, d)):
+        assert (r["b"], r["tau_m"], r["Td"]) == (p.b, p.tau_m, p.Td)
+        f_ms, f180 = rb.critical_frequencies(fg, rb.open_loop(fg, p, G0, R0, S0, M0))
+        assert r["f_Ms"] == f_ms
+        assert r["f_180"] == f180 or (np.isnan(f180) and np.isnan(r["f_180"]))

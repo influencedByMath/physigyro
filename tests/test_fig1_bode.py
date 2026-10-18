@@ -113,9 +113,35 @@ def test_off_variant_has_no_notch_and_lowpass_only_gyro_path():
     assert d["gyro_path"][0] == pytest.approx(d["gyro_lpf"][0])
 
 
-def test_comparison_figure_is_written(tmp_path):
-    out = fb.make_comparison(str(tmp_path))
+# ------------------------------------------------------------- final Fig. 1 (author's decision D-29)
+
+def test_figure_has_the_default_panel_first_and_the_esc_bank_second(tmp_path):
+    out = fb.make_figure(str(tmp_path))
+    assert out["panels"] == ["off", "on"]                       # (a) PX4 default = main panel, (b) bank on
     for ext in ("png", "pdf"):
-        assert (tmp_path / f"fig1_compare_esc_off_on.{ext}").stat().st_size > 10_000
+        assert (tmp_path / f"fig1_filter_stack.{ext}").stat().st_size > 10_000
+    assert not list(tmp_path.glob("fig1_compare_esc_off_on.*"))  # one figure holds both versions now
+    assert (tmp_path / "fig1_caption.md").read_text(encoding="utf-8") == fb.caption() + "\n"
     # the delay table it returns: the ESC bank adds its delay to both paths at the crossover
     assert out["on"]["gyro_path"][1] - out["off"]["gyro_path"][1] == pytest.approx(out["on"]["esc_bank"][1], rel=1e-9)
+
+
+def test_bank_delay_in_the_crossover_band_is_the_analytic_notch_tail():
+    """Below a notch centre f0 the notch lags by about f BW / f0^2 rad, i.e. a delay of BW / (2 pi f0^2)."""
+    f0s = flt.esc_notch_frequencies(fb.MOTOR_HZ, fb.SETTINGS.dnf_hmc, fb.SETTINGS.dnf_bw, fb.SETTINGS.dnf_min)
+    tail_ms = 1e3 * sum(fb.SETTINGS.dnf_bw / (2 * np.pi * f0 ** 2) for f0 in f0s)
+    d = fb.bank_delay_ms(np.array(fb.FC_RANGE))
+    assert len(f0s) == 12
+    assert d == pytest.approx([tail_ms, tail_ms], rel=0.03)
+
+
+def test_caption_states_the_computed_numbers():
+    cap = fb.caption()
+    d = fb.bank_delay_ms(np.array(fb.FC_RANGE))
+    lag = 360.0 * np.array(fb.FC_RANGE) * d * 1e-3
+    f0s = sorted(set(np.round(flt.esc_notch_frequencies(fb.MOTOR_HZ, 3, 15.0, 25.0), 1)))
+    assert f"{d.mean():.1f} ms" in cap
+    assert f"{lag[0]:.1f}°" in cap and f"{lag[1]:.1f}°" in cap
+    for f0 in f0s:
+        assert f"{f0:.1f}" in cap
+    assert "D-09" in cap and "D-28" in cap and f"{fb.MOTOR_HZ[0]:.1f} Hz" in cap

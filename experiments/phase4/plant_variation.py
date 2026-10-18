@@ -114,8 +114,9 @@ def halves(pieces):
     return first, second
 
 
-def fit_pieces(pieces, Tc, nseg, cls):
-    """D-14 fit of one class; returns a dict (error string when it fails)."""
+def fit_pieces(pieces, Tc, nseg, cls, f_band=F_BAND, min_coh=MIN_COH):
+    """D-14 fit of one class; returns a dict (error string when it fails). nseg is the Welch segment length;
+    f_band and min_coh (defaults: D-14) apply to the fit and to the instrument-agreement check alike."""
     instr = ["att_sp", "rate_sp"] if cls == "both" else [cls]
     frfs = {}
     for name in instr:
@@ -125,12 +126,12 @@ def fit_pieces(pieces, Tc, nseg, cls):
     if cls == "both":
         f, G1, c1, _ = frfs["att_sp"]
         _, G2, c2, _ = frfs["rate_sp"]
-        ok, db, deg, n = sysid.instruments_agree(f, G1, c1, G2, c2, F_BAND, MIN_COH, AGREE_DB, AGREE_DEG)
+        ok, db, deg, n = sysid.instruments_agree(f, G1, c1, G2, c2, f_band, min_coh, AGREE_DB, AGREE_DEG)
         res["agree"] = dict(ok=ok, rms_db=None if np.isnan(db) else round(db, 2),
                             rms_deg=None if np.isnan(deg) else round(deg, 2), n=n)
     f, G, coh, _ = frfs[instr[0]]
     try:
-        fit = sysid.fit_frf(f, G, coh, Tc, f_band=F_BAND, min_coh=MIN_COH)
+        fit = sysid.fit_frf(f, G, coh, Tc, f_band=f_band, min_coh=min_coh)
     except ValueError as e:
         res["error"] = str(e)
         return res

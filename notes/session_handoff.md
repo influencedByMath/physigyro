@@ -1,29 +1,39 @@
 # Session handoff (read at the start of a new session)
 
-Last update: 2026-10-18, Phase 4 Tasks 1-2 done, evidence pack for A2-A4 done. Written for: Claude starting a new session, and the author.
+Last update: 2026-10-18, Phase 4: Tasks 1-2 done, evidence pack done, author's decisions D-29..D-35 recorded, follow-up questions answered. Written for: Claude starting a new session, and the author.
 
 ## Where things stand
 
-- **Branch `phase4`** (created from the tip of `phase3`): Tasks 1-2 of `notes/phase4_plan.md` and the evidence pack for A2-A4 are committed locally. **`phase3` and `phase4` are NOT merged** into `main`; the author decides the merge. **No GitHub push** until the author asks.
-- **Tests:** `.venv/Scripts/python -m pytest -q` (317 pass). Run the full suite before every commit.
-- **Decided:** A1 = **D-28** (Tier 1 priors). Evidence: `notes/tier1_priors.md`.
-- **Evidence pack for A2-A4: `notes/evidence_pack_A2_A4.md`** (generated tables: `experiments/phase4/evidence_tables.md`).
+- **Branch `phase4`** (created from the tip of `phase3`): everything is committed locally. **`phase3` and `phase4` are NOT merged** into `main`; the author decides the merge. **No GitHub push** until the author asks.
+- **Tests:** `.venv/Scripts/python -m pytest -q` (341 pass). Run the full suite before every commit.
+- **Decided:**
+  - A1 = **D-28** (Tier 1 priors; evidence `notes/tier1_priors.md`);
+  - **D-29** Fig. 1 with two panels: (a, main) PX4 default with the ESC bank off, (b) bank on. Caption `experiments/phase4/figures/fig1_caption.md` is computed; the bank adds 1.8 ms in the crossover band;
+  - **D-30** A2: PM floor 30°;
+  - **D-31** A3: $M_{s,max}$ 2.0 (nominal);
+  - **D-32** separate worst-case limits (concept): every plant of the set stable with $M_s \le M_{s,wc}$. **Value open**;
+  - **D-33** ICM chip delay by the fit-error rule (lower bound as nominal T_d shift, rest in the delay step; real identified plants: FIFO -> control correction only);
+  - **D-34** all earlier unasked rulings accepted; identification gates frozen with A4;
+  - **D-35** the 31 dropout logs on the cut list.
+- **Evidence:** `notes/evidence_pack_A2_A4.md` (tables `experiments/phase4/evidence_tables.md`).
+- **Follow-up answers (the author's questions 1-4 on A4, F1-F4 options, A5 estimate, the reviewer's 10 declined points): `notes/followup_A4_F1_F4.md`.**
+  - Tables: `experiments/phase4/followup_tables.md`.
+  - Runners: `a4_followup.py` (about 6 min), `f_options.py` (about 4 min; needs `a4_followup.json`), `followup_tables.py`.
 - **Open decisions (the author), before Task 3:**
-  - A2 (PM floor), A3 ($M_{s,max}$), A4 (uncertainty set, worst-case limits, ICM chip delay): recommendations in Section 6 of the pack.
-  - **F1-F4** (Section 5 of the pack):
-    - F1: D-28 plant priors slower than 9 of 25 identified plants;
-    - F2: Tier 3a gain design unlike the real drones;
-    - F3: synthetic drones with f_c ≥ 10 Hz are rare (not impossible) at the PX4 defaults;
-    - F4: f_lo rule for real crossovers below 4 Hz.
-  - Fig. 1 variant: ESC-RPM bank on or off (`experiments/phase4/figures/fig1_compare_esc_off_on.png`).
+  - **A4 rest:** set width, delay step and the value of $M_{s,wc}$. Recommendation: ±20 %, 1 controller sample, $M_{s,wc}$ 3.0; keep the D-14 identification settings; report the 5 flagged real settings.
+  - **F1-F4** (recommendations in the follow-up, Section 7):
+    - F1: τ_m 15-60 ms, T_d 0.3-8 ms;
+    - F2: PM window 60-95°, integral corner 0.03;
+    - F3: sample f_c in 4-10 Hz, or 3-10 Hz with F4;
+    - F4: f_lo = max(5 f_c, 20 Hz), which follows from D-23 Q5, optionally with f_c from 3 Hz.
 - **Before Task 4:** A5 (training-set size, Scenario B share). **Tasks 3 and 4 are NOT started** (author's instruction).
-- **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first (evidence pack revised: A4 width now ±20 %, F3 restated, Td correction for FIFO ≠ control IMU, control-IMU filter rate really loaded, funnel complete, gains-changed rows excluded). Deferred minor: ESC RPM averaged from first take-off to last landing in multi-flight logs.
+- **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first. Deferred minor: ESC RPM averaged from first take-off to last landing in multi-flight logs.
 - Plan ledger (git-ignored): `.superpowers/sdd/phase4_plan/progress.md` (rulings, process notes).
 
 ## Read first (in this order)
 
-1. `THESIS.md`: Section 0; Section 2 (D-01 to D-28); 7.1-7.1.1, 7.2, 7.8; 7.4.7 and 7.5.1; Section 10 Phase 4; Section 17 (VERIFY items F1-F5).
-2. `notes/evidence_pack_A2_A4.md`: the evidence and the open decisions.
+1. `THESIS.md`: Section 0; Section 2 (D-01 to D-35); 7.1-7.1.1, 7.2, 7.8; 7.4.7 and 7.5.1; Section 10 Phase 4; Section 17 (VERIFY items F1-F5).
+2. `notes/followup_A4_F1_F4.md` (the latest answers and recommendations), then `notes/evidence_pack_A2_A4.md` (the evidence).
 3. `notes/phase4_plan.md`: the approved plan (Tasks 3-4 next).
 4. `notes/tier1_priors.md`: Task 1 evidence.
 5. `notes/decision_log.md`: decisions, rulings, corrections. Keep it updated.
@@ -33,7 +43,7 @@ Last update: 2026-10-18, Phase 4 Tasks 1-2 done, evidence pack for A2-A4 done. W
 
 - **Decisions:**
   - No serious decision without evidence and the author's permission; ask with AskUserQuestion and a recommendation.
-  - Every decision goes into THESIS Section 2 (next ID: **D-29**) **and** `notes/decision_log.md`.
+  - Every decision goes into THESIS Section 2 (next ID: **D-36**) **and** `notes/decision_log.md`.
 - **Stopping:** stop and report immediately on any new landmine (unexpected data or code problem).
 - **Testing:**
   - Write tests first and see them fail.
@@ -71,4 +81,9 @@ Last update: 2026-10-18, Phase 4 Tasks 1-2 done, evidence pack for A2-A4 done. W
   - synthetic ICM-4268x drones get it;
   - never both (Review Focus 2).
 - **Phase delay with notches:** valid only below the first notch; above it, sum the factor phases (`fig1_bode.factors`).
+- **Limits (D-30..D-32):** nominal PM ≥ 30°, $M_s$ ≤ 2.0, GM ≥ 6 dB; worst case over the set by $M_{s,wc}$ with its implied PM / GM (`a4_followup.separate_limits`, `robust.passes(..., wc=robust_limits.wc_limits(Ms_wc))`).
+- **Noise band:** the code still uses f_lo = 5 f_c (`LoopCase`); if the author takes F4 (d), use max(5 f_c, 20 Hz) (D-23 Q5 band 20-780 Hz).
+- **Real-gain cases need both an identification and a library spectrum:** b79d2e3d has no steady window (Q10).
+- **Scenario B:** only 5 generator entries carry motor harmonics (51603946 has valid RPM in 1 of 3 windows).
+- **Fig. 1:** `fig1_bode.make_figure` writes the two-panel figure and the caption; the old comparison files are gone.
 - **Phase 3 limitations still apply** (THESIS 7.5.1).

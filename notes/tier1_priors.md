@@ -69,7 +69,7 @@ Nominal: 2,000 Hz: 54; 6,400: 14; 8,000: 15; 8,192: 3; about 8,371: 25. Measured
 
 - Valid ESC RPM in steady windows: only **6 of the 52 usable vehicles**: 46.3, 51.7, 68.1, 101.5, 103.0, 126.4 Hz (median 85 Hz).
 - Literature: Xu et al. 2019, rotor disturbance "between 75 Hz and 90 Hz" (Sec. III-A1).
-- **Design consequence for Task 4:** the generator draws whole real peak sets (D-26). So f_m must **not** be sampled independently; it must be the source vehicle's RPM/60 times the same frequency scale (`noise_generator.sample` returns `source` and `scale`). Otherwise an ESC notch would sit away from the noise peaks. Scenario B is therefore possible only with the RPM source vehicles.
+- **Design consequence for Task 4:** the generator draws whole real peak sets (D-26). So f_m must **not** be sampled independently; it must be the source vehicle's RPM/60 times the same frequency scale (`noise_generator.sample` returns `source` and `scale`). Otherwise an ESC notch would sit away from the noise peaks. Scenario B is therefore possible only with the RPM source vehicles. **Correction (2026-10-18 follow-up): only 5 of the 6 RPM vehicles are generator sources**: 51603946 has valid RPM in 1 of its 3 windows, and the vehicle spectrum keeps motor frequencies only if every window has them (`spectra_library.vehicle_spectra`).
 
 ### 1.7 Real PID gains (fit half, 111 vehicles; inputs to Tier 3b)
 
