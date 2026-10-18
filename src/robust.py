@@ -29,6 +29,25 @@ def corner_plants(p, delta_b, delta_tau, delta_d):
                   for sb in (-1, 1) for st in (-1, 1) for dd in (0.0, float(delta_d))]
 
 
+def critical_frequencies(f, L):
+    """(frequency of the peak sensitivity max |1/(1+L)|, frequency of the phase crossover that sets the smallest
+    gain margin) of one open loop on grid f; the second is NaN without a phase crossover below |L| = 1."""
+    f = np.asarray(f, dtype=float)
+    f_ms = float(f[np.argmin(np.abs(1.0 + L))])
+    ph = np.unwrap(np.angle(L))
+    lm = np.log(np.abs(L))
+    u = np.floor((ph + np.pi) / (2 * np.pi))
+    best, f180 = np.inf, float("nan")
+    for i in np.flatnonzero(u[:-1] != u[1:]):
+        v = 2 * np.pi * max(u[i], u[i + 1]) - np.pi
+        t = (v - ph[i]) / (ph[i + 1] - ph[i])
+        lmc = lm[i] + t * (lm[i + 1] - lm[i])
+        if lmc < 0 and -lmc < best:
+            best = -lmc
+            f180 = float(np.exp(np.log(f[i]) + t * (np.log(f[i + 1]) - np.log(f[i]))))
+    return f_ms, f180
+
+
 def robust_metrics(plant, gains, rates, s, motor_hz, delta_b, delta_tau, delta_d, n_stab=1500):
     """Margins of the nominal plant, the worst case over all 9 plants and over the 8 corners only."""
     f = stability_grid(rates, n_stab)
@@ -41,6 +60,7 @@ def robust_metrics(plant, gains, rates, s, motor_hz, delta_b, delta_tau, delta_d
                     stable=bool(np.all(m["stable"][sl])))
 
     nominal = {k: (bool(m[k][0]) if k == "stable" else float(m[k][0])) for k in ("PM", "GM", "Ms", "fc", "stable")}
+    nominal["f_Ms"], nominal["f_180"] = critical_frequencies(f, L[0])
     return dict(nominal=nominal, worst=worst(slice(None)), worst_corners=worst(slice(1, None)))
 
 

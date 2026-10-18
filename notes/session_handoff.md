@@ -5,7 +5,7 @@ Last update: 2026-10-18, Phase 4 Tasks 1-2 done, evidence pack for A2-A4 done. W
 ## Where things stand
 
 - **Branch `phase4`** (created from the tip of `phase3`): Tasks 1-2 of `notes/phase4_plan.md` and the evidence pack for A2-A4 are committed locally. **`phase3` and `phase4` are NOT merged** into `main`; the author decides the merge. **No GitHub push** until the author asks.
-- **Tests:** `.venv/Scripts/python -m pytest -q` (301 pass). Run the full suite before every commit.
+- **Tests:** `.venv/Scripts/python -m pytest -q` (317 pass). Run the full suite before every commit.
 - **Decided:** A1 = **D-28** (Tier 1 priors). Evidence: `notes/tier1_priors.md`.
 - **Evidence pack for A2-A4: `notes/evidence_pack_A2_A4.md`** (generated tables: `experiments/phase4/evidence_tables.md`).
 - **Open decisions (the author), before Task 3:**
@@ -13,11 +13,11 @@ Last update: 2026-10-18, Phase 4 Tasks 1-2 done, evidence pack for A2-A4 done. W
   - **F1-F4** (Section 5 of the pack):
     - F1: D-28 plant priors slower than 9 of 25 identified plants;
     - F2: Tier 3a gain design unlike the real drones;
-    - F3: no synthetic drone with f_c ≥ 10 Hz is safe at the PX4 defaults;
+    - F3: synthetic drones with f_c ≥ 10 Hz are rare (not impossible) at the PX4 defaults;
     - F4: f_lo rule for real crossovers below 4 Hz.
   - Fig. 1 variant: ESC-RPM bank on or off (`experiments/phase4/figures/fig1_compare_esc_off_on.png`).
 - **Before Task 4:** A5 (training-set size, Scenario B share). **Tasks 3 and 4 are NOT started** (author's instruction).
-- **Independent review:** requested by the author on 2026-10-18 (code and method review of the whole `phase4` branch); see the session log in THESIS Section 17 for its outcome.
+- **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first (evidence pack revised: A4 width now ±20 %, F3 restated, Td correction for FIFO ≠ control IMU, control-IMU filter rate really loaded, funnel complete, gains-changed rows excluded). Deferred minor: ESC RPM averaged from first take-off to last landing in multi-flight logs.
 - Plan ledger (git-ignored): `.superpowers/sdd/phase4_plan/progress.md` (rulings, process notes).
 
 ## Read first (in this order)
@@ -60,12 +60,14 @@ Last update: 2026-10-18, Phase 4 Tasks 1-2 done, evidence pack for A2-A4 done. W
 - **Synthetic drones (D-28):** f_c 4-15 Hz, τ_m 20-60 ms, T_d 0.5-5 ms (log-uniform); (FIFO rate, controller rate) pairs from the 37 same-IMU full-rate fit logs (`priors_from_logs.json` `rate_rows`). F1-F3 may change this.
 - **Hover f_m of synthetic drones:** the generator's source vehicle RPM/60 times the sampled frequency scale (`noise_generator.sample` meta `source`, `scale`).
 - **Real-gain cases:**
-  - plants from `sysid.piece_spectra` + `fit_frf` with the D-14 instrument rule and the (provisional) gates of `plant_variation.accept`; the gates must be fixed before the test half is touched;
+  - plants from `sysid.piece_spectra` + `fit_frf` with the D-14 instrument rule, up to 8 held skipped publications, 1.28 s segments (the D-14 6-frequency rule depends on this resolution) and the (provisional) gates of `plant_variation.accept`; the gates must be fixed before the test half is touched;
   - gains include `MC_*RATE_K`;
-  - filter rate = the control IMU's raw rate (`robust.control_imu_raw_rate`).
+  - filter rate = the control IMU's raw rate (`robust_limits.control_rate`; needs `vehicle_imu_status`, which `noise_data.TOPICS` does not load);
+  - identified T_d corrected for FIFO ≠ control IMU (`robust_limits.chip_td_correction`); rows with loop parameters changed in flight excluded.
 - **Robust check:** `src/robust.py` (`robust_metrics`, `passes` with same or separate worst-case limits). It reproduces the feasibility worst case exactly.
 - **ICM chip delay (D-25, A4):**
-  - identified plants already contain the FIFO chip's filter: no increment for real-gain drones;
+  - identified plants already contain the FIFO chip's filter: only the FIFO → control chip correction for real-gain drones;
+  - if synthetic T_d priors are ever taken from identified plants: no chip increment on top;
   - synthetic ICM-4268x drones get it;
   - never both (Review Focus 2).
 - **Phase delay with notches:** valid only below the first notch; above it, sum the factor phases (`fig1_bode.factors`).

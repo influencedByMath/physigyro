@@ -163,3 +163,67 @@ def test_instruments_agree_gate_also_checks_phase():
     coh = np.full(40, 0.9)
     ok, db, deg, _ = sysid.instruments_agree(f, G, coh, G * np.exp(1j * np.radians(10)), coh)
     assert not ok and db == pytest.approx(0.0, abs=1e-9) and deg == pytest.approx(10.0)
+
+
+def _px4_timing(seed, T=150.0, b=400.0, tau=0.03, Td=0.0015, d_comp=0.0003, skip_frac=0.0, jitter=0.0):
+    """PX4-like timing (adapted from the independent review, 2026-10-18): FIFO gyro at 8 kHz; the 800 Hz rate
+    controller acts on the newest sample (its time = the torque setpoint's timestamp_sample) and its output is applied
+    d_comp later as a zero-order hold; the plant adds Td and a motor lag. The chain must identify Td + d_comp."""
+    fs, n_dec = 8000.0, 10
+    dt, n = 1 / fs, int(T * fs)
+    rng = np.random.default_rng(seed)
+    nk = n // n_dec
+    r_k = lfilter([0.05], [1, -0.95], rng.standard_normal(nk)) * 3.0
+    dist = lfilter([0.002], [1, -0.998], rng.standard_normal(n)) * 40.0
+    a = np.exp(-dt / tau)
+    w = m = integ = u_now = 0.0
+    lag = int(round((Td + d_comp) / dt))
+    omega, u_fine = np.zeros(n), np.zeros(n)
+    u_k, t_k = np.zeros(nk), np.zeros(nk)
+    k = 0
+    for i in range(n):
+        if i % n_dec == 0 and k < nk:
+            e = r_k[k] - (w + 0.01 * rng.standard_normal())
+            integ += 0.15 * e / 800.0
+            u_now = 0.06 * e + integ
+            u_k[k], t_k[k] = u_now, i * dt
+            k += 1
+        if i + lag < n:
+            u_fine[i + lag] = u_now
+        m = a * m + (1 - a) * u_fine[i]
+        w = w + dt * (b * m + dist[i])
+        omega[i] = w
+    t = np.arange(n) * dt
+    gs = _GS(t, np.stack([omega, omega, omega], 1), [(0, n)])
+    keep = np.ones(nk, bool)
+    if skip_frac:
+        keep[rng.random(nk) < skip_frac] = False
+        keep[0] = True
+    tq = t_k[keep] + jitter * rng.uniform(-1, 1, keep.sum()) / 800.0
+    uq, rq = u_k[keep], r_k[keep]
+    Tc = float(np.median(np.diff(tq)))
+    pieces = []
+    for tg, idx in sysid.uniform_pieces(tq, Tc, max_hold=3):
+        wg = sysid.body_rate_on_grid(gs, 0, tg, f_cut=100.0)
+        ok = np.isfinite(wg)
+        pieces.append(dict(r=rq[idx][ok], u=uq[idx][ok], w=wg[ok]))
+    S = sysid.piece_spectra(pieces, fs=1 / Tc, nperseg=1024)
+    f, G, coh = sysid.frf_from_spectra(S)
+    return sysid.fit_frf(f, G, coh, Tc, f_band=(0.5, 20.0), min_coh=0.5), Td + d_comp
+
+
+@pytest.mark.parametrize("kw", [dict(seed=1), dict(seed=3, skip_frac=0.10, jitter=0.04)])
+def test_end_to_end_timing_does_not_shift_the_identified_delay(kw):
+    fit, true_td = _px4_timing(**kw)
+    assert abs(fit["Td"] - true_td) < 0.0003            # half a controller sample would be 0.625 ms
+    assert abs(fit["b"] / 400.0 - 1) < 0.10
+
+
+def test_body_rate_resampling_has_no_measurable_time_shift():
+    fs = 8000.0
+    t = np.arange(0, 6.0, 1 / fs)
+    slow = 0.5 * np.sin(2 * np.pi * 5.0 * t)
+    gs = _GS(t, np.stack([slow + 2.0 * np.sin(2 * np.pi * 795.0 * t), slow, slow], 1), [(0, len(t))])
+    tg = np.arange(1.0, 5.0, 1 / 800)
+    w = sysid.body_rate_on_grid(gs, 0, tg, f_cut=100.0)
+    assert np.max(np.abs(w - 0.5 * np.sin(2 * np.pi * 5.0 * tg))) < 1e-3     # a 64 us shift would already fail

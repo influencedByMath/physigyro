@@ -16,6 +16,7 @@ SYSID = [
     ("no hold: split at every skip", "breaks = np.where((steps > max_hold + 1) | (steps < 1))[0]",
      "breaks = np.where((steps > 1) | (steps < 1))[0]"),
     ("grid at nominal period (drift)", "out.append((b + a * k, idx))", "out.append((b + Tc * k, idx))"),
+    ("grid shifted by half a sample", "out.append((b + a * k, idx))", "out.append((b + a * (k + 0.5), idx))"),
     ("hold picks next sample", 'idx = i0 + np.searchsorted(slot, k, side="right") - 1',
      'idx = i0 + np.minimum(np.searchsorted(slot, k, side="left"), len(slot) - 1)'),
     ("unweighted piece average", "acc[key] = acc.get(key, 0.0) + n_seg * S", "acc[key] = acc.get(key, 0.0) + S"),
@@ -29,6 +30,8 @@ SYSID = [
     ("edges kept", "m = (tg >= ts[0] + edge_s) & (tg <= ts[-1] - edge_s)", "m = (tg >= ts[0]) & (tg <= ts[-1])"),
 ]
 PV = [
+    ("hold only 3 samples", "MAX_HOLD = 8 ", "MAX_HOLD = 3 "),
+    ("no funnel row for logs without pieces", "        if not any(groups.values()):", "        if False:"),
     ("halves uneven", "        if acc + L <= n // 2:", "        if acc + L <= n // 3:"),
     ("zoh not stale-checked", "ok = (k >= 0) & (tg - t_src[np.clip(k, 0, None)] <= STALE_S)", "ok = k >= 0"),
     ("zoh takes next sample", 'k = np.searchsorted(t_src, tg, side="right") - 1', 'k = np.searchsorted(t_src, tg, side="left")'),

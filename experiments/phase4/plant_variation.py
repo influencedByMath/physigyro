@@ -4,7 +4,7 @@
 
 For every fit-half log whose logger profile writes the controller signals at full rate (high-rate or sysid,
 priors.full_rate_logged) and that has vehicle_torque_setpoint at >= 200 Hz:
-- pieces on the controller grid (sysid.uniform_pieces: single skipped publications held, logger dropouts split);
+- pieces on the controller grid (sysid.uniform_pieces: up to 8 skipped publications held, longer gaps split);
 - airborne time with 5 s trimmed at take-off and landing (D-23 Q10 T_edge);
 - the instrument by flight mode (D-14, sysid.instrument_for_mode): attitude setpoint in Stabilized/Altitude,
   rate setpoint in Acro, both (must agree within 1 dB / 5 deg, the D-14 candidate) in Position/auto/offboard;
@@ -32,8 +32,12 @@ import sysid                        # noqa: E402
 T_EDGE = 5.0              # D-23 Q10
 F_BAND = (0.5, 20.0)      # D-14 / feasibility
 MIN_COH = 0.5             # D-14
-SEG_S = 1.28              # Welch segment length (1024 samples at 800 Hz, as in the feasibility test)
-MAX_HOLD = 3              # skipped publications held (the motor command holds its value)
+SEG_S = 1.28              # Welch segment length (1024 samples at 800 Hz, as in the feasibility test): the D-14 rule of
+                          # 6 coherent frequencies was set at this 0.78 Hz resolution (a 0.8 s segment lost 9 fits)
+MAX_HOLD = 8              # skipped publications held (the motor command holds its value). 8, not 3: many logs pause
+                          # the torque setpoint AND the controller input vehicle_angular_velocity for 5-6 periods about
+                          # once per second (independent review, Important 1; fit-half probe: 79 of 83 and 227 of 232
+                          # pauses in 852b8368 / d1af0dea, mostly without a logger-dropout record)
 F_CUT = 100.0             # zero-phase low-pass of the raw gyro before resampling
 MIN_TQ_RATE = 200.0
 STALE_S = 0.1             # an instrument sample older than this is a data gap
@@ -184,6 +188,9 @@ def _analyze(rec):
             groups, Tc, nseg = build_pieces(u, gs, axis)
         except Exception as e:
             out.append(dict(base, axis=axis, error=f"pieces: {e!r}"[:200]))
+            continue
+        if not any(groups.values()):
+            out.append(dict(base, axis=axis, error=f"no airborne gap-free piece as long as one Welch segment ({SEG_S} s)"))
             continue
         for cls, pieces in groups.items():
             if not pieces:

@@ -92,3 +92,19 @@ def test_control_imu_raw_rate_follows_sensor_selection():
 def test_separate_limits_still_require_the_nominal_gain_margin():
     lim = dict(PM_min=30.0, Ms_max=2.0, GM_min=6.0, wc=dict(PM=20.0, Ms=3.0, GM=3.0))
     assert not rb.passes(_rm(35, 1.9, 5.9, 21, 2.9, 3.5), **lim)
+
+
+def test_critical_frequencies_of_a_known_loop():
+    # L = K exp(-s T) / s: phase -90 - 360 f T, so the phase crossover is at f = 1 / (4 T); |1 + L| is smallest there
+    T, K = 0.01, 2 * np.pi * 5.0
+    f = np.geomspace(0.1, 200.0, 20000)
+    L = K * np.exp(-2j * np.pi * f * T) / (2j * np.pi * f)
+    fm, f180 = rb.critical_frequencies(f, L)
+    assert f180 == pytest.approx(25.0, rel=1e-3)
+    assert fm == pytest.approx(f[np.argmin(np.abs(1 + L))])
+
+
+def test_robust_metrics_report_where_the_margins_bind():
+    rm = rb.robust_metrics(P0, G0, R0, S0, M0, 0.2, 0.2, 1 / 800)
+    assert 5.0 < rm["nominal"]["f_Ms"] < 40.0 and 5.0 < rm["nominal"]["f_180"] < 60.0
+    assert rm["nominal"]["f_Ms"] > rm["nominal"]["fc"]

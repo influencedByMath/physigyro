@@ -3,30 +3,35 @@
 ## A. Tier 2 identifications on the fit half (plant_variation.json)
 
 - Logs with the controller signals at full rate (high-rate or sysid profile): **102**.
-- Accepted (vehicle, axis) identifications: **25** from **14** vehicles.
+- Accepted (vehicle, axis) identifications: **30** from **17** vehicles.
+- Every log at the best stage it reached (each log counted once): accepted identification 17; fit failed the gates 5; too little excitation 20; no gap-free piece of one Welch segment 38; torque setpoint below 200 Hz 2; missing topic 20.
 - Rows that did not give an accepted fit (one row per log, axis and instrument class):
 
+  - no fit: no airborne gap-free piece as long as one Welch segment (1.28 s): 76
+  - both: no fit: 44
   - no fit: pieces: ValueError('missing topic: vehicle_torque_setpoint'): 36
-  - both: no fit: 33
-  - att_sp: no fit: 16
+  - att_sp: no fit: 20
   - no fit: pieces: ValueError('torque setpoint logged at 50 Hz'): 4
+  - att_sp: phase_err: 4
+  - att_sp: mag_err: 4
   - no fit: pieces: ValueError('missing topic: vehicle_status'): 4
   - both: phase_err: 3
   - both: tau_m_bound: 3
-  - att_sp: mag_err: 3
   - att_sp: tau_m_bound: 3
-  - att_sp: phase_err: 2
   - both: mag_err: 1
 
-- Gate sensitivity (rows accepted; 3 dB / 15° is used): 2 dB / 10°: 24 rows; 3 dB / 15°: 25 rows; 4 dB / 20°: 25 rows.
+- Gate sensitivity (rows accepted; 3 dB / 15° is used): 2 dB / 10°: 29 rows; 3 dB / 15°: 30 rows; 4 dB / 20°: 31 rows.
+- Fits rejected by the gates: 8 of 38; 6 of them have τ_m on its fit bound (fit errors 13-50°).
 - Instrument agreement of the accepted Position/auto rows: 0.06-0.39 dB, 0.7-3.7° (RMS).
-- Accepted rows whose logged FIFO IMU is not (or not known to be) the control IMU: 15 of 25.
+- Accepted rows whose logged FIFO IMU is not (or not known to be) the control IMU: 18 of 30.
 
 | Log | Axis | Instrument class | Usable s | b | τ_m [ms] | T_d [ms] | Freq. | Band [Hz] | Fit error | FIFO chip | Control chip |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 4e73d30d | pitch | both | 422.1 | 182 | 17.1 | 0.65 | 23 | 2.34-19.53 | 0.3 dB / 2.7° | ICM45686 | ICM45686 |
 | 225bab55 | roll | att_sp | 186.2 | 424 | 19.2 | 0.56 | 20 | 2.34-17.17 | 0.2 dB / 2.1° | ICM42688P | ICM20689 |
 | 225bab55 | pitch | att_sp | 186.2 | 386 | 19.8 | 2.60 | 9 | 2.34-9.37 | 0.3 dB / 2.4° | ICM42688P | ICM20689 |
+| 7e8f0064 | roll | both | 164.4 | 354 | 23.9 | 7.76 | 7 | 4.69-10.16 | 1.2 dB / 7.6° | ICM45686 | ICM45686 |
+| 7e8f0064 | pitch | both | 164.4 | 260 | 25.2 | 8.11 | 19 | 1.56-15.63 | 0.6 dB / 6.0° | ICM45686 | ICM45686 |
 | df9a5d9e | pitch | both | 155.3 | 244 | 34.0 | 3.94 | 7 | 2.34-8.59 | 0.7 dB / 5.1° | BMI055 | ICM42688P |
 | f96af168 | roll | att_sp | 107.1 | 240 | 43.7 | 2.98 | 13 | 0.78-10.16 | 0.9 dB / 3.7° | IIM42652 | IIM42652 |
 | f96af168 | pitch | att_sp | 107.1 | 234 | 39.3 | 3.48 | 8 | 0.78-6.25 | 1.2 dB / 2.6° | IIM42652 | IIM42652 |
@@ -38,8 +43,11 @@
 | 5cecf734 | pitch | both | 89.0 | 161 | 34.9 | 3.09 | 12 | 2.34-12.49 | 0.8 dB / 3.4° | ICM45686 | None |
 | c901f9c1 | roll | att_sp | 88.0 | 707 | 11.7 | 3.00 | 22 | 2.34-19.49 | 0.6 dB / 4.0° | ICM42688P | ICM20689 |
 | c901f9c1 | pitch | att_sp | 88.0 | 388 | 16.3 | 4.36 | 13 | 2.34-11.7 | 0.4 dB / 3.5° | ICM42688P | ICM20689 |
+| b79d2e3d | roll | att_sp | 79.9 | 425 | 30.4 | 1.31 | 25 | 0.78-19.52 | 1.1 dB / 3.1° | BMI055 | None |
+| b79d2e3d | pitch | att_sp | 79.9 | 393 | 28.2 | 1.10 | 25 | 0.78-19.52 | 1.2 dB / 3.4° | BMI055 | None |
 | d32cc24c | roll | att_sp | 79.5 | 293 | 12.7 | 6.53 | 11 | 0.78-8.58 | 1.6 dB / 7.4° | IIM42653 | IIM42653 |
 | d32cc24c | pitch | att_sp | 79.5 | 240 | 13.9 | 6.44 | 12 | 0.78-9.37 | 1.7 dB / 4.5° | IIM42653 | IIM42653 |
+| 852b8368 | roll | both | 71.5 | 211 | 40.7 | 5.36 | 6 | 5.46-10.15 | 0.4 dB / 2.8° | BMI055 | None |
 | 215afd8c | roll | both | 62.7 | 455 | 18.0 | 0.67 | 22 | 2.34-18.72 | 0.2 dB / 1.5° | BMI088 | BMI088 |
 | 215afd8c | pitch | both | 62.7 | 378 | 18.0 | 0.52 | 21 | 2.34-17.94 | 0.4 dB / 1.7° | BMI088 | BMI088 |
 | ab1aecd2 | pitch | att_sp | 59.1 | 423 | 21.9 | 0.00 | 12 | 2.34-13.28 | 1.3 dB / 5.8° | BMI088 | BMI088 |
@@ -52,63 +60,90 @@
 
 ## B. Repeatability: first vs second half of the same flight (same vehicle, same axis)
 
-Pairs with both halves accepted: **15**. Absolute differences:
+Pairs with both halves accepted: **18**. Absolute differences:
 
 | Quantity | n | Median | 90th percentile |
 |---|---|---|---|
-| b (symmetric relative difference) | 15 | 7.8 % | 28.3 % |
-| τ_m (symmetric relative difference) | 15 | 6.3 % | 25.7 % |
-| T_d difference | 15 | 0.5 ms | 2.4 ms |
-| T_d difference | 15 | 0.3 samples | 1.2 samples |
-| plant gain at 10 Hz | 15 | 0.3 dB | 1.0 dB |
-| plant phase at 10 Hz | 15 | 1.8° | 5.1° |
+| b (symmetric relative difference) | 18 | 7.1 % | 28.0 % |
+| τ_m (symmetric relative difference) | 18 | 6.3 % | 25.4 % |
+| T_d difference | 18 | 0.4 ms | 2.6 ms |
+| T_d difference | 18 | 0.2 samples | 1.3 samples |
+| plant gain at 10 Hz | 18 | 0.3 dB | 1.0 dB |
+| plant phase at 10 Hz | 18 | 1.7° | 6.1° |
 
 Per pair:
 
 | Log | Axis | Δb | Δτ_m | ΔT_d [ms] | gain at 10 Hz | phase at 10 Hz |
 |---|---|---|---|---|---|---|
+| b79d2e3d | roll | +3.0 % | -1.7 % | +0.08 | +0.38 dB | +0.1° |
+| b79d2e3d | pitch | +3.9 % | -3.2 % | -0.24 | +0.55 dB | +1.6° |
 | c901f9c1 | pitch | -10.8 % | -34.9 % | +2.99 | +0.84 dB | -0.9° |
+| 7e8f0064 | pitch | -22.4 % | -18.3 % | +3.01 | -0.74 dB | -6.3° |
 | fcdef3a8 | roll | +18.0 % | +25.0 % | -2.47 | +0.16 dB | +2.0° |
 | d32cc24c | roll | +5.3 % | +11.4 % | +1.47 | +0.04 dB | -8.5° |
 | f96af168 | roll | +2.0 % | +2.8 % | -0.27 | -0.04 dB | +0.5° |
 | 94bd7879 | roll | -7.8 % | -6.3 % | +0.00 | -0.34 dB | +1.8° |
 | 94bd7879 | pitch | +6.4 % | +6.0 % | -0.00 | +0.31 dB | -1.7° |
 | 4e73d30d | pitch | +10.7 % | -3.7 % | -0.44 | +1.10 dB | +2.6° |
-| ab1aecd2 | pitch | +51.6 % | -9.9 % | -0.93 | +5.15 dB | +6.0° |
+| ab1aecd2 | pitch | +51.6 % | -9.8 % | -0.93 | +5.15 dB | +6.0° |
 | a3f3ae23 | roll | -27.6 % | -26.1 % | +1.46 | -0.29 dB | -1.5° |
-| a3f3ae23 | pitch | -28.7 % | -22.7 % | +2.17 | -0.76 dB | -3.7° |
+| a3f3ae23 | pitch | -28.7 % | -22.7 % | +2.18 | -0.76 dB | -3.7° |
 | 215afd8c | roll | +3.3 % | +5.0 % | +0.09 | +0.05 dB | -1.8° |
 | 215afd8c | pitch | +7.9 % | +15.9 % | -0.64 | -0.09 dB | -2.2° |
 | 225bab55 | roll | -2.4 % | -0.4 % | +0.26 | -0.19 dB | -0.8° |
 | 5cecf734 | roll | +5.9 % | -6.3 % | +0.46 | +0.96 dB | -0.3° |
 | 5cecf734 | pitch | -2.8 % | -0.7 % | -0.13 | -0.19 dB | +0.6° |
 
-Size of each candidate uncertainty set at 10 Hz for the median identified plant (τ_m 21.2 ms, T_d 1.53 ms): largest gain change / largest extra phase lag over the 8 corners. Compare with the 90th percentiles above.
+Size of each candidate uncertainty set at 10 Hz for the median identified plant (τ_m 23.3 ms, T_d 1.91 ms): largest gain change / largest extra phase lag over the 8 corners. Compare with the 90th percentiles above.
 
 | Width | +0.5 sample, 800 Hz | +1 sample, 800 Hz | +2 samples, 800 Hz | +1 sample, 400 Hz |
 |---|---|---|---|---|
-| ±10 % | 1.46 dB / 4.8° | 1.46 dB / 7.1° | 1.46 dB / 11.6° | 1.46 dB / 11.6° |
-| ±15 % | 2.23 dB / 6.0° | 2.23 dB / 8.3° | 2.23 dB / 12.8° | 2.23 dB / 12.8° |
-| ±20 % | 3.02 dB / 7.1° | 3.02 dB / 9.4° | 3.02 dB / 13.9° | 3.02 dB / 13.9° |
-| ±30 % | 4.69 dB / 9.1° | 4.69 dB / 11.4° | 4.69 dB / 15.9° | 4.69 dB / 15.9° |
+| ±10 % | 1.50 dB / 4.7° | 1.50 dB / 7.0° | 1.50 dB / 11.5° | 1.50 dB / 11.5° |
+| ±15 % | 2.28 dB / 5.9° | 2.28 dB / 8.1° | 2.28 dB / 12.6° | 2.28 dB / 12.6° |
+| ±20 % | 3.08 dB / 6.9° | 3.08 dB / 9.2° | 3.08 dB / 13.7° | 3.08 dB / 13.7° |
+| ±30 % | 4.77 dB / 8.9° | 4.77 dB / 11.1° | 4.77 dB / 15.6° | 4.77 dB / 15.6° |
 
-Roll vs pitch of the same vehicle (same motors and ESCs; b differs by the inertia): **11** vehicles.
+Roll vs pitch of the same vehicle (same motors and ESCs; b differs by the inertia): **13** vehicles.
 
 | Quantity | n | Median | 90th percentile |
 |---|---|---|---|
-| τ_m roll vs pitch | 11 | 10.6 % | 32.3 % |
-| T_d roll vs pitch | 11 | 1.3 ms | 2.0 ms |
-| b roll / pitch (ratio) | 11 | 1.13 | range 0.97-1.82 |
+| τ_m roll vs pitch | 13 | 8.8 % | 31.5 % |
+| T_d roll vs pitch | 13 | 0.5 ms | 1.9 ms |
+| b roll / pitch (ratio) | 13 | 1.13 | range 0.97-1.82 |
+
+## B2. Repeatability where the margins bind (independent review, Important 2)
+
+Half-flight differences at several frequencies (18 pairs): 90th percentile with a 95 % bootstrap interval, next to the size of two candidate sets for the median plant (τ_m 23.3 ms, T_d 1.91 ms, 800 Hz).
+
+| Frequency | Phase, p90 [95 % CI] | Gain, p90 [95 % CI] | ±15 % +1 sample | ±20 % +1 sample |
+|---|---|---|---|---|
+| 5 Hz | 3.8° [2.4-5.0] | 1.22 dB [0.76-4.87] | 1.88 dB / 6.1° | 2.56 dB / 7.3° |
+| 10 Hz | 6.1° [2.2-8.5] | 1.01 dB [0.67-5.15] | 2.28 dB / 8.1° | 3.08 dB / 9.2° |
+| 15 Hz | 9.5° [6.3-12.8] | 1.23 dB [0.58-5.28] | 2.44 dB / 9.6° | 3.29 dB / 10.4° |
+| 20 Hz | 13.7° [9.8-18.9] | 1.33 dB [0.60-5.34] | 2.51 dB / 11.3° | 3.38 dB / 12.0° |
+
+Share of pairs whose gain AND phase differences lie inside each candidate set, evaluated at the drone's OWN frequency of the M_s peak and of its critical phase crossover (set built around its own plant):
+
+| Candidate set | at the M_s peak (n 18) | at the phase crossover (n 18) |
+|---|---|---|
+| ±10 % +0.5 sample | 83 % | 78 % |
+| ±10 % +1 sample | 89 % | 89 % |
+| ±15 % +1 sample | 89 % | 89 % |
+| ±20 % +1 sample | 94 % | 94 % |
+| ±30 % +1 sample | 94 % | 94 % |
+| ±20 % +2 sample | 94 % | 94 % |
+
+M_s peak of the real flown settings: 5.6 / 13.2 / 21.0 Hz (min / median / max). The M_s peak lies above the highest coherent fit frequency in **12 of 28** cases and the critical phase crossover in 22: there the margins rest on the plant model extrapolated beyond the identified band.
 
 ## C. Across vehicles (accepted identifications) and the D-28 priors
 
 | Quantity | n | min / p10 / median / p90 / max | Share inside the D-28 prior |
 |---|---|---|---|
-| τ_m [ms] | 25 | 11.7 / 14.4 / 21.2 / 40.6 / 64.9 | 52 % (20-60 ms) |
-| T_d [ms] | 25 | 0.0 / 0.0 / 1.5 / 4.4 / 6.5 | 72 % (0.5-5 ms) |
-| Motor + delay lag at 10 Hz [°] | 25 | 43.8 / 48.5 / 60.9 / 81.1 / 84.9 | 64 % (53.3-93.1°) |
+| τ_m [ms] | 30 | 11.7 / 15.1 / 23.3 / 40.8 / 64.9 | 60 % (20-60 ms) |
+| T_d [ms] | 30 | 0.0 / 0.0 / 1.9 / 6.5 / 8.1 | 67 % (0.5-5 ms) |
+| Motor + delay lag at 10 Hz [°] | 30 | 43.8 / 49.2 / 63.2 / 84.5 / 88.0 | 70 % (53.3-93.1°) |
 
-τ_m and T_d trade off below the 20 Hz band edge, so the lag at 10 Hz (near the crossover) is the robust comparison: 9 of 25 identified plants lag less than the fastest plant the D-28 priors can produce (53.3°). A prior of τ_m 10-60 ms and T_d 0-5 ms would reach down to 32.1°.
+τ_m and T_d trade off below the 20 Hz band edge, so the lag at 10 Hz (near the crossover) is the robust comparison: 9 of 30 identified plants lag less than the fastest plant the D-28 priors can produce (53.3°). A prior of τ_m 10-60 ms and T_d 0.1-5 ms would reach down to 32.5°.
 
 ## D. ICM chip delay under the two rules (Task 1; D-25)
 
@@ -119,130 +154,138 @@ Roll vs pitch of the same vehicle (same motors and ESCs; b differs by the inerti
 | ICM45686 | 9 | 1, 0.884-0.89 | 10, 0.25-0.89 |
 | IIM42652 | 2 | 1, 1.141-1.156 | 1, 1.141-1.156 |
 
+Delay of the same fit-error-rule terms at 5 Hz (near the crossover), against the 20-100 Hz band of the plan:
+
+- ICM42688P: 0.90-1.16 ms at 5 Hz (20-100 Hz band: 0.906-1.372 ms).
+- ICM42686P: 1.94-2.51 ms at 5 Hz (20-100 Hz band: 1.996-3.019 ms).
+- ICM45686: 0.25-0.88 ms at 5 Hz (20-100 Hz band: 0.25-0.89 ms).
+- IIM42652: 1.14-1.14 ms at 5 Hz (20-100 Hz band: 1.141-1.156 ms).
+- All of these are delays of minimum-phase filters with the fitted magnitude, i.e. lower bounds of the true delay; the largest of them is not an upper bound.
+
 Who carries an ICM-4268x chip (fit half; the test half is not counted, leakage rule):
 
 - FIFO (noise) IMU of the 111 screened fit logs: ICM-42688-P 25, ICM-42686-P 3.
 - Control IMU of the 111 fit logs (known in 71): ICM-42688-P 7, ICM-42686-P 3.
 - Generator sources (50 spectra, drawn uniformly by the synthetic drones): ICM-42688-P 13, ICM-42686-P 3, i.e. 32 % of synthetic drones.
-- Accepted Tier 2 identifications with an ICM-4268x FIFO IMU: 4 of 25; with an ICM-4268x control IMU: 1.
-- Identified T_d, median: ICM-4268x FIFO IMU 2.80 ms (n 4), other chips 1.35 ms (n 21). An identified T_d already contains the FIFO chip's own filter.
+- Accepted Tier 2 identifications with an ICM-4268x FIFO IMU: 4 of 30; with an ICM-4268x control IMU: 1.
+- Identified T_d, median: ICM-4268x FIFO IMU 2.80 ms (n 4), other chips 1.44 ms (n 26). An identified T_d already contains the FIFO chip's own filter.
 
 ## E. Pass rates (robust_limits.json)
 
 A case passes if the nominal plant meets PM ≥ floor, M_s ≤ M_s,max and GM ≥ 6 dB, and every plant of the set (nominal + 8 corners) is Nyquist-stable and meets the worst-case limits: the same ones ("same"), or separate ones ("wcMs"): M_s ≤ M_s,wc with the PM and GM that M_s,wc guarantees M_s,wc 2.5 → PM ≥ 23.1°, GM ≥ 4.4 dB, M_s,wc 3.0 → PM ≥ 19.2°, GM ≥ 3.5 dB.
 
-### Real-gain fit-half drones, pilot's actual filters (n = 25)
+### Real-gain fit-half drones, pilot's actual filters (n = 28; 2 more rows flagged and left out (loop parameters changed in flight))
 
-Nominal limits only (no uncertainty set): PM25 Ms1.8 56 %; PM25 Ms2 68 %; PM25 Ms2.2 72 %; PM30 Ms1.8 56 %; PM30 Ms2 68 %; PM30 Ms2.2 72 %; PM35 Ms1.8 56 %; PM35 Ms2 68 %; PM35 Ms2.2 72 %.
+Nominal limits only (no uncertainty set): PM25 Ms1.8 61 %; PM25 Ms2 82 %; PM25 Ms2.2 86 %; PM30 Ms1.8 61 %; PM30 Ms2 82 %; PM30 Ms2.2 86 %; PM35 Ms1.8 61 %; PM35 Ms2 82 %; PM35 Ms2.2 86 %.
 
 | Limits (same limits; delay step 0.5 sample) | ±10 % | ±15 % | ±20 % | ±30 % |
 |---|---|---|---|---|
-| PM25 Ms1.8 same | 36 % | 36 % | 24 % | 12 % |
-| PM25 Ms2 same | 48 % | 40 % | 36 % | 24 % |
-| PM25 Ms2.2 same | 56 % | 56 % | 44 % | 36 % |
-| PM30 Ms1.8 same | 36 % | 36 % | 24 % | 12 % |
-| PM30 Ms2 same | 48 % | 40 % | 36 % | 24 % |
-| PM30 Ms2.2 same | 56 % | 56 % | 44 % | 36 % |
-| PM35 Ms1.8 same | 36 % | 36 % | 24 % | 12 % |
-| PM35 Ms2 same | 48 % | 40 % | 36 % | 24 % |
-| PM35 Ms2.2 same | 56 % | 56 % | 44 % | 36 % |
+| PM25 Ms1.8 same | 36 % | 32 % | 25 % | 11 % |
+| PM25 Ms2 same | 50 % | 43 % | 36 % | 25 % |
+| PM25 Ms2.2 same | 61 % | 61 % | 46 % | 36 % |
+| PM30 Ms1.8 same | 36 % | 32 % | 25 % | 11 % |
+| PM30 Ms2 same | 50 % | 43 % | 36 % | 25 % |
+| PM30 Ms2.2 same | 61 % | 61 % | 46 % | 36 % |
+| PM35 Ms1.8 same | 36 % | 32 % | 25 % | 11 % |
+| PM35 Ms2 same | 50 % | 43 % | 36 % | 25 % |
+| PM35 Ms2.2 same | 61 % | 61 % | 46 % | 36 % |
 
 | Limits (same limits; delay step 1 sample) | ±10 % | ±15 % | ±20 % | ±30 % |
 |---|---|---|---|---|
-| PM25 Ms1.8 same | 36 % | 24 % | 16 % | 12 % |
-| PM25 Ms2 same | 40 % | 36 % | 36 % | 16 % |
-| PM25 Ms2.2 same | 52 % | 44 % | 36 % | 36 % |
-| PM30 Ms1.8 same | 36 % | 24 % | 16 % | 12 % |
-| PM30 Ms2 same | 40 % | 36 % | 36 % | 16 % |
-| PM30 Ms2.2 same | 52 % | 44 % | 36 % | 36 % |
-| PM35 Ms1.8 same | 36 % | 24 % | 16 % | 12 % |
-| PM35 Ms2 same | 40 % | 36 % | 36 % | 16 % |
-| PM35 Ms2.2 same | 52 % | 44 % | 36 % | 36 % |
+| PM25 Ms1.8 same | 32 % | 25 % | 14 % | 11 % |
+| PM25 Ms2 same | 43 % | 36 % | 32 % | 18 % |
+| PM25 Ms2.2 same | 57 % | 46 % | 43 % | 32 % |
+| PM30 Ms1.8 same | 32 % | 25 % | 14 % | 11 % |
+| PM30 Ms2 same | 43 % | 36 % | 32 % | 18 % |
+| PM30 Ms2.2 same | 57 % | 46 % | 43 % | 32 % |
+| PM35 Ms1.8 same | 32 % | 25 % | 14 % | 11 % |
+| PM35 Ms2 same | 43 % | 36 % | 32 % | 18 % |
+| PM35 Ms2.2 same | 57 % | 46 % | 43 % | 32 % |
 
 | Limits (same limits; delay step 2 sample) | ±10 % | ±15 % | ±20 % | ±30 % |
 |---|---|---|---|---|
-| PM25 Ms1.8 same | 16 % | 12 % | 12 % | 8 % |
-| PM25 Ms2 same | 36 % | 36 % | 20 % | 12 % |
-| PM25 Ms2.2 same | 36 % | 36 % | 36 % | 20 % |
-| PM30 Ms1.8 same | 16 % | 12 % | 12 % | 8 % |
-| PM30 Ms2 same | 36 % | 36 % | 20 % | 12 % |
-| PM30 Ms2.2 same | 36 % | 36 % | 36 % | 20 % |
-| PM35 Ms1.8 same | 16 % | 12 % | 12 % | 8 % |
-| PM35 Ms2 same | 36 % | 36 % | 20 % | 12 % |
-| PM35 Ms2.2 same | 36 % | 36 % | 36 % | 20 % |
+| PM25 Ms1.8 same | 18 % | 11 % | 11 % | 7 % |
+| PM25 Ms2 same | 36 % | 32 % | 21 % | 11 % |
+| PM25 Ms2.2 same | 39 % | 39 % | 36 % | 21 % |
+| PM30 Ms1.8 same | 18 % | 11 % | 11 % | 7 % |
+| PM30 Ms2 same | 36 % | 32 % | 21 % | 11 % |
+| PM30 Ms2.2 same | 39 % | 39 % | 36 % | 21 % |
+| PM35 Ms1.8 same | 18 % | 11 % | 11 % | 7 % |
+| PM35 Ms2 same | 36 % | 32 % | 21 % | 11 % |
+| PM35 Ms2.2 same | 39 % | 39 % | 36 % | 21 % |
 
 | Limits (separate worst-case limits; delay step 0.5 sample) | ±10 % | ±15 % | ±20 % | ±30 % |
 |---|---|---|---|---|
-| PM25 Ms1.8 wcMs2.5 | 56 % | 56 % | 56 % | 44 % |
-| PM25 Ms1.8 wcMs3 | 56 % | 56 % | 56 % | 56 % |
-| PM25 Ms2 wcMs2.5 | 68 % | 64 % | 56 % | 44 % |
-| PM25 Ms2 wcMs3 | 68 % | 68 % | 68 % | 56 % |
-| PM25 Ms2.2 wcMs2.5 | 72 % | 64 % | 56 % | 44 % |
-| PM25 Ms2.2 wcMs3 | 72 % | 72 % | 72 % | 56 % |
-| PM30 Ms1.8 wcMs2.5 | 56 % | 56 % | 56 % | 44 % |
-| PM30 Ms1.8 wcMs3 | 56 % | 56 % | 56 % | 56 % |
-| PM30 Ms2 wcMs2.5 | 68 % | 64 % | 56 % | 44 % |
-| PM30 Ms2 wcMs3 | 68 % | 68 % | 68 % | 56 % |
-| PM30 Ms2.2 wcMs2.5 | 72 % | 64 % | 56 % | 44 % |
-| PM30 Ms2.2 wcMs3 | 72 % | 72 % | 72 % | 56 % |
-| PM35 Ms1.8 wcMs2.5 | 56 % | 56 % | 56 % | 44 % |
-| PM35 Ms1.8 wcMs3 | 56 % | 56 % | 56 % | 56 % |
-| PM35 Ms2 wcMs2.5 | 68 % | 64 % | 56 % | 44 % |
-| PM35 Ms2 wcMs3 | 68 % | 68 % | 68 % | 56 % |
-| PM35 Ms2.2 wcMs2.5 | 72 % | 64 % | 56 % | 44 % |
-| PM35 Ms2.2 wcMs3 | 72 % | 72 % | 72 % | 56 % |
+| PM25 Ms1.8 wcMs2.5 | 61 % | 61 % | 61 % | 46 % |
+| PM25 Ms1.8 wcMs3 | 61 % | 61 % | 61 % | 61 % |
+| PM25 Ms2 wcMs2.5 | 82 % | 71 % | 61 % | 46 % |
+| PM25 Ms2 wcMs3 | 82 % | 82 % | 82 % | 64 % |
+| PM25 Ms2.2 wcMs2.5 | 82 % | 71 % | 61 % | 46 % |
+| PM25 Ms2.2 wcMs3 | 86 % | 86 % | 82 % | 64 % |
+| PM30 Ms1.8 wcMs2.5 | 61 % | 61 % | 61 % | 46 % |
+| PM30 Ms1.8 wcMs3 | 61 % | 61 % | 61 % | 61 % |
+| PM30 Ms2 wcMs2.5 | 82 % | 71 % | 61 % | 46 % |
+| PM30 Ms2 wcMs3 | 82 % | 82 % | 82 % | 64 % |
+| PM30 Ms2.2 wcMs2.5 | 82 % | 71 % | 61 % | 46 % |
+| PM30 Ms2.2 wcMs3 | 86 % | 86 % | 82 % | 64 % |
+| PM35 Ms1.8 wcMs2.5 | 61 % | 61 % | 61 % | 46 % |
+| PM35 Ms1.8 wcMs3 | 61 % | 61 % | 61 % | 61 % |
+| PM35 Ms2 wcMs2.5 | 82 % | 71 % | 61 % | 46 % |
+| PM35 Ms2 wcMs3 | 82 % | 82 % | 82 % | 64 % |
+| PM35 Ms2.2 wcMs2.5 | 82 % | 71 % | 61 % | 46 % |
+| PM35 Ms2.2 wcMs3 | 86 % | 86 % | 82 % | 64 % |
 
 | Limits (separate worst-case limits; delay step 1 sample) | ±10 % | ±15 % | ±20 % | ±30 % |
 |---|---|---|---|---|
-| PM25 Ms1.8 wcMs2.5 | 56 % | 56 % | 44 % | 40 % |
-| PM25 Ms1.8 wcMs3 | 56 % | 56 % | 56 % | 44 % |
-| PM25 Ms2 wcMs2.5 | 60 % | 56 % | 44 % | 40 % |
-| PM25 Ms2 wcMs3 | 68 % | 64 % | 56 % | 44 % |
-| PM25 Ms2.2 wcMs2.5 | 60 % | 56 % | 44 % | 40 % |
-| PM25 Ms2.2 wcMs3 | 72 % | 68 % | 60 % | 44 % |
-| PM30 Ms1.8 wcMs2.5 | 56 % | 56 % | 44 % | 40 % |
-| PM30 Ms1.8 wcMs3 | 56 % | 56 % | 56 % | 44 % |
-| PM30 Ms2 wcMs2.5 | 60 % | 56 % | 44 % | 40 % |
-| PM30 Ms2 wcMs3 | 68 % | 64 % | 56 % | 44 % |
-| PM30 Ms2.2 wcMs2.5 | 60 % | 56 % | 44 % | 40 % |
-| PM30 Ms2.2 wcMs3 | 72 % | 68 % | 60 % | 44 % |
-| PM35 Ms1.8 wcMs2.5 | 56 % | 56 % | 44 % | 40 % |
-| PM35 Ms1.8 wcMs3 | 56 % | 56 % | 56 % | 44 % |
-| PM35 Ms2 wcMs2.5 | 60 % | 56 % | 44 % | 40 % |
-| PM35 Ms2 wcMs3 | 68 % | 64 % | 56 % | 44 % |
-| PM35 Ms2.2 wcMs2.5 | 60 % | 56 % | 44 % | 40 % |
-| PM35 Ms2.2 wcMs3 | 72 % | 68 % | 60 % | 44 % |
+| PM25 Ms1.8 wcMs2.5 | 61 % | 61 % | 50 % | 43 % |
+| PM25 Ms1.8 wcMs3 | 61 % | 61 % | 61 % | 46 % |
+| PM25 Ms2 wcMs2.5 | 71 % | 61 % | 50 % | 43 % |
+| PM25 Ms2 wcMs3 | 82 % | 79 % | 64 % | 46 % |
+| PM25 Ms2.2 wcMs2.5 | 71 % | 61 % | 50 % | 43 % |
+| PM25 Ms2.2 wcMs3 | 86 % | 79 % | 64 % | 46 % |
+| PM30 Ms1.8 wcMs2.5 | 61 % | 61 % | 50 % | 43 % |
+| PM30 Ms1.8 wcMs3 | 61 % | 61 % | 61 % | 46 % |
+| PM30 Ms2 wcMs2.5 | 71 % | 61 % | 50 % | 43 % |
+| PM30 Ms2 wcMs3 | 82 % | 79 % | 64 % | 46 % |
+| PM30 Ms2.2 wcMs2.5 | 71 % | 61 % | 50 % | 43 % |
+| PM30 Ms2.2 wcMs3 | 86 % | 79 % | 64 % | 46 % |
+| PM35 Ms1.8 wcMs2.5 | 61 % | 61 % | 50 % | 43 % |
+| PM35 Ms1.8 wcMs3 | 61 % | 61 % | 61 % | 46 % |
+| PM35 Ms2 wcMs2.5 | 71 % | 61 % | 50 % | 43 % |
+| PM35 Ms2 wcMs3 | 82 % | 79 % | 64 % | 46 % |
+| PM35 Ms2.2 wcMs2.5 | 71 % | 61 % | 50 % | 43 % |
+| PM35 Ms2.2 wcMs3 | 86 % | 79 % | 64 % | 46 % |
 
 | Limits (separate worst-case limits; delay step 2 sample) | ±10 % | ±15 % | ±20 % | ±30 % |
 |---|---|---|---|---|
-| PM25 Ms1.8 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM25 Ms1.8 wcMs3 | 56 % | 56 % | 48 % | 40 % |
-| PM25 Ms2 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM25 Ms2 wcMs3 | 60 % | 56 % | 48 % | 40 % |
-| PM25 Ms2.2 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM25 Ms2.2 wcMs3 | 64 % | 56 % | 48 % | 40 % |
-| PM30 Ms1.8 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM30 Ms1.8 wcMs3 | 56 % | 56 % | 48 % | 40 % |
-| PM30 Ms2 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM30 Ms2 wcMs3 | 60 % | 56 % | 48 % | 40 % |
-| PM30 Ms2.2 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM30 Ms2.2 wcMs3 | 64 % | 56 % | 48 % | 40 % |
-| PM35 Ms1.8 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM35 Ms1.8 wcMs3 | 56 % | 56 % | 48 % | 40 % |
-| PM35 Ms2 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM35 Ms2 wcMs3 | 60 % | 56 % | 48 % | 40 % |
-| PM35 Ms2.2 wcMs2.5 | 48 % | 40 % | 36 % | 32 % |
-| PM35 Ms2.2 wcMs3 | 64 % | 56 % | 48 % | 40 % |
+| PM25 Ms1.8 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM25 Ms1.8 wcMs3 | 61 % | 61 % | 54 % | 43 % |
+| PM25 Ms2 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM25 Ms2 wcMs3 | 71 % | 64 % | 54 % | 43 % |
+| PM25 Ms2.2 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM25 Ms2.2 wcMs3 | 71 % | 64 % | 54 % | 43 % |
+| PM30 Ms1.8 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM30 Ms1.8 wcMs3 | 61 % | 61 % | 54 % | 43 % |
+| PM30 Ms2 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM30 Ms2 wcMs3 | 71 % | 64 % | 54 % | 43 % |
+| PM30 Ms2.2 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM30 Ms2.2 wcMs3 | 71 % | 64 % | 54 % | 43 % |
+| PM35 Ms1.8 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM35 Ms1.8 wcMs3 | 61 % | 61 % | 54 % | 43 % |
+| PM35 Ms2 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM35 Ms2 wcMs3 | 71 % | 64 % | 54 % | 43 % |
+| PM35 Ms2.2 wcMs2.5 | 54 % | 43 % | 43 % | 36 % |
+| PM35 Ms2.2 wcMs3 | 71 % | 64 % | 54 % | 43 % |
 
 Among the cases that pass the NOMINAL limits, the share that also passes the robust check:
 
 | Limits | ±10 % +0.5 | ±10 % +1 | ±15 % +1 | ±20 % +1 | ±30 % +1 | ±20 % +2 |
 |---|---|---|---|---|---|---|
-| PM30 Ms2 same | 71 % | 59 % | 53 % | 53 % | 24 % | 29 % |
-| PM30 Ms2 wcMs2.5 | 100 % | 88 % | 82 % | 65 % | 59 % | 53 % |
-| PM30 Ms2 wcMs3 | 100 % | 100 % | 94 % | 82 % | 65 % | 71 % |
-| PM30 Ms2.2 same | 78 % | 72 % | 61 % | 50 % | 50 % | 50 % |
-| PM30 Ms2.2 wcMs3 | 100 % | 100 % | 94 % | 83 % | 61 % | 67 % |
+| PM30 Ms2 same | 61 % | 52 % | 43 % | 39 % | 22 % | 26 % |
+| PM30 Ms2 wcMs2.5 | 100 % | 87 % | 74 % | 61 % | 52 % | 52 % |
+| PM30 Ms2 wcMs3 | 100 % | 100 % | 96 % | 78 % | 57 % | 65 % |
+| PM30 Ms2.2 same | 71 % | 67 % | 54 % | 50 % | 38 % | 42 % |
+| PM30 Ms2.2 wcMs3 | 100 % | 100 % | 92 % | 75 % | 54 % | 62 % |
 
 ### Synthetic Tier 3a drones at the PX4 default filters (n = 1000)
 
@@ -374,27 +417,32 @@ Worst case = smallest PM / largest M_s over the 9 plants; "+1" = delay step of 1
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | b27d09e3 (feasibility plant) | roll | 431 | 29.2 | 2.61 | 800 | 39.5° / 2.10 / 7.6 dB | 29.8° / 2.92 | 26.8° / 3.31 | 23.4° / 3.87 | 15.0° / 6.24 | 26.8° / 3.36 | 16.6° / 5.48 | - |
 | b27d09e3 (feasibility plant) | pitch | 474 | 34.2 | 0.0 | 800 | 46.1° / 1.65 / 12.0 dB | 39.2° / 2.02 | 37.7° / 2.14 | 35.9° / 2.29 | 31.3° / 2.74 | 39.1° / 2.10 | 29.7° / 2.80 | - |
-| 215afd8c | roll | 455 | 18.0 | 0.67 | 399 | 64.4° / 1.66 / 9.7 dB | 52.6° / 2.15 | 50.3° / 2.31 | 48.0° / 2.51 | 40.7° / 3.07 | 51.9° / 2.24 | 38.7° / 3.22 | - |
-| 215afd8c | pitch | 378 | 18.0 | 0.52 | 399 | 72.7° / 1.57 / 10.4 dB | 61.4° / 1.97 | 59.0° / 2.10 | 56.8° / 2.25 | 49.9° / 2.68 | 60.2° / 2.05 | 48.7° / 2.76 | - |
-| 225bab55 | roll | 424 | 19.2 | 0.56 | 400 | 47.5° / 1.74 / 11.3 dB | 39.8° / 2.05 | 37.6° / 2.15 | 35.4° / 2.25 | 31.4° / 2.48 | 37.3° / 2.14 | 31.8° / 2.52 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| 225bab55 | pitch | 386 | 19.8 | 2.6 | 400 | 40.4° / 2.03 / 8.9 dB | 31.6° / 2.55 | 29.3° / 2.72 | 27.0° / 2.91 | 22.9° / 3.35 | 29.1° / 2.69 | 22.8° / 3.46 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| 4e73d30d | pitch | 182 | 17.1 | 0.65 | 400 | 53.3° / 1.93 / 7.8 dB | 38.9° / 2.82 | 35.4° / 3.15 | 31.5° / 3.60 | 22.5° / 5.18 | 37.4° / 2.98 | 19.9° / 5.91 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| 5cecf734 | roll | 156 | 34.8 | 4.42 | 801 | 59.6° / 1.37 / 15.4 dB | 54.4° / 1.46 | 52.7° / 1.49 | 51.0° / 1.51 | 48.0° / 1.59 | 51.9° / 1.49 | 49.4° / 1.57 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| 5cecf734 | pitch | 161 | 34.9 | 3.09 | 801 | 60.7° / 1.34 / 16.2 dB | 55.6° / 1.42 | 53.9° / 1.45 | 52.3° / 1.47 | 49.3° / 1.54 | 53.1° / 1.44 | 50.6° / 1.52 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| 94bd7879 | roll | 212 | 20.3 | 0.0 | 400 | 87.4° / 1.41 / 12.6 dB | 78.0° / 1.67 | 75.6° / 1.75 | 73.4° / 1.85 | 69.2° / 2.10 | 76.1° / 1.73 | 68.1° / 2.12 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| 94bd7879 | pitch | 190 | 15.2 | 0.0 | 400 | 59.5° / 1.80 / 8.6 dB | 45.5° / 2.52 | 42.2° / 2.77 | 38.6° / 3.08 | 30.1° / 4.06 | 44.3° / 2.62 | 27.0° / 4.57 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| 9ca62be3 | roll | 427 | 23.6 | 1.35 | 664 | 65.4° / 1.46 / 12.5 dB | 58.3° / 1.65 | 56.4° / 1.71 | 54.6° / 1.79 | 51.4° / 1.98 | 56.2° / 1.72 | 51.4° / 1.94 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| 9ca62be3 | pitch | 379 | 21.2 | 0.0 | 664 | 71.1° / 1.37 / 14.2 dB | 64.3° / 1.52 | 62.4° / 1.56 | 60.6° / 1.62 | 57.3° / 1.75 | 62.2° / 1.56 | 57.5° / 1.74 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| a3f3ae23 | roll | 666 | 64.9 | 2.29 | 250 | 26.3° / 2.60 / 7.2 dB | 11.4° / 6.31 | 8.7° / 8.42 | 5.6° / 13.42 | -2.3° / 33.76 UNSTABLE | 12.7° / 5.86 | -8.7° / 42.16 UNSTABLE | - |
-| a3f3ae23 | pitch | 468 | 41.5 | 4.4 | 250 | 28.9° / 2.69 / 5.8 dB | 12.2° / 6.75 | 8.6° / 9.74 | 4.6° / 18.66 | -5.2° / 17.25 UNSTABLE | 11.9° / 7.16 | -10.0° / 47.05 UNSTABLE | - |
-| ab1aecd2 | pitch | 423 | 21.9 | 0.0 | 998 | 34.4° / 2.59 / 5.8 dB | 20.9° / 4.31 | 16.7° / 5.39 | 12.2° / 7.33 | 2.6° / 33.78 | 16.0° / 5.54 | 4.5° / 20.05 | FFT notch on: not modelled; FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| b27d09e3 | roll | 464 | 32.0 | 1.32 | 800 | 42.6° / 1.88 / 9.2 dB | 33.9° / 2.47 | 31.4° / 2.71 | 28.6° / 3.03 | 21.6° / 4.15 | 32.0° / 2.70 | 21.9° / 4.00 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| b27d09e3 | pitch | 443 | 32.6 | 1.1 | 800 | 43.7° / 1.77 / 10.4 dB | 36.4° / 2.22 | 34.6° / 2.38 | 32.5° / 2.59 | 27.1° / 3.24 | 35.6° / 2.36 | 26.4° / 3.22 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| c901f9c1 | roll | 707 | 11.7 | 3.0 | 401 | 17.6° / 5.64 / 2.1 dB | 0.7° / 106.09 | -3.3° / 54.22 UNSTABLE | -7.4° / 26.31 UNSTABLE | -15.5° / 216.71 UNSTABLE | -1.8° / 293.56 UNSTABLE | -18.6° / 26.31 UNSTABLE | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| c901f9c1 | pitch | 388 | 16.3 | 4.36 | 401 | 48.9° / 2.23 / 6.0 dB | 37.4° / 3.01 | 34.5° / 3.34 | 31.7° / 3.76 | 25.8° / 5.07 | 34.8° / 3.36 | 25.7° / 4.87 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
-| d32cc24c | roll | 293 | 12.7 | 6.53 | 804 | 39.9° / 3.20 / 3.7 dB | 25.2° / 5.28 | 19.5° / 6.86 | 13.6° / 9.90 | 1.1° / 128.40 | 16.6° / 8.04 | 7.6° / 18.12 | ESC notch on, no valid RPM: notch left out; FFT notch on: not modelled |
+| 215afd8c | roll | 455 | 18.0 | 0.67 | 399 | 64.4° / 1.66 / 9.7 dB | 52.6° / 2.15 | 50.3° / 2.31 | 48.0° / 2.51 | 40.7° / 3.07 | 51.9° / 2.24 | 38.6° / 3.22 | - |
+| 215afd8c | pitch | 378 | 18.0 | 0.52 | 399 | 72.7° / 1.57 / 10.4 dB | 61.4° / 1.97 | 59.0° / 2.10 | 56.8° / 2.25 | 49.9° / 2.69 | 60.2° / 2.05 | 48.7° / 2.76 | - |
+| 225bab55 | roll | 424 | 19.2 | 0.0 | 400 | 48.2° / 1.71 / 11.7 dB | 40.5° / 2.01 | 38.4° / 2.10 | 36.2° / 2.20 | 32.3° / 2.42 | 38.1° / 2.09 | 32.6° / 2.46 | Td corrected -0.91 ms (FIFO chip ICM42688P -> control chip ICM20689); corrected Td clamped at 0 |
+| 225bab55 | pitch | 386 | 19.8 | 1.69 | 400 | 41.8° / 1.96 / 9.4 dB | 33.1° / 2.43 | 30.8° / 2.58 | 28.6° / 2.75 | 24.5° / 3.12 | 30.7° / 2.55 | 24.3° / 3.24 | Td corrected -0.91 ms (FIFO chip ICM42688P -> control chip ICM20689) |
+| 4e73d30d | pitch | 182 | 17.1 | 0.65 | 400 | 53.3° / 1.93 / 7.8 dB | 38.9° / 2.82 | 35.4° / 3.15 | 31.5° / 3.60 | 22.5° / 5.18 | 37.4° / 2.98 | 19.9° / 5.91 | - |
+| 5cecf734 | roll | 156 | 34.8 | 4.42 | 801 | 59.6° / 1.37 / 15.4 dB | 54.4° / 1.46 | 52.7° / 1.49 | 51.0° / 1.51 | 48.0° / 1.59 | 51.9° / 1.49 | 49.4° / 1.57 | control IMU unknown: Td keeps the FIFO chip's filter |
+| 5cecf734 | pitch | 161 | 34.9 | 3.09 | 801 | 60.7° / 1.34 / 16.2 dB | 55.6° / 1.42 | 53.9° / 1.45 | 52.3° / 1.47 | 49.3° / 1.54 | 53.1° / 1.44 | 50.6° / 1.52 | control IMU unknown: Td keeps the FIFO chip's filter |
+| 7e8f0064 | roll | 354 | 23.9 | 7.76 | 800 | 49.9° / 1.76 / 9.6 dB | 43.3° / 1.97 | 41.1° / 2.05 | 39.0° / 2.12 | 35.2° / 2.31 | 40.1° / 2.06 | 37.0° / 2.25 | FFT notch on: not modelled |
+| 7e8f0064 | pitch | 260 | 25.2 | 8.11 | 800 | 55.2° / 1.57 / 12.2 dB | 49.3° / 1.72 | 47.2° / 1.77 | 45.2° / 1.82 | 41.4° / 1.94 | 46.0° / 1.79 | 43.6° / 1.90 | FFT notch on: not modelled |
+| 852b8368 | roll | 211 | 40.7 | 5.36 | 807 | 56.5° / 1.90 / 7.7 dB | 46.2° / 2.40 | 41.8° / 2.69 | 36.8° / 3.08 | 25.1° / 4.57 | 39.0° / 2.89 | 32.5° / 3.53 | control IMU unknown: Td keeps the FIFO chip's filter |
+| 94bd7879 | roll | 212 | 20.3 | 0.0 | 400 | 87.4° / 1.41 / 12.6 dB | 78.0° / 1.67 | 75.6° / 1.75 | 73.4° / 1.85 | 69.2° / 2.10 | 76.1° / 1.73 | 68.1° / 2.12 | - |
+| 94bd7879 | pitch | 190 | 15.2 | 0.0 | 400 | 59.5° / 1.80 / 8.6 dB | 45.5° / 2.52 | 42.2° / 2.77 | 38.6° / 3.08 | 30.1° / 4.06 | 44.3° / 2.62 | 27.0° / 4.57 | - |
+| 9ca62be3 | roll | 427 | 23.6 | 1.35 | 664 | 65.4° / 1.46 / 12.5 dB | 58.3° / 1.65 | 56.4° / 1.71 | 54.6° / 1.79 | 51.4° / 1.98 | 56.2° / 1.72 | 51.4° / 1.94 | control IMU unknown: Td keeps the FIFO chip's filter |
+| 9ca62be3 | pitch | 379 | 21.2 | 0.0 | 664 | 71.1° / 1.37 / 14.2 dB | 64.3° / 1.52 | 62.4° / 1.56 | 60.6° / 1.62 | 57.3° / 1.75 | 62.2° / 1.56 | 57.5° / 1.74 | control IMU unknown: Td keeps the FIFO chip's filter |
+| a3f3ae23 | roll | 666 | 64.9 | 2.29 | 250 | 26.3° / 2.60 / 7.2 dB | 11.4° / 6.31 | 8.7° / 8.42 | 5.6° / 13.43 | -2.3° / 33.73 UNSTABLE | 12.7° / 5.86 | -8.7° / 42.21 UNSTABLE | loop parameters changed in flight (MC_PITCHRATE_D, MC_PITCHRATE_K, MC_ROLLRATE_D): excluded from the pass rates |
+| a3f3ae23 | pitch | 468 | 41.5 | 4.4 | 250 | 28.9° / 2.69 / 5.8 dB | 12.2° / 6.76 | 8.6° / 9.74 | 4.6° / 18.68 | -5.3° / 17.24 UNSTABLE | 11.9° / 7.16 | -10.0° / 47.13 UNSTABLE | loop parameters changed in flight (MC_PITCHRATE_D, MC_PITCHRATE_K, MC_ROLLRATE_D): excluded from the pass rates |
+| ab1aecd2 | pitch | 423 | 21.9 | 0.0 | 998 | 34.4° / 2.59 / 5.8 dB | 20.9° / 4.31 | 16.7° / 5.39 | 12.2° / 7.33 | 2.6° / 33.79 | 16.0° / 5.54 | 4.5° / 20.05 | FFT notch on: not modelled |
+| b27d09e3 | roll | 464 | 32.0 | 1.32 | 800 | 42.6° / 1.88 / 9.2 dB | 33.9° / 2.47 | 31.4° / 2.71 | 28.6° / 3.03 | 21.6° / 4.15 | 32.0° / 2.70 | 21.9° / 4.00 | - |
+| b27d09e3 | pitch | 443 | 32.6 | 1.1 | 800 | 43.7° / 1.77 / 10.4 dB | 36.4° / 2.22 | 34.6° / 2.38 | 32.5° / 2.59 | 27.1° / 3.24 | 35.6° / 2.36 | 26.4° / 3.22 | - |
+| b79d2e3d | roll | 425 | 30.4 | 1.31 | 665 | 44.3° / 1.94 / 8.4 dB | 35.4° / 2.54 | 32.8° / 2.80 | 29.8° / 3.13 | 22.5° / 4.29 | 32.9° / 2.82 | 23.5° / 4.02 | ESC notch on, no valid RPM: notch left out; control IMU unknown: Td keeps the FIFO chip's filter |
+| b79d2e3d | pitch | 393 | 28.2 | 1.1 | 665 | 51.0° / 1.74 / 9.8 dB | 43.3° / 2.13 | 41.6° / 2.28 | 39.2° / 2.47 | 33.2° / 3.03 | 42.0° / 2.29 | 33.6° / 2.92 | ESC notch on, no valid RPM: notch left out; control IMU unknown: Td keeps the FIFO chip's filter |
+| c901f9c1 | roll | 707 | 11.7 | 2.09 | 401 | 20.8° / 4.73 / 2.6 dB | 4.4° / 23.03 | 0.5° / 157.34 | -3.3° / 72.40 UNSTABLE | -11.0° / 68.78 UNSTABLE | 2.3° / 43.25 | -14.5° / 12.65 UNSTABLE | Td corrected -0.91 ms (FIFO chip ICM42688P -> control chip ICM20689) |
+| c901f9c1 | pitch | 388 | 16.3 | 3.45 | 401 | 50.9° / 2.13 / 6.4 dB | 39.4° / 2.83 | 36.6° / 3.11 | 33.9° / 3.46 | 28.8° / 4.50 | 36.9° / 3.11 | 27.9° / 4.41 | Td corrected -0.91 ms (FIFO chip ICM42688P -> control chip ICM20689) |
+| d32cc24c | roll | 293 | 12.7 | 6.53 | 804 | 39.9° / 3.20 / 3.7 dB | 25.2° / 5.28 | 19.5° / 6.87 | 13.6° / 9.90 | 1.0° / 128.28 | 16.6° / 8.04 | 7.6° / 18.12 | ESC notch on, no valid RPM: notch left out; FFT notch on: not modelled |
 | d32cc24c | pitch | 240 | 13.9 | 6.44 | 804 | 55.1° / 2.27 / 5.7 dB | 44.8° / 2.94 | 41.1° / 3.29 | 36.8° / 3.74 | 27.1° / 5.25 | 39.1° / 3.49 | 32.3° / 4.35 | ESC notch on, no valid RPM: notch left out; FFT notch on: not modelled |
-| df9a5d9e | pitch | 244 | 34.0 | 3.94 | 810 | 52.1° / 1.58 / 11.7 dB | 46.2° / 1.77 | 44.6° / 1.84 | 43.0° / 1.93 | 40.3° / 2.15 | 44.2° / 1.86 | 40.7° / 2.06 | FIFO IMU is not the control IMU: identified Td includes the FIFO chip's filter |
+| df9a5d9e | pitch | 244 | 34.0 | 4.85 | 810 | 50.7° / 1.63 / 11.1 dB | 44.7° / 1.83 | 43.0° / 1.91 | 41.5° / 2.01 | 38.7° / 2.27 | 42.6° / 1.94 | 39.1° / 2.16 | Td corrected +0.91 ms (FIFO chip BMI055 -> control chip ICM42688P) |
 | f96af168 | roll | 240 | 43.7 | 2.98 | 819 | 48.0° / 1.60 / 13.0 dB | 42.7° / 1.75 | 41.2° / 1.81 | 39.8° / 1.87 | 37.3° / 2.04 | 40.8° / 1.81 | 37.8° / 1.99 | - |
 | f96af168 | pitch | 234 | 39.3 | 3.48 | 819 | 49.5° / 1.61 / 12.2 dB | 43.9° / 1.78 | 42.3° / 1.84 | 40.8° / 1.92 | 38.2° / 2.11 | 41.9° / 1.86 | 38.7° / 2.04 | - |
 | fcdef3a8 | roll | 216 | 23.0 | 1.53 | 667 | 71.0° / 1.74 / 8.7 dB | 61.1° / 2.13 | 57.1° / 2.31 | 52.5° / 2.53 | 41.9° / 3.21 | 55.1° / 2.38 | 47.4° / 2.87 | - |
@@ -415,15 +463,15 @@ Worst case = smallest PM / largest M_s over the 9 plants; "+1" = delay step of 1
 
 Real fit-half drones (identified plant + the log's gains), in the terms of THESIS 7.1.1 Tier 3a:
 
-- Crossover with the flown filters: min / p10 / median / p90 / max = 3.3 / 3.8 / 6.4 / 10.0 / 15.9 Hz (3 of 25 below 4 Hz).
-- PM without filters: 48.6 / 57.9 / 78.0 / 96.5 / 106.6° (min / p10 / median / p90 / max); inside the Tier 3a window 45-75°: 48 %.
-- D-corner ratio r: median 1.18 (p10 0.93, p90 2.45); inside [0.5, 3]: 92 %. I-corner ratio: median 0.0337 (Tier 3a uses 0.1).
+- Crossover with the flown filters: min / p10 / median / p90 / max = 3.1 / 3.6 / 6.5 / 10.0 / 15.9 Hz (4 of 30 below 4 Hz).
+- PM without filters: 48.6 / 60.7 / 72.8 / 94.0 / 106.6° (min / p10 / median / p90 / max); inside the Tier 3a window 45-75°: 53 %.
+- D-corner ratio r: median 1.16 (p10 0.89, p90 3.37); inside [0.5, 3]: 83 %. I-corner ratio: median 0.0304 (Tier 3a uses 0.1).
 
 Synthetic drones at the PX4 default filters, by design (1,000 each, same seed):
 
-| Design | Tries | Nominal PM30/Ms2 | Nominal PM25/Ms2.2 | 4-6.5 Hz nominal | 6.5-10 Hz nominal | 10-15 Hz nominal | 6.5-10 Hz robust (wcMs3, ±15 % +1) |
-|---|---|---|---|---|---|---|---|
-| a: THESIS (D-28, PM 45-75, i 0.1) | 2186 | 50 % | 59 % | 90 % (n 463) | 23 % (n 341) | 0 % (n 196) | 23 % |
-| b: PM window 55-100 | 2395 | 70 % | 77 % | 99 % (n 564) | 47 % (n 307) | 0 % (n 129) | 45 % |
-| c: b + i 0.03 | 2169 | 71 % | 77 % | 100 % (n 552) | 51 % (n 312) | 0 % (n 136) | 49 % |
-| d: c + tau 10-60 ms, Td 0.1-5 ms | 1668 | 65 % | 72 % | 100 % (n 442) | 64 % (n 330) | 0 % (n 228) | 62 % |
+| Design | Tries | Nominal PM30/Ms2 | Nominal PM25/Ms2.2 | 4-6.5 Hz nominal | 6.5-10 Hz nominal | 10-15 Hz nominal | 10-15 Hz nominal PM25/Ms2.2 | 6.5-10 Hz robust (wcMs3, ±15 % +1) |
+|---|---|---|---|---|---|---|---|---|
+| a: THESIS (D-28, PM 45-75, i 0.1) | 2186 | 50 % | 59 % | 90 % (n 463) | 23 % (n 341) | 0 % (n 196) | 0.0 % | 23 % |
+| b: PM window 60-95 | 3043 | 74 % | 81 % | 100 % (n 587) | 53 % (n 296) | 0 % (n 117) | 0.0 % | 50 % |
+| c: b + i 0.03 | 2691 | 76 % | 82 % | 100 % (n 582) | 60 % (n 300) | 0 % (n 118) | 0.0 % | 57 % |
+| d: c + tau 10-60 ms, Td 0.1-5 ms | 2119 | 68 % | 75 % | 100 % (n 448) | 69 % (n 338) | 0 % (n 214) | 6.5 % | 68 % |

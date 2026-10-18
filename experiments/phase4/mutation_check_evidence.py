@@ -20,6 +20,12 @@ MUTANTS = [
      "return plant_lag_deg(tau_range[0], td_range[1], f), plant_lag_deg(tau_range[1], td_range[0], f)"),
     ("corner lag sign", "lag = max(lag, -np.degrees(np.angle(q)))", "lag = max(lag, np.degrees(np.angle(q)))"),
     ("corner delay in seconds not samples", "for dd in (0.0, delay_samples * Tc):", "for dd in (0.0, delay_samples):"),
+    ("bootstrap of the median", "stats = np.quantile(x[rng.integers(0, x.size, (n_boot, x.size))], q, axis=1)",
+     "stats = np.quantile(x[rng.integers(0, x.size, (n_boot, x.size))], 0.5, axis=1)"),
+    ("funnel keeps the worst stage", "FUNNEL_ORDER.index(stage) < FUNNEL_ORDER.index(best[r[\"log_id\"]])",
+     "FUNNEL_ORDER.index(stage) > FUNNEL_ORDER.index(best[r[\"log_id\"]])"),
+    ("coverage gain OR phase", 'inside[(w, ds)].append(abs(d["gain_db_10"]) <= g and abs(d["phase_deg_10"]) <= p)',
+     'inside[(w, ds)].append(abs(d["gain_db_10"]) <= g or abs(d["phase_deg_10"]) <= p)'),
 ]
 
 if __name__ == "__main__":

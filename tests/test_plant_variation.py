@@ -79,3 +79,30 @@ class _NoTopics:
 def test_build_pieces_names_a_missing_topic():
     with pytest.raises(ValueError, match="missing topic: vehicle_torque_setpoint"):
         pv.build_pieces(_NoTopics(), None, 0)
+
+
+def test_a_log_without_usable_pieces_still_gets_a_funnel_row(monkeypatch):
+    # review Important 1: 46 of 102 logs left no row at all
+    monkeypatch.setattr(pv.nd, "load", lambda path: object())
+    monkeypatch.setattr(pv.nd, "gyro_stream", lambda u: object())
+    monkeypatch.setattr(pv, "build_pieces", lambda u, gs, axis: ({"att_sp": [], "rate_sp": [], "both": []}, 1 / 800, 640))
+    rec = dict(log_id="L", vehicle_key="V", fc=dict(hw="X", fifo_chip=None, control_chip=None, fifo_is_control_gyro=False),
+               log_rejections=[])
+    rows = pv.analyze(rec)
+    assert len(rows) == 2 and all("no airborne gap-free piece" in r["error"] for r in rows)
+    assert {r["axis"] for r in rows} == {0, 1}
+
+
+def test_hold_bridges_the_periodic_controller_pauses_at_the_d14_resolution():
+    # review Important 1: in many logs the torque setpoint (and the controller input vehicle_angular_velocity) pauses
+    # for 5-6 periods about once per second, so gap-free pieces were about 1.0 s, shorter than one 1.28 s segment.
+    # A shorter segment is NOT the fix: at 1.25 Hz resolution fewer bins pass the D-14 "6 coherent frequencies" rule.
+    assert pv.SEG_S == 1.28 and pv.MAX_HOLD >= 8
+    import sysid
+    Tc = 1 / 800
+    t = np.arange(0, 10.0, Tc)
+    keep = np.ones(len(t), bool)
+    for k in range(816, len(t), 816):                                   # a 6-period pause every 1.02 s
+        keep[k:k + 5] = False
+    pieces = sysid.uniform_pieces(t[keep], Tc, max_hold=pv.MAX_HOLD)
+    assert len(pieces) == 1 and len(pieces[0][0]) == len(t)

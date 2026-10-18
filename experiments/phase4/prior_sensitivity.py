@@ -2,9 +2,9 @@
 
     .venv/Scripts/python experiments/phase4/prior_sensitivity.py
 
-The A2-A4 evidence (robust_limits.json) showed that synthetic drones with f_c >= 10 Hz never pass even the nominal
+The A2-A4 evidence (robust_limits.json) showed that synthetic drones with f_c >= 10 Hz rarely pass even the nominal
 limits at the PX4 default filters, while real fit-half drones (plant_variation.json identifications with the
-pilot's gains) fly at 8-15 Hz. This runner
+pilot's gains) fly at crossovers up to about 16 Hz (median about 6 Hz). This runner
 1. measures the real drones' design in the same terms as Tier 3a: crossover, PM WITHOUT filters, the D-corner ratio
    r = (Kp / Kd) / (2 pi f_c) and the I-corner ratio i = (Ki / Kp) / (2 pi f_c) (fit half; robust_limits cases);
 2. repeats the synthetic evaluation of robust_limits.py for four designs (same seed, same rate pairs, f_c 4-15 Hz):

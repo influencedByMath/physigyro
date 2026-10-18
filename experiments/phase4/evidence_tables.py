@@ -61,6 +61,17 @@ def corner_perturbation(tau_m, Td, f_ctrl, width, delay_samples, f=10.0):
     return float(gain), float(lag)
 
 
+def bootstrap_ci(values, q=0.9, n_boot=4000, seed=20261018, level=0.95):
+    """Percentile-bootstrap confidence interval of the q-quantile of |values| (small samples: n = 15 pairs)."""
+    x = np.abs(np.asarray(values, dtype=float))
+    if x.size == 0:
+        return None, None
+    rng = np.random.default_rng(seed)
+    stats = np.quantile(x[rng.integers(0, x.size, (n_boot, x.size))], q, axis=1)
+    lo, hi = np.quantile(stats, [(1 - level) / 2, 1 - (1 - level) / 2])
+    return float(lo), float(hi)
+
+
 def abs_summary(values):
     """n, median and 90th percentile of |values|."""
     a = np.abs(np.asarray(values, dtype=float))
@@ -80,7 +91,7 @@ def accepted_rows(pvj):
     best, reasons = {}, Counter()
     for r in pvj["rows"]:
         if "full" not in r:
-            reasons["no fit: " + str(r.get("error", "no usable piece"))[:60]] += 1
+            reasons["no fit: " + str(r.get("error", "no usable piece"))[:90]] += 1
             continue
         ok, why = pv.accept(r["full"], r["cls"])
         if not ok:
@@ -93,11 +104,42 @@ def accepted_rows(pvj):
     return best, reasons
 
 
+FUNNEL_ORDER = ("accepted identification", "fit failed the gates", "too little excitation",
+                "no gap-free piece of one Welch segment", "torque setpoint below 200 Hz", "missing topic", "other error")
+
+
+def _row_stage(r):
+    if "full" in r:
+        if "b" not in r["full"]:
+            return "too little excitation"
+        return "accepted identification" if pv.accept(r["full"], r["cls"])[0] else "fit failed the gates"
+    e = str(r.get("error", ""))
+    if "missing topic" in e:
+        return "missing topic"
+    if "logged at" in e:
+        return "torque setpoint below 200 Hz"
+    if "gap-free piece" in e:
+        return "no gap-free piece of one Welch segment"
+    return "other error"
+
+
+def log_funnel(rows):
+    """Every log counted once, at the best stage any of its rows reached (FUNNEL_ORDER, best first)."""
+    best = {}
+    for r in rows:
+        stage = _row_stage(r)
+        if r["log_id"] not in best or FUNNEL_ORDER.index(stage) < FUNNEL_ORDER.index(best[r["log_id"]]):
+            best[r["log_id"]] = stage
+    return dict(Counter(best.values()))
+
+
 def section_identification(pvj):
     best, reasons = accepted_rows(pvj)
     L = ["## A. Tier 2 identifications on the fit half (plant_variation.json)", "",
          f"- Logs with the controller signals at full rate (high-rate or sysid profile): **{pvj['n_logs']}**.",
          f"- Accepted (vehicle, axis) identifications: **{len(best)}** from **{len({k[0] for k in best})}** vehicles.",
+         "- Every log at the best stage it reached (each log counted once): " + "; ".join(
+             f"{k} {v}" for k, v in sorted(log_funnel(pvj["rows"]).items(), key=lambda kv: FUNNEL_ORDER.index(kv[0]))) + ".",
          "- Rows that did not give an accepted fit (one row per log, axis and instrument class):", ""]
     L += [f"  - {k}: {v}" for k, v in sorted(reasons.items(), key=lambda kv: -kv[1])]
     sens = []
@@ -105,6 +147,12 @@ def section_identification(pvj):
         n = sum(1 for r in pvj["rows"] if "full" in r and pv.accept(r["full"], r["cls"], max_mag_db=db, max_phase_deg=deg)[0])
         sens.append(f"{db:g} dB / {deg:g}°: {n} rows")
     L += ["", "- Gate sensitivity (rows accepted; 3 dB / 15° is used): " + "; ".join(sens) + "."]
+    fitted = [r for r in pvj["rows"] if "full" in r and "b" in r["full"]]
+    rejected = [r for r in fitted if not pv.accept(r["full"], r["cls"])[0]]
+    tau_b = sum(1 for r in rejected if r["full"]["at_bound"]["tau_m"])
+    L.append(f"- Fits rejected by the gates: {len(rejected)} of {len(fitted)}; {tau_b} of them have τ_m on its fit bound "
+             f"(fit errors {min(r['full']['phase_err_deg'] for r in rejected):.0f}-{max(r['full']['phase_err_deg'] for r in rejected):.0f}°)."
+             if rejected else "- Fits rejected by the gates: none.")
     ag = [r["full"]["agree"] for r in best.values() if r["cls"] == "both"]
     if ag:
         L.append(f"- Instrument agreement of the accepted Position/auto rows: {min(a['rms_db'] for a in ag):.2f}-"
@@ -178,6 +226,76 @@ def section_repeatability(best):
     return "\n".join(L)
 
 
+CANDIDATES = ((0.10, 0.5), (0.10, 1.0), (0.15, 1.0), (0.20, 1.0), (0.30, 1.0), (0.20, 2.0))
+
+
+def accepted_pairs(best):
+    return [(log, ax, r, r["half1"], r["half2"]) for (log, ax), r in sorted(best.items())
+            if pv.accept(r.get("half1", {}), r["cls"])[0] and pv.accept(r.get("half2", {}), r["cls"])[0]]
+
+
+def coverage(pairs, freq_of, candidates=CANDIDATES):
+    """Share of half-flight pairs whose gain AND phase differences at the drone's own frequency freq_of(log, axis)
+    lie inside the candidate set built around that drone's identified plant; pairs without a frequency are skipped.
+    Returns ({candidate: share}, n)."""
+    inside = {c: [] for c in candidates}
+    for log, ax, r, h1, h2 in pairs:
+        fq = freq_of(log, ax)
+        if fq is None or not np.isfinite(fq):
+            continue
+        d = half_diff(h1, h2, 1 / r["f_ctrl"], f=fq)
+        for w, ds in candidates:
+            g, p = corner_perturbation(r["full"]["tau_m"], r["full"]["Td"], r["f_ctrl"], w, ds, f=fq)
+            inside[(w, ds)].append(abs(d["gain_db_10"]) <= g and abs(d["phase_deg_10"]) <= p)
+    n = len(next(iter(inside.values())))
+    return {c: (float(np.mean(v)) if v else None) for c, v in inside.items()}, n
+
+
+def section_frequency(best, rl):
+    pairs = accepted_pairs(best)
+    cases = {(c["log"], c["axis"]): c for c in rl["real"]["cases"]}
+    tau = float(np.median([r["full"]["tau_m"] for r in best.values()]))
+    td = float(np.median([r["full"]["Td"] for r in best.values()]))
+    L = ["## B2. Repeatability where the margins bind (independent review, Important 2)", "",
+         f"Half-flight differences at several frequencies ({len(pairs)} pairs): 90th percentile with a 95 % bootstrap "
+         f"interval, next to the size of two candidate sets for the median plant (τ_m {1e3 * tau:.1f} ms, "
+         f"T_d {1e3 * td:.2f} ms, 800 Hz).", "",
+         "| Frequency | Phase, p90 [95 % CI] | Gain, p90 [95 % CI] | ±15 % +1 sample | ±20 % +1 sample |", "|---|---|---|---|---|"]
+    for fq in (5.0, 10.0, 15.0, 20.0):
+        d = [half_diff(h1, h2, 1 / r["f_ctrl"], f=fq) for _, _, r, h1, h2 in pairs]
+        ph = [x["phase_deg_10"] for x in d]
+        ga = [x["gain_db_10"] for x in d]
+        pl, phh = bootstrap_ci(ph)
+        gl, gh = bootstrap_ci(ga)
+        s15 = corner_perturbation(tau, td, 800.0, 0.15, 1.0, f=fq)
+        s20 = corner_perturbation(tau, td, 800.0, 0.20, 1.0, f=fq)
+        L.append(f"| {fq:g} Hz | {abs_summary(ph)['p90']:.1f}° [{pl:.1f}-{phh:.1f}] | {abs_summary(ga)['p90']:.2f} dB "
+                 f"[{gl:.2f}-{gh:.2f}] | {s15[0]:.2f} dB / {s15[1]:.1f}° | {s20[0]:.2f} dB / {s20[1]:.1f}° |")
+
+    def freq(key):
+        return lambda log, ax: (cases.get((log[:8], AXES[ax])) or {}).get("nominal", {}).get(key)
+    cov_ms, n_ms = coverage(pairs, freq("f_Ms"))
+    cov_pc, n_pc = coverage(pairs, freq("f_180"))
+    L += ["", "Share of pairs whose gain AND phase differences lie inside each candidate set, evaluated at the drone's "
+          "OWN frequency of the M_s peak and of its critical phase crossover (set built around its own plant):", "",
+          f"| Candidate set | at the M_s peak (n {n_ms}) | at the phase crossover (n {n_pc}) |", "|---|---|---|"]
+    for w, ds in CANDIDATES:
+        a, b = cov_ms[(w, ds)], cov_pc[(w, ds)]
+        L.append(f"| ±{100 * w:.0f} % +{ds:g} sample | {'-' if a is None else f'{100 * a:.0f} %'} | "
+                 f"{'-' if b is None else f'{100 * b:.0f} %'} |")
+    inc = [c for c in rl["real"]["cases"] if not c.get("exclude")]
+    fms = [c["nominal"].get("f_Ms") for c in inc]
+    above = sum(1 for c in inc if c.get("fit_band") and c["nominal"].get("f_Ms", 0) > c["fit_band"][1])
+    above180 = sum(1 for c in inc if c.get("fit_band") and np.isfinite(c["nominal"].get("f_180", np.nan))
+                   and c["nominal"]["f_180"] > c["fit_band"][1])
+    if fms:
+        L += ["", f"M_s peak of the real flown settings: {' / '.join(f'{v:.1f}' for v in np.quantile(fms, [0, 0.5, 1]))} Hz "
+              f"(min / median / max). The M_s peak lies above the highest coherent fit frequency in **{above} of {len(inc)}** "
+              f"cases and the critical phase crossover in {above180}: there the margins rest on the plant model "
+              "extrapolated beyond the identified band."]
+    return "\n".join(L)
+
+
 def section_across(best):
     tau = [1e3 * r["full"]["tau_m"] for r in best.values()]
     td = [1e3 * r["full"]["Td"] for r in best.values()]
@@ -188,7 +306,7 @@ def section_across(best):
     idl = 100 * np.mean([(0.5 <= t <= 5) for t in td]) if td else float("nan")
     lag = [plant_lag_deg(r["full"]["tau_m"], r["full"]["Td"]) for r in best.values()]
     lo, hi = prior_lag_range((0.020, 0.060), (0.0005, 0.005))
-    lo10, _ = prior_lag_range((0.010, 0.060), (0.0, 0.005))
+    lo10, _ = prior_lag_range((0.010, 0.060), (0.0001, 0.005))
     il = 100 * np.mean([(lo <= x <= hi) for x in lag]) if lag else float("nan")
     below = sum(1 for x in lag if x < lo)
     return "\n".join(["## C. Across vehicles (accepted identifications) and the D-28 priors", "",
@@ -198,7 +316,7 @@ def section_across(best):
                       f"| Motor + delay lag at 10 Hz [°] | {len(lag)} | {q(lag)} | {il:.0f} % ({lo:.1f}-{hi:.1f}°) |", "",
                       f"τ_m and T_d trade off below the 20 Hz band edge, so the lag at 10 Hz (near the crossover) is the robust "
                       f"comparison: {below} of {len(lag)} identified plants lag less than the fastest plant the D-28 priors "
-                      f"can produce ({lo:.1f}°). A prior of τ_m 10-60 ms and T_d 0-5 ms would reach down to {lo10:.1f}°."])
+                      f"can produce ({lo:.1f}°). A prior of τ_m 10-60 ms and T_d 0.1-5 ms would reach down to {lo10:.1f}°."])
 
 
 def section_chips(best, pri, logs, fits):
@@ -209,6 +327,12 @@ def section_chips(best, pri, logs, fits):
     for chip, v in cd.items():
         L.append(f"| {chip} | {v['n_vehicles']} | {v['bic']['n_terms']}, {v['bic']['delay_ms'][0]}-{v['bic']['delay_ms'][1]} | "
                  f"{v['rms']['n_terms']}, {v['rms']['delay_ms'][0]}-{v['rms']['delay_ms'][1]} |")
+    L += ["", "Delay of the same fit-error-rule terms at 5 Hz (near the crossover), against the 20-100 Hz band of the plan:", ""]
+    for chip, v in cd.items():
+        d5 = [1e3 * float(pr.lowpass_group_delay(5.0, fc, n)) for fc, n in v["rms"]["terms"]]
+        L.append(f"- {chip}: {min(d5):.2f}-{max(d5):.2f} ms at 5 Hz (20-100 Hz band: {v['rms']['delay_ms'][0]}-{v['rms']['delay_ms'][1]} ms).")
+    L.append("- All of these are delays of minimum-phase filters with the fitted magnitude, i.e. lower bounds of the true "
+             "delay; the largest of them is not an upper bound.")
     fifo = Counter((r["fc"].get("fifo_chip") or {}).get("name") for r in logs)
     ctrl = Counter((r["fc"].get("control_chip") or {}).get("name") for r in logs)
     gen = Counter(v["chip"] for v in fits["vehicles"].values() if not v.get("dropped"))
@@ -254,8 +378,10 @@ def section_pass(rl):
         if not block or not block.get("pass_rates"):
             L += [f"### {label}: no cases", ""]
             continue
-        n = block.get("n_cases", block.get("n"))
-        L += [f"### {label} (n = {n})", ""]
+        n = block.get("n_included", block.get("n_cases", block.get("n")))
+        extra = (f"; {block['n_cases'] - block['n_included']} more rows flagged and left out (loop parameters changed in flight)"
+                 if block.get("n_included") is not None and block["n_cases"] != block["n_included"] else "")
+        L += [f"### {label} (n = {n}{extra})", ""]
         nom = block.get("nominal_pass_rates") or {}
         if nom:
             L += ["Nominal limits only (no uncertainty set): " + "; ".join(
@@ -332,14 +458,14 @@ def section_design(ps):
          f"- D-corner ratio r: median {real['r_q']['0.5']} (p10 {real['r_q']['0.1']}, p90 {real['r_q']['0.9']}); inside "
          f"[0.5, 3]: {100 * real['r_share_in_0p5_3']:.0f} %. I-corner ratio: median {real['i_median']} (Tier 3a uses 0.1).", "",
          "Synthetic drones at the PX4 default filters, by design (1,000 each, same seed):", "",
-         "| Design | Tries | Nominal PM30/Ms2 | Nominal PM25/Ms2.2 | 4-6.5 Hz nominal | 6.5-10 Hz nominal | 10-15 Hz nominal | 6.5-10 Hz robust (wcMs3, ±15 % +1) |",
-         "|---|---|---|---|---|---|---|---|"]
+         "| Design | Tries | Nominal PM30/Ms2 | Nominal PM25/Ms2.2 | 4-6.5 Hz nominal | 6.5-10 Hz nominal | 10-15 Hz nominal | 10-15 Hz nominal PM25/Ms2.2 | 6.5-10 Hz robust (wcMs3, ±15 % +1) |",
+         "|---|---|---|---|---|---|---|---|---|"]
     for name, d in ps["designs"].items():
         b = d["fc_bins"]
         L.append(f"| {name} | {d['tries']} | {100 * d['nominal_pass_rates']['PM30_Ms2']:.0f} % | "
                  f"{100 * d['nominal_pass_rates']['PM25_Ms2.2']:.0f} % | "
                  + " | ".join(f"{100 * b[k]['nominal|PM30_Ms2']:.0f} % (n {b[k]['n']})" for k in ("4-6.5 Hz", "6.5-10 Hz", "10-15 Hz"))
-                 + f" | {100 * b['6.5-10 Hz']['PM30_Ms2_wcMs3|w0.15_d1']:.0f} % |")
+                 + f" | {100 * b['10-15 Hz']['nominal|PM25_Ms2.2']:.1f} % | {100 * b['6.5-10 Hz']['PM30_Ms2_wcMs3|w0.15_d1']:.0f} % |")
     return "\n".join(L)
 
 
@@ -352,7 +478,8 @@ def main():
     ps = json.load(open(pr.fit_path(HERE, "prior_sensitivity.json")))
     a, best = section_identification(pvj)
     parts = ["# Evidence tables for A2-A4 (generated by experiments/phase4/evidence_tables.py; fit half only)", "",
-             a, "", section_repeatability(best), "", section_across(best), "", section_chips(best, pri, logs, fits), "",
+             a, "", section_repeatability(best), "", section_frequency(best, rl), "", section_across(best), "",
+             section_chips(best, pri, logs, fits), "",
              section_pass(rl), "", section_cases(rl), "", section_chip_pass(rl), "", section_design(ps), ""]
     with open(os.path.join(HERE, "evidence_tables.md"), "w", encoding="utf-8") as fh:
         fh.write("\n".join(parts))

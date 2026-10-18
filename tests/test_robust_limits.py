@@ -135,3 +135,81 @@ def test_synthetic_drones_accept_a_pm_window_and_an_i_ratio():
 def test_nominal_pass_rates_require_the_gain_margin():
     r = rl.nominal_pass_rates([_ev(40, 1.8, 5.9, 35, 1.9, 5.9)])      # PM and Ms fine, GM below 6 dB
     assert r["PM30_Ms2"] == 0.0
+
+
+# ------------------------------------------------------------- review fixes (Important 4a, 5, 6)
+
+class _DS:
+    def __init__(self, name, data, multi_id=0):
+        self.name, self.data, self.multi_id = name, data, multi_id
+
+
+class _ULog:
+    """Stub with sensor_selection and vehicle_imu_status, like a PX4 log (review Important 5)."""
+    def __init__(self, sel=2490378, statuses=((6684682, 2001.9), (2490378, 8105.0))):
+        self.data_list = [_DS("vehicle_imu_status", dict(gyro_device_id=np.array([d, d]), gyro_raw_rate_hz=np.array([r, r])), i)
+                          for i, (d, r) in enumerate(statuses)]
+        if sel is not None:
+            self.data_list.append(_DS("sensor_selection", dict(gyro_device_id=np.array([sel]))))
+
+    def get_dataset(self, name, multi_instance=0):
+        for d in self.data_list:
+            if d.name == name and d.multi_id == multi_instance:
+                return d
+        raise IndexError("list index out of range")
+
+
+def test_control_rate_uses_the_selected_gyro_of_vehicle_imu_status():
+    assert rl.control_rate(_ULog()) == (pytest.approx(8105.0), "control IMU")
+    assert rl.control_rate(_ULog(sel=None)) == (None, "control IMU not matched")
+    assert rl.control_rate(_ULog(sel=123)) == (None, "control IMU not matched")
+
+
+def test_loop_params_changed_in_flight():
+    assert rl.loop_params_changed(["MC_PITCHRATE_D", "MC_PITCHRATE_K", "SDLOG_PROFILE", "MC_ROLLRATE_D", "IMU_GYRO_CUTOFF"]) == \
+        ["IMU_GYRO_CUTOFF", "MC_PITCHRATE_D", "MC_PITCHRATE_K", "MC_ROLLRATE_D"]
+    assert rl.loop_params_changed([]) == [] and rl.loop_params_changed(["BAT1_V_CHARGED"]) == []
+
+
+def test_chip_td_correction_counts_the_control_chip_once():
+    lower = {"ICM42688P": 0.000906, "ICM45686": 0.00025}
+    assert rl.chip_td_correction("ICM42688P", "ICM42688P", lower) == 0.0            # same chip type
+    assert rl.chip_td_correction("ICM42688P", "ICM20689", lower) == pytest.approx(-0.000906)
+    assert rl.chip_td_correction("BMI055", "ICM42688P", lower) == pytest.approx(0.000906)
+    assert rl.chip_td_correction("BMI055", "BMI088", lower) == 0.0                   # neither has a fitted term
+    assert rl.chip_td_correction("ICM42688P", None, lower) is None                   # control chip unknown
+    assert rl.chip_td_correction(None, None, lower) is None                          # both unknown: not "the same chip"
+
+
+def _rec(changed=(), fft=False, fifo_is_control=False, fs_nominal=2000.0):
+    act = dict(f_gyro=40.0, f_dterm=30.0, notches=[], dnf_esc=False, dnf_bw=15.0, dnf_hmc=3, dnf_min=25.0)
+    g = dict(Kp=0.15, Ki=0.2, Kd=0.003)
+    return dict(fc=dict(actual=act, gains_roll=g, gains_pitch=g, fft_notch=fft, fifo_is_control_gyro=fifo_is_control,
+                        changed_in_flight=list(changed), hw="X"), stats=dict(fs_nominal=fs_nominal))
+
+
+def _row(fifo="BMI055", ctrl="ICM42688P"):
+    return dict(log_id="L", axis=0, cls="att_sp", fifo_chip=fifo, control_chip=ctrl, f_ctrl=800.0,
+                full=dict(b=400.0, tau_m=0.03, Td=0.002, seconds=60.0))
+
+
+def test_case_from_log_uses_the_control_imu_rate_and_corrects_the_chip_delay():
+    c = rl.case_from_log(_ULog(), _rec(), _row(), {"ICM42688P": 0.000906})
+    assert c["fs"] == pytest.approx(8105.0) and c["fs_source"] == "control IMU"
+    assert c["plant"]["Td"] == pytest.approx(0.002 + 0.000906) and c["td_identified"] == pytest.approx(0.002)
+    assert c["exclude"] is False
+
+
+def test_case_from_log_falls_back_to_the_fifo_rate_and_flags_changed_gains():
+    c = rl.case_from_log(_ULog(sel=None), _rec(changed=["MC_ROLLRATE_D"]), _row(fifo="ICM42688P", ctrl="ICM20689"),
+                         {"ICM42688P": 0.000906})
+    assert c["fs"] == 2000.0 and c["fs_source"].startswith("FIFO nominal")
+    assert c["plant"]["Td"] == pytest.approx(0.002 - 0.000906)
+    assert c["exclude"] is True and any("changed in flight" in f for f in c["flags"])
+
+
+def test_case_from_log_clamps_a_negative_corrected_delay():
+    row = _row(fifo="ICM42688P", ctrl="ICM20689")
+    row["full"]["Td"] = 0.0004
+    c = rl.case_from_log(_ULog(), _rec(), row, {"ICM42688P": 0.000906})
+    assert c["plant"]["Td"] == 0.0 and any("clamped" in f for f in c["flags"])

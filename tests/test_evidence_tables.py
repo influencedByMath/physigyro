@@ -58,3 +58,38 @@ def test_corner_perturbation_at_10_hz():
     assert phase == pytest.approx(np.degrees(np.arctan(2 * np.pi * 10 * 0.03) - np.arctan(2 * np.pi * 10 * 0.025)), rel=1e-6)
     _, phase = et.corner_perturbation(0.025, 0.001, 800.0, 0.0, 1.0)
     assert phase == pytest.approx(360 * 10 / 800.0)                    # one controller sample at 10 Hz
+
+
+def test_bootstrap_ci_of_the_90th_percentile():
+    lo, hi = et.bootstrap_ci([1.0] * 15)
+    assert lo == hi == 1.0
+    v = np.linspace(0.1, 1.5, 15)
+    lo, hi = et.bootstrap_ci(v, seed=1)
+    assert lo <= np.quantile(np.abs(v), 0.9) <= hi and lo < hi
+    assert et.bootstrap_ci(v, seed=1) == (lo, hi)                       # reproducible
+    assert et.bootstrap_ci([], seed=1) == (None, None)
+
+
+def test_log_funnel_counts_each_log_once_at_its_best_stage():
+    ok = dict(b=400.0, tau_m=0.03, Td=0.002, n_freq=12, mag_err_db=1.0, phase_err_deg=3.0,
+              at_bound=dict(tau_m=False, Td_zero=False, Td_max=False))
+    bad = dict(ok, at_bound=dict(tau_m=True, Td_zero=False, Td_max=False))
+    rows = [dict(log_id="A", axis=0, cls="att_sp", full=ok), dict(log_id="A", axis=1, cls="att_sp", full=bad),
+            dict(log_id="B", axis=0, cls="att_sp", full=bad),
+            dict(log_id="C", axis=0, cls="both", full=dict(error="too few frequencies")),
+            dict(log_id="D", axis=0, error="no airborne gap-free piece as long as one Welch segment (0.8 s)"),
+            dict(log_id="E", axis=0, error="pieces: ValueError('missing topic: vehicle_torque_setpoint')"),
+            dict(log_id="E", axis=1, error="pieces: ValueError('missing topic: vehicle_torque_setpoint')")]
+    f = et.log_funnel(rows)
+    assert f == {"accepted identification": 1, "fit failed the gates": 1, "too little excitation": 1,
+                 "no gap-free piece of one Welch segment": 1, "missing topic": 1}
+
+
+def test_coverage_counts_pairs_inside_their_own_set():
+    full = dict(b=400.0, tau_m=0.025, Td=0.001)
+    same = dict(b=400.0, tau_m=0.025, Td=0.001)
+    far = dict(b=800.0, tau_m=0.025, Td=0.001)                      # +6 dB: outside every candidate
+    r = dict(f_ctrl=800.0, full=full)
+    pairs = [("A", 0, r, same, same), ("B", 0, r, same, far), ("C", 0, r, same, same)]
+    cov, n = et.coverage(pairs, lambda log, ax: None if log == "C" else 12.0, candidates=((0.15, 1.0),))
+    assert n == 2 and cov[(0.15, 1.0)] == pytest.approx(0.5)

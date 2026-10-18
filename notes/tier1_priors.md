@@ -5,7 +5,7 @@ Made 2026-10-18 (Day 21), branch `phase4`. Written for: the author, to decide A1
 **Rules followed**
 - No number without a source that was read. What could not be found stays **VERIFY**, with the reason.
 - Our own log evidence uses the **fit half only**. Every input goes through `src/priors.py` (`require_fit_half`, `require_fit_rows`); a test proves that `test_*` inputs are refused.
-- Code: `src/priors.py` (33 tests, mutation check 16/16), `experiments/phase4/priors_from_logs.py` → `priors_from_logs.json`, `experiments/phase4/chip_lowpass_table.py` → `chip_lowpass_table.json`.
+- Code: `src/priors.py` (34 tests, mutation check 17/17), `experiments/phase4/priors_from_logs.py` → `priors_from_logs.json`, `experiments/phase4/chip_lowpass_table.py` → `chip_lowpass_table.json`.
 
 ---
 
