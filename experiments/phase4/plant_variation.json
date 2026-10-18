@@ -1,0 +1,4945 @@
+{
+ "settings": {
+  "T_EDGE": 5.0,
+  "F_BAND": [
+   0.5,
+   20.0
+  ],
+  "MIN_COH": 0.5,
+  "SEG_S": 1.28,
+  "MAX_HOLD": 3,
+  "F_CUT": 100.0,
+  "MIN_TQ_RATE": 200.0,
+  "STALE_S": 0.1,
+  "AGREE_DB": 1.0,
+  "AGREE_DEG": 5.0
+ },
+ "n_logs": 102,
+ "rows": [
+  {
+   "log_id": "4c4351af-8262-4e43-8334-d463e28f6c9b",
+   "vehicle_key": "uuid:0001000000003131363933375113002e001f",
+   "hw": "PX4_FMU_V3",
+   "fifo_chip": "MPU6000",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 9.1
+  },
+  {
+   "log_id": "4c4351af-8262-4e43-8334-d463e28f6c9b",
+   "vehicle_key": "uuid:0001000000003131363933375113002e001f",
+   "hw": "PX4_FMU_V3",
+   "fifo_chip": "MPU6000",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 9.1
+  },
+  {
+   "log_id": "2cb01a9f-059b-4f26-9a97-e4960a89ab5f",
+   "vehicle_key": "uuid:000200000000333934343033511900440035",
+   "hw": "PX4_FMU_V5",
+   "fifo_chip": "BMI055",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "error": "pieces: ValueError('torque setpoint logged at 50 Hz')",
+   "log_seconds": 2.0
+  },
+  {
+   "log_id": "2cb01a9f-059b-4f26-9a97-e4960a89ab5f",
+   "vehicle_key": "uuid:000200000000333934343033511900440035",
+   "hw": "PX4_FMU_V5",
+   "fifo_chip": "BMI055",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "error": "pieces: ValueError('torque setpoint logged at 50 Hz')",
+   "log_seconds": 2.0
+  },
+  {
+   "log_id": "d57d39b2-6d39-452e-b5d7-3201843f1340",
+   "vehicle_key": "uuid:000200000000363236353033511400320031",
+   "hw": "PX4_FMU_V5",
+   "fifo_chip": "BMI055",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 798.08,
+   "full": {
+    "seconds": 80.2,
+    "n_seg": 124,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 40.1,
+    "n_seg": 61,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 40.1,
+    "n_seg": 61,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 3.1
+  },
+  {
+   "log_id": "d57d39b2-6d39-452e-b5d7-3201843f1340",
+   "vehicle_key": "uuid:000200000000363236353033511400320031",
+   "hw": "PX4_FMU_V5",
+   "fifo_chip": "BMI055",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 798.08,
+   "full": {
+    "seconds": 80.2,
+    "n_seg": 124,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 40.1,
+    "n_seg": 61,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 40.1,
+    "n_seg": 61,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 3.1
+  },
+  {
+   "log_id": "276f3593-7c01-422e-8d4e-eaeb17b2c072",
+   "vehicle_key": "uuid:000200000000363236353033511400410021",
+   "hw": "PX4_FMU_V5",
+   "fifo_chip": "BMI055",
+   "control_chip": "ICM20602",
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.4
+  },
+  {
+   "log_id": "276f3593-7c01-422e-8d4e-eaeb17b2c072",
+   "vehicle_key": "uuid:000200000000363236353033511400410021",
+   "hw": "PX4_FMU_V5",
+   "fifo_chip": "BMI055",
+   "control_chip": "ICM20602",
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.4
+  },
+  {
+   "log_id": "deb6098a-d97d-4874-9318-c5bf90483b01",
+   "vehicle_key": "uuid:000600000000303736303532510c002b0024",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "BMI088",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 667.11,
+   "full": {
+    "seconds": 295.8,
+    "n_seg": 440,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 147.9,
+    "n_seg": 219,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 147.9,
+    "n_seg": 219,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 14.1
+  },
+  {
+   "log_id": "deb6098a-d97d-4874-9318-c5bf90483b01",
+   "vehicle_key": "uuid:000600000000303736303532510c002b0024",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "BMI088",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 667.11,
+   "full": {
+    "seconds": 295.8,
+    "n_seg": 440,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 147.9,
+    "n_seg": 219,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 147.9,
+    "n_seg": 219,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 14.1
+  },
+  {
+   "log_id": "6ee503f7-848c-4332-b251-bb96f473970b",
+   "vehicle_key": "uuid:000600000000313134373033510600310044",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM20689",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 400.0,
+   "full": {
+    "seconds": 311.8,
+    "n_seg": 470,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 155.9,
+    "n_seg": 237,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 155.9,
+    "n_seg": 232,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 9.4
+  },
+  {
+   "log_id": "6ee503f7-848c-4332-b251-bb96f473970b",
+   "vehicle_key": "uuid:000600000000313134373033510600310044",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM20689",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 400.0,
+   "full": {
+    "seconds": 311.8,
+    "n_seg": 470,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 155.9,
+    "n_seg": 237,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 155.9,
+    "n_seg": 232,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 9.4
+  },
+  {
+   "log_id": "4c570092-9585-41cb-951c-8e0b35bfaa93",
+   "vehicle_key": "uuid:00060000000031333638313351010038002c",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.7
+  },
+  {
+   "log_id": "4c570092-9585-41cb-951c-8e0b35bfaa93",
+   "vehicle_key": "uuid:00060000000031333638313351010038002c",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.7
+  },
+  {
+   "log_id": "5da71fcd-4ebf-429a-aeb1-d8c095248a8d",
+   "vehicle_key": "uuid:0006000000003133373035325102002b0028",
+   "hw": "HKUST_NXT_DUAL",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_status')",
+   "log_seconds": 1.6
+  },
+  {
+   "log_id": "5da71fcd-4ebf-429a-aeb1-d8c095248a8d",
+   "vehicle_key": "uuid:0006000000003133373035325102002b0028",
+   "hw": "HKUST_NXT_DUAL",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_status')",
+   "log_seconds": 1.6
+  },
+  {
+   "log_id": "c901f9c1-acc1-40a2-89a5-ecad916089f9",
+   "vehicle_key": "uuid:0006000000003137343235325103003c0028",
+   "hw": "CUAV_NORA",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM20689",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 400.8,
+   "full": {
+    "seconds": 88.0,
+    "n_seg": 126,
+    "b": 706.8530367409227,
+    "tau_m": 0.011748298324196493,
+    "Td": 0.0029980755143900854,
+    "n_freq": 22,
+    "f_used": [
+     2.34,
+     19.49
+    ],
+    "mag_err_db": 0.636,
+    "phase_err_deg": 3.959,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 44.0,
+    "n_seg": 61,
+    "b": 680.4165163593758,
+    "tau_m": 0.01073034253195926,
+    "Td": 0.003496617153870897,
+    "n_freq": 24,
+    "f_used": [
+     0.78,
+     19.49
+    ],
+    "mag_err_db": 0.864,
+    "phase_err_deg": 9.084,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 44.0,
+    "n_seg": 63,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.7
+  },
+  {
+   "log_id": "c901f9c1-acc1-40a2-89a5-ecad916089f9",
+   "vehicle_key": "uuid:0006000000003137343235325103003c0028",
+   "hw": "CUAV_NORA",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM20689",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 400.8,
+   "full": {
+    "seconds": 88.0,
+    "n_seg": 126,
+    "b": 388.4494769737537,
+    "tau_m": 0.016270567446129036,
+    "Td": 0.004359435705342039,
+    "n_freq": 13,
+    "f_used": [
+     2.34,
+     11.7
+    ],
+    "mag_err_db": 0.396,
+    "phase_err_deg": 3.519,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 44.0,
+    "n_seg": 61,
+    "b": 384.8677078797332,
+    "tau_m": 0.01585030104443224,
+    "Td": 0.004644077443847464,
+    "n_freq": 15,
+    "f_used": [
+     1.56,
+     12.48
+    ],
+    "mag_err_db": 0.369,
+    "phase_err_deg": 3.58,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 44.0,
+    "n_seg": 63,
+    "b": 429.00545598537843,
+    "tau_m": 0.02254055836053966,
+    "Td": 0.0016583786242998578,
+    "n_freq": 9,
+    "f_used": [
+     2.34,
+     8.58
+    ],
+    "mag_err_db": 0.436,
+    "phase_err_deg": 4.075,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 2.7
+  },
+  {
+   "log_id": "0cb69aed-f0b0-4844-81c1-e850ba2a973a",
+   "vehicle_key": "uuid:000600000000323532363133511700200031",
+   "hw": "APT_SAGE",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 809.06,
+   "full": {
+    "seconds": 58.0,
+    "n_seg": 78,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 29.0,
+    "n_seg": 41,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 29.0,
+    "n_seg": 36,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.3
+  },
+  {
+   "log_id": "0cb69aed-f0b0-4844-81c1-e850ba2a973a",
+   "vehicle_key": "uuid:000600000000323532363133511700200031",
+   "hw": "APT_SAGE",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 809.06,
+   "full": {
+    "seconds": 58.0,
+    "n_seg": 78,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 29.0,
+    "n_seg": 41,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 29.0,
+    "n_seg": 36,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.3
+  },
+  {
+   "log_id": "feea08d6-20b3-477e-98b7-ea4417ee6f0b",
+   "vehicle_key": "uuid:000600000000323836353233511000390041",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "BMI055",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 2.2
+  },
+  {
+   "log_id": "feea08d6-20b3-477e-98b7-ea4417ee6f0b",
+   "vehicle_key": "uuid:000600000000323836353233511000390041",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "BMI055",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 2.2
+  },
+  {
+   "log_id": "df9a5d9e-bd9c-4ef6-92fe-a389be06dae7",
+   "vehicle_key": "uuid:000600000000333136373333511600440030",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 810.37,
+   "full": {
+    "seconds": 155.3,
+    "n_seg": 143,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 77.6,
+    "n_seg": 71,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 77.6,
+    "n_seg": 71,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.43,
+     "rms_deg": 3.3,
+     "n": 10
+    },
+    "b": 242.4891957234323,
+    "tau_m": 0.03635497436977905,
+    "Td": 0.003723988745192687,
+    "n_freq": 10,
+    "f_used": [
+     1.56,
+     9.37
+    ],
+    "mag_err_db": 0.879,
+    "phase_err_deg": 5.675,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 9.5
+  },
+  {
+   "log_id": "df9a5d9e-bd9c-4ef6-92fe-a389be06dae7",
+   "vehicle_key": "uuid:000600000000333136373333511600440030",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 810.37,
+   "full": {
+    "seconds": 155.3,
+    "n_seg": 143,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.39,
+     "rms_deg": 3.02,
+     "n": 7
+    },
+    "b": 244.3057473027332,
+    "tau_m": 0.03396064979070329,
+    "Td": 0.003944101025857617,
+    "n_freq": 7,
+    "f_used": [
+     2.34,
+     8.59
+    ],
+    "mag_err_db": 0.742,
+    "phase_err_deg": 5.109,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 77.6,
+    "n_seg": 71,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 2
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 77.6,
+    "n_seg": 71,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.28,
+     "rms_deg": 2.65,
+     "n": 11
+    },
+    "b": 275.2593897177054,
+    "tau_m": 0.04190025044723575,
+    "Td": 0.0007073770658353825,
+    "n_freq": 11,
+    "f_used": [
+     1.56,
+     9.37
+    ],
+    "mag_err_db": 1.03,
+    "phase_err_deg": 7.059,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 9.5
+  },
+  {
+   "log_id": "9ca62be3-8e10-45d3-8b8d-c19eac166426",
+   "vehicle_key": "uuid:000600000000333136373333511700190033",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 664.45,
+   "full": {
+    "seconds": 97.8,
+    "n_seg": 112,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.35,
+     "rms_deg": 3.7,
+     "n": 7
+    },
+    "b": 427.2067269987754,
+    "tau_m": 0.023637553284118228,
+    "Td": 0.0013480260342261226,
+    "n_freq": 7,
+    "f_used": [
+     2.35,
+     7.04
+    ],
+    "mag_err_db": 0.443,
+    "phase_err_deg": 6.644,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 48.9,
+    "n_seg": 55,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 5
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 48.9,
+    "n_seg": 55,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.32,
+     "rms_deg": 3.44,
+     "n": 9
+    },
+    "b": 423.68884386918495,
+    "tau_m": 0.02377035560770928,
+    "Td": 0.002648165517044259,
+    "n_freq": 9,
+    "f_used": [
+     2.35,
+     8.6
+    ],
+    "mag_err_db": 0.531,
+    "phase_err_deg": 6.59,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 5.1
+  },
+  {
+   "log_id": "9ca62be3-8e10-45d3-8b8d-c19eac166426",
+   "vehicle_key": "uuid:000600000000333136373333511700190033",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 664.45,
+   "full": {
+    "seconds": 97.8,
+    "n_seg": 112,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.34,
+     "rms_deg": 3.14,
+     "n": 6
+    },
+    "b": 378.68598184080753,
+    "tau_m": 0.02123111388916101,
+    "Td": 2.951587220742341e-21,
+    "n_freq": 6,
+    "f_used": [
+     2.35,
+     6.25
+    ],
+    "mag_err_db": 0.615,
+    "phase_err_deg": 2.096,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 48.9,
+    "n_seg": 55,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 2
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 48.9,
+    "n_seg": 55,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.26,
+     "rms_deg": 2.28,
+     "n": 6
+    },
+    "b": 378.76439643979717,
+    "tau_m": 0.021642199718484977,
+    "Td": 4.800956275257773e-21,
+    "n_freq": 6,
+    "f_used": [
+     2.35,
+     6.25
+    ],
+    "mag_err_db": 0.591,
+    "phase_err_deg": 1.983,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 5.1
+  },
+  {
+   "log_id": "fcdef3a8-df10-40ed-a6f0-85883f155983",
+   "vehicle_key": "uuid:00060000000033313637333351170033004d",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "BMI055",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 667.11,
+   "full": {
+    "seconds": 100.0,
+    "n_seg": 133,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.21,
+     "rms_deg": 2.17,
+     "n": 16
+    },
+    "b": 215.55140741117035,
+    "tau_m": 0.023037024887301034,
+    "Td": 0.0015328175524396569,
+    "n_freq": 16,
+    "f_used": [
+     1.56,
+     13.28
+    ],
+    "mag_err_db": 0.996,
+    "phase_err_deg": 3.894,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 50.0,
+    "n_seg": 67,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.18,
+     "rms_deg": 2.04,
+     "n": 15
+    },
+    "b": 222.19314219147884,
+    "tau_m": 0.024154226905637684,
+    "Td": 0.001012600593600485,
+    "n_freq": 15,
+    "f_used": [
+     1.56,
+     12.5
+    ],
+    "mag_err_db": 0.947,
+    "phase_err_deg": 4.627,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 50.0,
+    "n_seg": 66,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.04,
+     "rms_deg": 0.97,
+     "n": 14
+    },
+    "b": 185.52971770042834,
+    "tau_m": 0.01877780107198952,
+    "Td": 0.0034811368520301944,
+    "n_freq": 14,
+    "f_used": [
+     3.12,
+     13.28
+    ],
+    "mag_err_db": 0.654,
+    "phase_err_deg": 3.789,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 4.0
+  },
+  {
+   "log_id": "fcdef3a8-df10-40ed-a6f0-85883f155983",
+   "vehicle_key": "uuid:00060000000033313637333351170033004d",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "BMI055",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 667.11,
+   "full": {
+    "seconds": 100.0,
+    "n_seg": 133,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.29,
+     "rms_deg": 2.37,
+     "n": 13
+    },
+    "b": 157.75370891149228,
+    "tau_m": 0.017641528776830635,
+    "Td": 2.3048387727460296e-17,
+    "n_freq": 13,
+    "f_used": [
+     1.56,
+     10.94
+    ],
+    "mag_err_db": 1.865,
+    "phase_err_deg": 6.665,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 50.0,
+    "n_seg": 67,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.25,
+     "rms_deg": 2.14,
+     "n": 13
+    },
+    "b": 161.6459748830467,
+    "tau_m": 0.018862107022124548,
+    "Td": 1.7298727389228484e-18,
+    "n_freq": 13,
+    "f_used": [
+     1.56,
+     10.94
+    ],
+    "mag_err_db": 1.777,
+    "phase_err_deg": 7.54,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 50.0,
+    "n_seg": 66,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.19,
+     "rms_deg": 0.71,
+     "n": 8
+    },
+    "b": 104.38094529074388,
+    "tau_m": 0.0030000000000356426,
+    "Td": 0.009380011814233353,
+    "n_freq": 8,
+    "f_used": [
+     6.25,
+     11.72
+    ],
+    "mag_err_db": 0.992,
+    "phase_err_deg": 5.946,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 4.0
+  },
+  {
+   "log_id": "d32cc24c-66d7-4961-a1fa-6becccd542bc",
+   "vehicle_key": "uuid:00060000000033313831303351150050003c",
+   "hw": "ARK_FPV",
+   "fifo_chip": "IIM42653",
+   "control_chip": "IIM42653",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 803.86,
+   "full": {
+    "seconds": 79.5,
+    "n_seg": 115,
+    "b": 292.88725243781045,
+    "tau_m": 0.012704471435051896,
+    "Td": 0.006528871163782752,
+    "n_freq": 11,
+    "f_used": [
+     0.78,
+     8.58
+    ],
+    "mag_err_db": 1.637,
+    "phase_err_deg": 7.366,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 39.7,
+    "n_seg": 58,
+    "b": 305.3322404246282,
+    "tau_m": 0.014271914460013668,
+    "Td": 0.007230453606861656,
+    "n_freq": 11,
+    "f_used": [
+     0.78,
+     9.37
+    ],
+    "mag_err_db": 1.409,
+    "phase_err_deg": 10.412,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 39.7,
+    "n_seg": 57,
+    "b": 289.60982772336234,
+    "tau_m": 0.012726886841888758,
+    "Td": 0.005759880383551836,
+    "n_freq": 10,
+    "f_used": [
+     0.78,
+     7.8
+    ],
+    "mag_err_db": 1.827,
+    "phase_err_deg": 7.178,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 3.9
+  },
+  {
+   "log_id": "d32cc24c-66d7-4961-a1fa-6becccd542bc",
+   "vehicle_key": "uuid:00060000000033313831303351150050003c",
+   "hw": "ARK_FPV",
+   "fifo_chip": "IIM42653",
+   "control_chip": "IIM42653",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 803.86,
+   "full": {
+    "seconds": 79.5,
+    "n_seg": 115,
+    "b": 239.5526726735979,
+    "tau_m": 0.01387663100966002,
+    "Td": 0.0064418260696511185,
+    "n_freq": 12,
+    "f_used": [
+     0.78,
+     9.37
+    ],
+    "mag_err_db": 1.707,
+    "phase_err_deg": 4.534,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 39.7,
+    "n_seg": 58,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 39.7,
+    "n_seg": 57,
+    "b": 239.67162383437923,
+    "tau_m": 0.013944520614409438,
+    "Td": 0.0064360592554329734,
+    "n_freq": 12,
+    "f_used": [
+     0.78,
+     9.37
+    ],
+    "mag_err_db": 1.707,
+    "phase_err_deg": 4.552,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 3.9
+  },
+  {
+   "log_id": "27ee9f0f-4959-4fdf-9494-c59d522646b9",
+   "vehicle_key": "uuid:000600000000333238303533511800320045",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_status')",
+   "log_seconds": 0.1
+  },
+  {
+   "log_id": "27ee9f0f-4959-4fdf-9494-c59d522646b9",
+   "vehicle_key": "uuid:000600000000333238303533511800320045",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_status')",
+   "log_seconds": 0.1
+  },
+  {
+   "log_id": "f96af168-f377-447f-bf68-21978f59215b",
+   "vehicle_key": "uuid:000600000000333334373033510f002a0048",
+   "hw": "CUAV_X25_EVO",
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 819.0,
+   "full": {
+    "seconds": 107.1,
+    "n_seg": 154,
+    "b": 240.4196315949303,
+    "tau_m": 0.04372298213969386,
+    "Td": 0.002979430508528526,
+    "n_freq": 13,
+    "f_used": [
+     0.78,
+     10.16
+    ],
+    "mag_err_db": 0.885,
+    "phase_err_deg": 3.682,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 53.5,
+    "n_seg": 77,
+    "b": 242.4484571645489,
+    "tau_m": 0.04419263055279825,
+    "Td": 0.002869851793629388,
+    "n_freq": 13,
+    "f_used": [
+     0.78,
+     10.16
+    ],
+    "mag_err_db": 0.942,
+    "phase_err_deg": 3.635,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 53.5,
+    "n_seg": 77,
+    "b": 237.5838893371228,
+    "tau_m": 0.0429753512983171,
+    "Td": 0.0031405856829372332,
+    "n_freq": 13,
+    "f_used": [
+     0.78,
+     10.16
+    ],
+    "mag_err_db": 0.843,
+    "phase_err_deg": 4.704,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 16.1
+  },
+  {
+   "log_id": "f96af168-f377-447f-bf68-21978f59215b",
+   "vehicle_key": "uuid:000600000000333334373033510f002a0048",
+   "hw": "CUAV_X25_EVO",
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 819.0,
+   "full": {
+    "seconds": 218.6,
+    "n_seg": 329,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 109.3,
+    "n_seg": 164,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 109.3,
+    "n_seg": 164,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 16.1
+  },
+  {
+   "log_id": "f96af168-f377-447f-bf68-21978f59215b",
+   "vehicle_key": "uuid:000600000000333334373033510f002a0048",
+   "hw": "CUAV_X25_EVO",
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 819.0,
+   "full": {
+    "seconds": 107.1,
+    "n_seg": 154,
+    "b": 234.11877218260003,
+    "tau_m": 0.03931887280644477,
+    "Td": 0.0034763087955574767,
+    "n_freq": 8,
+    "f_used": [
+     0.78,
+     6.25
+    ],
+    "mag_err_db": 1.217,
+    "phase_err_deg": 2.555,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 53.5,
+    "n_seg": 77,
+    "b": 239.46651659234897,
+    "tau_m": 0.04376752792335699,
+    "Td": 0.002234765466145962,
+    "n_freq": 11,
+    "f_used": [
+     0.78,
+     8.6
+    ],
+    "mag_err_db": 1.139,
+    "phase_err_deg": 3.379,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 53.5,
+    "n_seg": 77,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 16.1
+  },
+  {
+   "log_id": "f96af168-f377-447f-bf68-21978f59215b",
+   "vehicle_key": "uuid:000600000000333334373033510f002a0048",
+   "hw": "CUAV_X25_EVO",
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 819.0,
+   "full": {
+    "seconds": 218.6,
+    "n_seg": 329,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 109.3,
+    "n_seg": 164,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 109.3,
+    "n_seg": 164,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 16.1
+  },
+  {
+   "log_id": "8a4a9cff-5526-4bc5-9ac5-cb4926ea0ede",
+   "vehicle_key": "uuid:000600000000333334373033510f0036001a",
+   "hw": "CUAV_X25_EVO",
+   "fifo_chip": "IIM42652",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 819.0,
+   "full": {
+    "seconds": 224.6,
+    "n_seg": 350,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 112.3,
+    "n_seg": 174,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 112.3,
+    "n_seg": 174,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 11.2
+  },
+  {
+   "log_id": "8a4a9cff-5526-4bc5-9ac5-cb4926ea0ede",
+   "vehicle_key": "uuid:000600000000333334373033510f0036001a",
+   "hw": "CUAV_X25_EVO",
+   "fifo_chip": "IIM42652",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 819.0,
+   "full": {
+    "seconds": 224.6,
+    "n_seg": 350,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 112.3,
+    "n_seg": 174,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 112.3,
+    "n_seg": 174,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 11.2
+  },
+  {
+   "log_id": "05eae866-7f82-49d7-af77-71aed5936fa9",
+   "vehicle_key": "uuid:000600000000333438373130511300250043",
+   "hw": "UCAS_YANQIH7",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 11.7
+  },
+  {
+   "log_id": "05eae866-7f82-49d7-af77-71aed5936fa9",
+   "vehicle_key": "uuid:000600000000333438373130511300250043",
+   "hw": "UCAS_YANQIH7",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 11.7
+  },
+  {
+   "log_id": "79cf5a86-fc3d-41cb-9015-bcdece11cc16",
+   "vehicle_key": "uuid:00060000000033353537323351010024001b",
+   "hw": "UCAS_YANQIH7",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 5.1
+  },
+  {
+   "log_id": "79cf5a86-fc3d-41cb-9015-bcdece11cc16",
+   "vehicle_key": "uuid:00060000000033353537323351010024001b",
+   "hw": "UCAS_YANQIH7",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 5.1
+  },
+  {
+   "log_id": "a3bb82bf-3ed8-490b-887f-c4332f5b5505",
+   "vehicle_key": "uuid:000600000000333538343233510e00200020",
+   "hw": "MICOAIR_H743_V2",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 665.34,
+   "full": {
+    "seconds": 53.1,
+    "n_seg": 76,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 26.6,
+    "n_seg": 38,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 26.6,
+    "n_seg": 37,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.8
+  },
+  {
+   "log_id": "a3bb82bf-3ed8-490b-887f-c4332f5b5505",
+   "vehicle_key": "uuid:000600000000333538343233510e00200020",
+   "hw": "MICOAIR_H743_V2",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 665.34,
+   "full": {
+    "seconds": 53.1,
+    "n_seg": 76,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 26.6,
+    "n_seg": 38,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 26.6,
+    "n_seg": 37,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.8
+  },
+  {
+   "log_id": "393095f9-9bf0-44dd-8e34-86adafb37c29",
+   "vehicle_key": "uuid:000600000000333738393233510c001b0029",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 249.75,
+   "full": {
+    "seconds": 48.9,
+    "n_seg": 75,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.16,
+     "rms_deg": 1.95,
+     "n": 11
+    },
+    "b": 232.9301813686033,
+    "tau_m": 0.003000000000000002,
+    "Td": 0.005837743011154487,
+    "n_freq": 11,
+    "f_used": [
+     1.56,
+     19.51
+    ],
+    "mag_err_db": 4.375,
+    "phase_err_deg": 27.925,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 24.5,
+    "n_seg": 37,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.12,
+     "rms_deg": 0.88,
+     "n": 9
+    },
+    "b": 255.0184535136424,
+    "tau_m": 0.0030000000062567543,
+    "Td": 0.0056272233230130015,
+    "n_freq": 9,
+    "f_used": [
+     2.34,
+     19.51
+    ],
+    "mag_err_db": 3.359,
+    "phase_err_deg": 30.056,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 24.5,
+    "n_seg": 37,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.14,
+     "rms_deg": 1.27,
+     "n": 9
+    },
+    "b": 266.96467031617453,
+    "tau_m": 0.003000000000000002,
+    "Td": 0.005513977865459078,
+    "n_freq": 9,
+    "f_used": [
+     2.34,
+     19.51
+    ],
+    "mag_err_db": 3.389,
+    "phase_err_deg": 22.814,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 1.6
+  },
+  {
+   "log_id": "393095f9-9bf0-44dd-8e34-86adafb37c29",
+   "vehicle_key": "uuid:000600000000333738393233510c001b0029",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 249.75,
+   "full": {
+    "seconds": 48.9,
+    "n_seg": 75,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 4
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 24.5,
+    "n_seg": 37,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 1
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 24.5,
+    "n_seg": 37,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.18,
+     "rms_deg": 1.55,
+     "n": 7
+    },
+    "b": 153.47614969858057,
+    "tau_m": 0.010536327987333807,
+    "Td": 0.029999999999999995,
+    "n_freq": 7,
+    "f_used": [
+     1.56,
+     6.24
+    ],
+    "mag_err_db": 2.885,
+    "phase_err_deg": 7.824,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": true
+    }
+   },
+   "log_seconds": 1.6
+  },
+  {
+   "log_id": "2927968c-4824-4296-8e32-63fba1f44667",
+   "vehicle_key": "uuid:00060000000033383530333351070029002b",
+   "hw": "ARK_FPV",
+   "fifo_chip": "IIM42653",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 1014.2,
+   "full": {
+    "seconds": 112.9,
+    "n_seg": 146,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 56.5,
+    "n_seg": 73,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 56.5,
+    "n_seg": 71,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 6.9
+  },
+  {
+   "log_id": "2927968c-4824-4296-8e32-63fba1f44667",
+   "vehicle_key": "uuid:00060000000033383530333351070029002b",
+   "hw": "ARK_FPV",
+   "fifo_chip": "IIM42653",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 1014.2,
+   "full": {
+    "seconds": 112.9,
+    "n_seg": 146,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 56.5,
+    "n_seg": 73,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 1
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 56.5,
+    "n_seg": 71,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 6.9
+  },
+  {
+   "log_id": "94bd7879-589e-4d4a-a5f6-65a1fb4283e8",
+   "vehicle_key": "uuid:0006000000003339343834335118002b0040",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 400.0,
+   "full": {
+    "seconds": 57.9,
+    "n_seg": 78,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.25,
+     "rms_deg": 1.68,
+     "n": 23
+    },
+    "b": 212.33112350786692,
+    "tau_m": 0.020280428660628857,
+    "Td": 7.239775493230855e-26,
+    "n_freq": 23,
+    "f_used": [
+     1.56,
+     18.75
+    ],
+    "mag_err_db": 1.588,
+    "phase_err_deg": 6.553,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 29.0,
+    "n_seg": 36,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.24,
+     "rms_deg": 1.8,
+     "n": 24
+    },
+    "b": 206.55230004085138,
+    "tau_m": 0.019446873820813018,
+    "Td": 3.0374917874881385e-24,
+    "n_freq": 24,
+    "f_used": [
+     0.78,
+     18.75
+    ],
+    "mag_err_db": 1.592,
+    "phase_err_deg": 6.552,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 29.0,
+    "n_seg": 41,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.29,
+     "rms_deg": 1.82,
+     "n": 19
+    },
+    "b": 223.31633804110945,
+    "tau_m": 0.02071510110927542,
+    "Td": 8.423267419332711e-25,
+    "n_freq": 19,
+    "f_used": [
+     1.56,
+     19.53
+    ],
+    "mag_err_db": 1.554,
+    "phase_err_deg": 7.228,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 2.2
+  },
+  {
+   "log_id": "94bd7879-589e-4d4a-a5f6-65a1fb4283e8",
+   "vehicle_key": "uuid:0006000000003339343834335118002b0040",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 400.0,
+   "full": {
+    "seconds": 57.9,
+    "n_seg": 78,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.23,
+     "rms_deg": 1.58,
+     "n": 24
+    },
+    "b": 190.11655517175237,
+    "tau_m": 0.015239180018258483,
+    "Td": 1.4699503109330869e-19,
+    "n_freq": 24,
+    "f_used": [
+     1.56,
+     19.53
+    ],
+    "mag_err_db": 1.12,
+    "phase_err_deg": 5.939,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 29.0,
+    "n_seg": 36,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.14,
+     "rms_deg": 0.8,
+     "n": 23
+    },
+    "b": 195.78633609434956,
+    "tau_m": 0.01574738026556959,
+    "Td": 1.0930223717091604e-19,
+    "n_freq": 23,
+    "f_used": [
+     2.34,
+     19.53
+    ],
+    "mag_err_db": 1.155,
+    "phase_err_deg": 4.933,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 29.0,
+    "n_seg": 41,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.15,
+     "rms_deg": 1.36,
+     "n": 23
+    },
+    "b": 183.65086621549784,
+    "tau_m": 0.014830271896653166,
+    "Td": 1.3825351228331094e-18,
+    "n_freq": 23,
+    "f_used": [
+     1.56,
+     19.53
+    ],
+    "mag_err_db": 1.119,
+    "phase_err_deg": 5.203,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 2.2
+  },
+  {
+   "log_id": "4e73d30d-eda1-4b60-8112-51fa6061f16b",
+   "vehicle_key": "uuid:0006000000003431373432335110002a0043",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 400.0,
+   "full": {
+    "seconds": 422.1,
+    "n_seg": 646,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 1
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 211.0,
+    "n_seg": 320,
+    "agree": {
+     "ok": false,
+     "rms_db": 0.22,
+     "rms_deg": 6.37,
+     "n": 13
+    },
+    "b": 189.66002478603036,
+    "tau_m": 0.0030000000000000976,
+    "Td": 0.007736037261241287,
+    "n_freq": 13,
+    "f_used": [
+     0.78,
+     18.75
+    ],
+    "mag_err_db": 4.962,
+    "phase_err_deg": 30.963,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 211.0,
+    "n_seg": 325,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 1
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 12.5
+  },
+  {
+   "log_id": "4e73d30d-eda1-4b60-8112-51fa6061f16b",
+   "vehicle_key": "uuid:0006000000003431373432335110002a0043",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 400.0,
+   "full": {
+    "seconds": 422.1,
+    "n_seg": 646,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.11,
+     "rms_deg": 0.87,
+     "n": 23
+    },
+    "b": 181.96430265363756,
+    "tau_m": 0.017078460440527153,
+    "Td": 0.0006460197539897659,
+    "n_freq": 23,
+    "f_used": [
+     2.34,
+     19.53
+    ],
+    "mag_err_db": 0.28,
+    "phase_err_deg": 2.746,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 211.0,
+    "n_seg": 320,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.2,
+     "rms_deg": 0.59,
+     "n": 23
+    },
+    "b": 201.5065177149323,
+    "tau_m": 0.01694698099699512,
+    "Td": 0.00025967716065373835,
+    "n_freq": 23,
+    "f_used": [
+     2.34,
+     19.53
+    ],
+    "mag_err_db": 0.309,
+    "phase_err_deg": 1.817,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 211.0,
+    "n_seg": 325,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.11,
+     "rms_deg": 0.87,
+     "n": 23
+    },
+    "b": 181.1072745455824,
+    "tau_m": 0.017592648108024096,
+    "Td": 0.0006967311190039663,
+    "n_freq": 23,
+    "f_used": [
+     2.34,
+     19.53
+    ],
+    "mag_err_db": 0.307,
+    "phase_err_deg": 2.908,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 12.5
+  },
+  {
+   "log_id": "ee80255d-0216-4bfb-beed-c4b0955c0096",
+   "vehicle_key": "uuid:000600000000343630333436511080110009",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 806.45,
+   "full": {
+    "seconds": 18.0,
+    "n_seg": 27,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 9.0,
+    "n_seg": 13,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 5
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 9.0,
+    "n_seg": 13,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 3.0
+  },
+  {
+   "log_id": "ee80255d-0216-4bfb-beed-c4b0955c0096",
+   "vehicle_key": "uuid:000600000000343630333436511080110009",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 806.45,
+   "full": {
+    "seconds": 18.0,
+    "n_seg": 27,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 2
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 9.0,
+    "n_seg": 13,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.02,
+     "rms_deg": 0.15,
+     "n": 9
+    },
+    "b": 89.91530489799975,
+    "tau_m": 0.018002746183307255,
+    "Td": 0.0032953081822702586,
+    "n_freq": 9,
+    "f_used": [
+     13.28,
+     19.54
+    ],
+    "mag_err_db": 0.779,
+    "phase_err_deg": 7.857,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 9.0,
+    "n_seg": 13,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 3
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 3.0
+  },
+  {
+   "log_id": "18454291-096a-4c69-8848-bc244a88afa7",
+   "vehicle_key": "uuid:000600000000343633363432510200300037",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 666.22,
+   "full": {
+    "seconds": 142.3,
+    "n_seg": 215,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 71.1,
+    "n_seg": 108,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 71.1,
+    "n_seg": 106,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 6.0
+  },
+  {
+   "log_id": "18454291-096a-4c69-8848-bc244a88afa7",
+   "vehicle_key": "uuid:000600000000343633363432510200300037",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 666.22,
+   "full": {
+    "seconds": 142.3,
+    "n_seg": 215,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 71.1,
+    "n_seg": 108,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 71.1,
+    "n_seg": 106,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 6.0
+  },
+  {
+   "log_id": "ab1aecd2-8119-4376-b711-aa8f8f0e9acb",
+   "vehicle_key": "uuid:000600000000343832323533510600190027",
+   "hw": "MICOAIR_H743_V2",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 998.0,
+   "full": {
+    "seconds": 59.1,
+    "n_seg": 66,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 29.5,
+    "n_seg": 33,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 29.5,
+    "n_seg": 32,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 7.3
+  },
+  {
+   "log_id": "ab1aecd2-8119-4376-b711-aa8f8f0e9acb",
+   "vehicle_key": "uuid:000600000000343832323533510600190027",
+   "hw": "MICOAIR_H743_V2",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 998.0,
+   "full": {
+    "seconds": 48.5,
+    "n_seg": 57,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 24.3,
+    "n_seg": 27,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 2
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 24.3,
+    "n_seg": 28,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 7.3
+  },
+  {
+   "log_id": "ab1aecd2-8119-4376-b711-aa8f8f0e9acb",
+   "vehicle_key": "uuid:000600000000343832323533510600190027",
+   "hw": "MICOAIR_H743_V2",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 998.0,
+   "full": {
+    "seconds": 59.1,
+    "n_seg": 66,
+    "b": 423.36547366559506,
+    "tau_m": 0.02189966178011059,
+    "Td": 5.354218113472285e-17,
+    "n_freq": 12,
+    "f_used": [
+     2.34,
+     13.28
+    ],
+    "mag_err_db": 1.309,
+    "phase_err_deg": 5.793,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 29.5,
+    "n_seg": 33,
+    "b": 565.6125190795589,
+    "tau_m": 0.021275253231456587,
+    "Td": 6.861333934156653e-22,
+    "n_freq": 16,
+    "f_used": [
+     1.56,
+     14.06
+    ],
+    "mag_err_db": 0.664,
+    "phase_err_deg": 8.032,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 29.5,
+    "n_seg": 32,
+    "b": 333.6904489711928,
+    "tau_m": 0.02348002969206776,
+    "Td": 0.0009295312137676951,
+    "n_freq": 9,
+    "f_used": [
+     3.9,
+     13.28
+    ],
+    "mag_err_db": 0.978,
+    "phase_err_deg": 6.342,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 7.3
+  },
+  {
+   "log_id": "ab1aecd2-8119-4376-b711-aa8f8f0e9acb",
+   "vehicle_key": "uuid:000600000000343832323533510600190027",
+   "hw": "MICOAIR_H743_V2",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 998.0,
+   "full": {
+    "seconds": 48.5,
+    "n_seg": 57,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 2
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 24.3,
+    "n_seg": 27,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.49,
+     "rms_deg": 1.78,
+     "n": 9
+    },
+    "b": 462.608837067083,
+    "tau_m": 0.02705764073467148,
+    "Td": 0.00024946951536492613,
+    "n_freq": 9,
+    "f_used": [
+     0.78,
+     19.52
+    ],
+    "mag_err_db": 1.002,
+    "phase_err_deg": 6.781,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 24.3,
+    "n_seg": 28,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 7.3
+  },
+  {
+   "log_id": "a3f3ae23-f3e8-46a3-9b37-a1efd4a0c06d",
+   "vehicle_key": "uuid:0006000000003532393932335103001a0032",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "BMI055",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 250.13,
+   "full": {
+    "seconds": 87.7,
+    "n_seg": 126,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 43.8,
+    "n_seg": 60,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 43.8,
+    "n_seg": 64,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.4
+  },
+  {
+   "log_id": "a3f3ae23-f3e8-46a3-9b37-a1efd4a0c06d",
+   "vehicle_key": "uuid:0006000000003532393932335103001a0032",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "BMI055",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 250.13,
+   "full": {
+    "seconds": 10.5,
+    "n_seg": 13,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.09,
+     "rms_deg": 0.8,
+     "n": 11
+    },
+    "b": 666.3122683516744,
+    "tau_m": 0.0649443218812257,
+    "Td": 0.0022917398547870824,
+    "n_freq": 11,
+    "f_used": [
+     6.25,
+     17.98
+    ],
+    "mag_err_db": 0.687,
+    "phase_err_deg": 3.2,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 5.2,
+    "n_seg": 5,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.15,
+     "rms_deg": 1.13,
+     "n": 13
+    },
+    "b": 532.9778258776904,
+    "tau_m": 0.05201667192710728,
+    "Td": 0.0029310183765038503,
+    "n_freq": 13,
+    "f_used": [
+     3.91,
+     18.76
+    ],
+    "mag_err_db": 0.924,
+    "phase_err_deg": 6.72,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 5.2,
+    "n_seg": 7,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.14,
+     "rms_deg": 1.47,
+     "n": 12
+    },
+    "b": 703.937291956316,
+    "tau_m": 0.06760936628770858,
+    "Td": 0.0014706292820303168,
+    "n_freq": 12,
+    "f_used": [
+     4.69,
+     15.63
+    ],
+    "mag_err_db": 1.349,
+    "phase_err_deg": 5.808,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 2.4
+  },
+  {
+   "log_id": "a3f3ae23-f3e8-46a3-9b37-a1efd4a0c06d",
+   "vehicle_key": "uuid:0006000000003532393932335103001a0032",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "BMI055",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 250.13,
+   "full": {
+    "seconds": 87.7,
+    "n_seg": 126,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 43.8,
+    "n_seg": 60,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 43.8,
+    "n_seg": 64,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.4
+  },
+  {
+   "log_id": "a3f3ae23-f3e8-46a3-9b37-a1efd4a0c06d",
+   "vehicle_key": "uuid:0006000000003532393932335103001a0032",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "BMI055",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 250.13,
+   "full": {
+    "seconds": 10.5,
+    "n_seg": 13,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.22,
+     "rms_deg": 1.76,
+     "n": 16
+    },
+    "b": 468.1185448633638,
+    "tau_m": 0.041535033857336465,
+    "Td": 0.004401875780548324,
+    "n_freq": 19,
+    "f_used": [
+     1.56,
+     16.41
+    ],
+    "mag_err_db": 1.331,
+    "phase_err_deg": 6.2,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 5.2,
+    "n_seg": 5,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.09,
+     "rms_deg": 0.93,
+     "n": 20
+    },
+    "b": 438.3262185184256,
+    "tau_m": 0.03944708629608552,
+    "Td": 0.005204761230115885,
+    "n_freq": 21,
+    "f_used": [
+     1.56,
+     17.98
+    ],
+    "mag_err_db": 1.566,
+    "phase_err_deg": 9.58,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 5.2,
+    "n_seg": 7,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.15,
+     "rms_deg": 1.09,
+     "n": 18
+    },
+    "b": 585.1979935723372,
+    "tau_m": 0.049532977592063175,
+    "Td": 0.003031686641343833,
+    "n_freq": 18,
+    "f_used": [
+     3.91,
+     19.54
+    ],
+    "mag_err_db": 1.471,
+    "phase_err_deg": 6.108,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 2.4
+  },
+  {
+   "log_id": "3660b528-e276-489a-bbb5-0228c7c06b49",
+   "vehicle_key": "uuid:000600000000353534373233510400260020",
+   "hw": "AUAV_H9",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 800.0,
+   "full": {
+    "seconds": 36.5,
+    "n_seg": 53,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 18.3,
+    "n_seg": 26,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 18.3,
+    "n_seg": 27,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 13.8
+  },
+  {
+   "log_id": "3660b528-e276-489a-bbb5-0228c7c06b49",
+   "vehicle_key": "uuid:000600000000353534373233510400260020",
+   "hw": "AUAV_H9",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 800.0,
+   "full": {
+    "seconds": 255.9,
+    "n_seg": 397,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.12,
+     "rms_deg": 1.8,
+     "n": 22
+    },
+    "b": 222.8328133158608,
+    "tau_m": 0.003000000000000002,
+    "Td": 0.012525602109273051,
+    "n_freq": 22,
+    "f_used": [
+     3.13,
+     19.53
+    ],
+    "mag_err_db": 2.879,
+    "phase_err_deg": 43.686,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 128.0,
+    "n_seg": 197,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.09,
+     "rms_deg": 1.19,
+     "n": 22
+    },
+    "b": 220.45755762227705,
+    "tau_m": 0.003000000000000002,
+    "Td": 0.012724631270830877,
+    "n_freq": 22,
+    "f_used": [
+     3.13,
+     19.53
+    ],
+    "mag_err_db": 2.744,
+    "phase_err_deg": 43.341,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 128.0,
+    "n_seg": 198,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.1,
+     "rms_deg": 1.57,
+     "n": 16
+    },
+    "b": 252.49549826450885,
+    "tau_m": 0.003000000000000002,
+    "Td": 0.011190514346266191,
+    "n_freq": 16,
+    "f_used": [
+     3.91,
+     19.53
+    ],
+    "mag_err_db": 2.372,
+    "phase_err_deg": 33.055,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 13.8
+  },
+  {
+   "log_id": "3660b528-e276-489a-bbb5-0228c7c06b49",
+   "vehicle_key": "uuid:000600000000353534373233510400260020",
+   "hw": "AUAV_H9",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 800.0,
+   "full": {
+    "seconds": 36.5,
+    "n_seg": 53,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 18.3,
+    "n_seg": 26,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 18.3,
+    "n_seg": 27,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 13.8
+  },
+  {
+   "log_id": "3660b528-e276-489a-bbb5-0228c7c06b49",
+   "vehicle_key": "uuid:000600000000353534373233510400260020",
+   "hw": "AUAV_H9",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 800.0,
+   "full": {
+    "seconds": 255.9,
+    "n_seg": 397,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.12,
+     "rms_deg": 1.47,
+     "n": 11
+    },
+    "b": 235.7319959010467,
+    "tau_m": 0.003000000000000002,
+    "Td": 0.012143157105163324,
+    "n_freq": 11,
+    "f_used": [
+     3.91,
+     19.53
+    ],
+    "mag_err_db": 2.918,
+    "phase_err_deg": 37.495,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 128.0,
+    "n_seg": 197,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.07,
+     "rms_deg": 1.34,
+     "n": 18
+    },
+    "b": 5192.614696525303,
+    "tau_m": 0.49999999999995004,
+    "Td": 1.1893836460528064e-16,
+    "n_freq": 18,
+    "f_used": [
+     3.13,
+     19.53
+    ],
+    "mag_err_db": 7.16,
+    "phase_err_deg": 12.807,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 128.0,
+    "n_seg": 198,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.06,
+     "rms_deg": 0.1,
+     "n": 7
+    },
+    "b": 1037.444682593153,
+    "tau_m": 0.03962997939145866,
+    "Td": 7.600793705749262e-18,
+    "n_freq": 7,
+    "f_used": [
+     11.72,
+     19.53
+    ],
+    "mag_err_db": 3.363,
+    "phase_err_deg": 12.076,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": true,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 13.8
+  },
+  {
+   "log_id": "50b00c42-e1b2-4a18-8dbe-0d22f291cf0b",
+   "vehicle_key": "uuid:00060000000036303930313351020034004e",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.5
+  },
+  {
+   "log_id": "50b00c42-e1b2-4a18-8dbe-0d22f291cf0b",
+   "vehicle_key": "uuid:00060000000036303930313351020034004e",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.5
+  },
+  {
+   "log_id": "b9f6dde0-348a-497d-9dfd-fbc324077914",
+   "vehicle_key": "uuid:000600000000363039303133510500370045",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 4.7
+  },
+  {
+   "log_id": "b9f6dde0-348a-497d-9dfd-fbc324077914",
+   "vehicle_key": "uuid:000600000000363039303133510500370045",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 4.7
+  },
+  {
+   "log_id": "dfc68892-7373-4454-89a5-a77352c3ca7c",
+   "vehicle_key": "uuid:0006000000003630393031335109004d0035",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 3.4
+  },
+  {
+   "log_id": "dfc68892-7373-4454-89a5-a77352c3ca7c",
+   "vehicle_key": "uuid:0006000000003630393031335109004d0035",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 3.4
+  },
+  {
+   "log_id": "ad87638b-51e3-462e-8af2-2aaa588ac586",
+   "vehicle_key": "uuid:0006000000003630393031335109004e002f",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.4
+  },
+  {
+   "log_id": "ad87638b-51e3-462e-8af2-2aaa588ac586",
+   "vehicle_key": "uuid:0006000000003630393031335109004e002f",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.4
+  },
+  {
+   "log_id": "e09edaa4-3417-4dee-b679-b66d4f212798",
+   "vehicle_key": "uuid:0006000000003630393031335109004e0031",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 2.2
+  },
+  {
+   "log_id": "e09edaa4-3417-4dee-b679-b66d4f212798",
+   "vehicle_key": "uuid:0006000000003630393031335109004e0031",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 2.2
+  },
+  {
+   "log_id": "43e8a177-5c03-4a10-9fd9-e812c3196cf1",
+   "vehicle_key": "uuid:0006000000003630393031335109004f0036",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.3
+  },
+  {
+   "log_id": "43e8a177-5c03-4a10-9fd9-e812c3196cf1",
+   "vehicle_key": "uuid:0006000000003630393031335109004f0036",
+   "hw": "DRONEYEE_ZYFC_H7",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.3
+  },
+  {
+   "log_id": "77082458-0529-4498-82ea-24b0a289320e",
+   "vehicle_key": "uuid:0006000000003632333730335111001f0035",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM20689",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 399.52,
+   "full": {
+    "seconds": 40.1,
+    "n_seg": 55,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 20.0,
+    "n_seg": 26,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 20.0,
+    "n_seg": 27,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 1.5
+  },
+  {
+   "log_id": "77082458-0529-4498-82ea-24b0a289320e",
+   "vehicle_key": "uuid:0006000000003632333730335111001f0035",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM20689",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 399.52,
+   "full": {
+    "seconds": 40.1,
+    "n_seg": 55,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 20.0,
+    "n_seg": 26,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 20.0,
+    "n_seg": 27,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 1.5
+  },
+  {
+   "log_id": "e7a73480-2970-4b82-a4ea-52965261afc5",
+   "vehicle_key": "uuid:0006000000003632373732325104004b0036",
+   "hw": "GDCX_H743VI",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 4.0
+  },
+  {
+   "log_id": "e7a73480-2970-4b82-a4ea-52965261afc5",
+   "vehicle_key": "uuid:0006000000003632373732325104004b0036",
+   "hw": "GDCX_H743VI",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 4.0
+  },
+  {
+   "log_id": "215afd8c-c39d-4790-86d5-1416894a3474",
+   "vehicle_key": "uuid:000600000000363239323333510c00350037",
+   "hw": "HKUST_NXT_DUAL",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 399.36,
+   "full": {
+    "seconds": 62.7,
+    "n_seg": 85,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.06,
+     "rms_deg": 0.65,
+     "n": 22
+    },
+    "b": 455.0990463894658,
+    "tau_m": 0.017959029331476736,
+    "Td": 0.0006668839713900044,
+    "n_freq": 22,
+    "f_used": [
+     2.34,
+     18.72
+    ],
+    "mag_err_db": 0.23,
+    "phase_err_deg": 1.505,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 31.3,
+    "n_seg": 42,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.22,
+     "rms_deg": 1.01,
+     "n": 22
+    },
+    "b": 466.1768346033479,
+    "tau_m": 0.018592674441802005,
+    "Td": 0.0006817336894847588,
+    "n_freq": 22,
+    "f_used": [
+     1.56,
+     17.94
+    ],
+    "mag_err_db": 0.479,
+    "phase_err_deg": 1.952,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 31.3,
+    "n_seg": 42,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.05,
+     "rms_deg": 0.47,
+     "n": 23
+    },
+    "b": 450.8452613208149,
+    "tau_m": 0.01768845603194143,
+    "Td": 0.0005882659094505865,
+    "n_freq": 23,
+    "f_used": [
+     2.34,
+     19.5
+    ],
+    "mag_err_db": 0.264,
+    "phase_err_deg": 1.864,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 2.1
+  },
+  {
+   "log_id": "215afd8c-c39d-4790-86d5-1416894a3474",
+   "vehicle_key": "uuid:000600000000363239323333510c00350037",
+   "hw": "HKUST_NXT_DUAL",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 399.36,
+   "full": {
+    "seconds": 62.7,
+    "n_seg": 85,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.09,
+     "rms_deg": 1.32,
+     "n": 21
+    },
+    "b": 377.86198430047307,
+    "tau_m": 0.017987679337441,
+    "Td": 0.0005203146967014865,
+    "n_freq": 21,
+    "f_used": [
+     2.34,
+     17.94
+    ],
+    "mag_err_db": 0.354,
+    "phase_err_deg": 1.686,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 31.3,
+    "n_seg": 42,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.1,
+     "rms_deg": 1.7,
+     "n": 20
+    },
+    "b": 395.0073415267757,
+    "tau_m": 0.019563802269592274,
+    "Td": 0.00023863592698457177,
+    "n_freq": 20,
+    "f_used": [
+     2.34,
+     17.16
+    ],
+    "mag_err_db": 0.324,
+    "phase_err_deg": 2.171,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 31.3,
+    "n_seg": 42,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.1,
+     "rms_deg": 0.85,
+     "n": 23
+    },
+    "b": 364.8631917868028,
+    "tau_m": 0.016678977406266678,
+    "Td": 0.0008780607414735283,
+    "n_freq": 23,
+    "f_used": [
+     2.34,
+     19.5
+    ],
+    "mag_err_db": 0.457,
+    "phase_err_deg": 2.065,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 2.1
+  },
+  {
+   "log_id": "42ec9694-85a8-4653-beb0-41dde8dfd175",
+   "vehicle_key": "uuid:0006000000003634353630335109002f0030",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 664.89,
+   "full": {
+    "seconds": 87.6,
+    "n_seg": 132,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 43.8,
+    "n_seg": 65,
+    "b": 525.8808109300113,
+    "tau_m": 0.0161492537743135,
+    "Td": 0.004637610357190198,
+    "n_freq": 8,
+    "f_used": [
+     3.12,
+     18.73
+    ],
+    "mag_err_db": 0.645,
+    "phase_err_deg": 3.604,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 43.8,
+    "n_seg": 66,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.9
+  },
+  {
+   "log_id": "42ec9694-85a8-4653-beb0-41dde8dfd175",
+   "vehicle_key": "uuid:0006000000003634353630335109002f0030",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "BMI088",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 664.89,
+   "full": {
+    "seconds": 87.6,
+    "n_seg": 132,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 43.8,
+    "n_seg": 65,
+    "b": 448.37759025198767,
+    "tau_m": 0.018502477633539408,
+    "Td": 0.0034873960712853095,
+    "n_freq": 25,
+    "f_used": [
+     0.78,
+     19.51
+    ],
+    "mag_err_db": 0.997,
+    "phase_err_deg": 7.895,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 43.8,
+    "n_seg": 66,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.9
+  },
+  {
+   "log_id": "0c769da1-6623-458d-a64b-628ab7bcd145",
+   "vehicle_key": "uuid:000600000000363435363333511800200032",
+   "hw": "HKUST_NXT_DUAL",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 400.0,
+   "full": {
+    "seconds": 35.7,
+    "n_seg": 54,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 4
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 17.9,
+    "n_seg": 26,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 4
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 17.9,
+    "n_seg": 26,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.48,
+     "rms_deg": 2.99,
+     "n": 8
+    },
+    "b": 404.7793941753467,
+    "tau_m": 0.017709165541921718,
+    "Td": 0.0038908752485267623,
+    "n_freq": 8,
+    "f_used": [
+     3.13,
+     14.06
+    ],
+    "mag_err_db": 0.768,
+    "phase_err_deg": 4.508,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 7.0
+  },
+  {
+   "log_id": "0c769da1-6623-458d-a64b-628ab7bcd145",
+   "vehicle_key": "uuid:000600000000363435363333511800200032",
+   "hw": "HKUST_NXT_DUAL",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 400.0,
+   "full": {
+    "seconds": 35.7,
+    "n_seg": 54,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 4
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 17.9,
+    "n_seg": 26,
+    "agree": {
+     "ok": false,
+     "rms_db": 0.36,
+     "rms_deg": 5.14,
+     "n": 9
+    },
+    "b": 418.60641470342057,
+    "tau_m": 0.01558225146880067,
+    "Td": 0.00554715458512192,
+    "n_freq": 9,
+    "f_used": [
+     0.78,
+     10.16
+    ],
+    "mag_err_db": 1.514,
+    "phase_err_deg": 14.622,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 17.9,
+    "n_seg": 26,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 7.0
+  },
+  {
+   "log_id": "421643a5-443f-435b-acbc-fbf9533d2eae",
+   "vehicle_key": "uuid:000600000000363633383433510300320016",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 670.69,
+   "full": {
+    "seconds": 158.2,
+    "n_seg": 218,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 79.1,
+    "n_seg": 107,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 79.1,
+    "n_seg": 109,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 7.2
+  },
+  {
+   "log_id": "421643a5-443f-435b-acbc-fbf9533d2eae",
+   "vehicle_key": "uuid:000600000000363633383433510300320016",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 670.69,
+   "full": {
+    "seconds": 158.2,
+    "n_seg": 218,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 79.1,
+    "n_seg": 107,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 1
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 79.1,
+    "n_seg": 109,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 7.2
+  },
+  {
+   "log_id": "bb25630e-806c-4336-8ae0-3a9333e7afb2",
+   "vehicle_key": "uuid:0006000000003638333331335102003a0027",
+   "hw": "AMOVLAB_ICF6",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.7
+  },
+  {
+   "log_id": "bb25630e-806c-4336-8ae0-3a9333e7afb2",
+   "vehicle_key": "uuid:0006000000003638333331335102003a0027",
+   "hw": "AMOVLAB_ICF6",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.7
+  },
+  {
+   "log_id": "f2c3358d-ccb6-4820-bd75-f534cceaba51",
+   "vehicle_key": "uuid:000600000000373632303233510e00390032",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "error": "pieces: ValueError('torque setpoint logged at 50 Hz')",
+   "log_seconds": 3.9
+  },
+  {
+   "log_id": "f2c3358d-ccb6-4820-bd75-f534cceaba51",
+   "vehicle_key": "uuid:000600000000373632303233510e00390032",
+   "hw": "PX4_FMU_V6C",
+   "fifo_chip": "BMI055",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "error": "pieces: ValueError('torque setpoint logged at 50 Hz')",
+   "log_seconds": 3.9
+  },
+  {
+   "log_id": "f689356f-efe4-48d4-ad05-8c5c7816aee7",
+   "vehicle_key": "uuid:000600000000373633313033510900490023",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 750.19,
+   "full": {
+    "seconds": 324.5,
+    "n_seg": 487,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 162.3,
+    "n_seg": 245,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 162.3,
+    "n_seg": 241,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 2
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 14.1
+  },
+  {
+   "log_id": "f689356f-efe4-48d4-ad05-8c5c7816aee7",
+   "vehicle_key": "uuid:000600000000373633313033510900490023",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 750.19,
+   "full": {
+    "seconds": 324.5,
+    "n_seg": 487,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 162.3,
+    "n_seg": 245,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 162.3,
+    "n_seg": 241,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 14.1
+  },
+  {
+   "log_id": "238d7cf2-47e8-4405-9b66-3b1de10aeb89",
+   "vehicle_key": "uuid:0006000000003736353632335115003e0031",
+   "hw": "MICOAIR_H743",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI270",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 800.0,
+   "full": {
+    "seconds": 39.9,
+    "n_seg": 57,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 19.9,
+    "n_seg": 27,
+    "b": 570.5474114658435,
+    "tau_m": 0.03360598676902682,
+    "Td": 0.00011726987897131204,
+    "n_freq": 8,
+    "f_used": [
+     2.34,
+     10.16
+    ],
+    "mag_err_db": 0.922,
+    "phase_err_deg": 6.937,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 19.9,
+    "n_seg": 28,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 1.7
+  },
+  {
+   "log_id": "238d7cf2-47e8-4405-9b66-3b1de10aeb89",
+   "vehicle_key": "uuid:0006000000003736353632335115003e0031",
+   "hw": "MICOAIR_H743",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI270",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 800.0,
+   "full": {
+    "seconds": 39.9,
+    "n_seg": 57,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 19.9,
+    "n_seg": 27,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 19.9,
+    "n_seg": 28,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 1.7
+  },
+  {
+   "log_id": "179b1387-db1b-41d1-9f5d-a87be02be11d",
+   "vehicle_key": "uuid:00060000000037363536323351190031002e",
+   "hw": "MICOAIR_H743",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 666.67,
+   "full": {
+    "seconds": 2.2,
+    "n_seg": 2,
+    "b": 127.29370378217816,
+    "tau_m": 0.0030000000000027782,
+    "Td": 0.01945816858997854,
+    "n_freq": 12,
+    "f_used": [
+     1.56,
+     19.52
+    ],
+    "mag_err_db": 4.114,
+    "phase_err_deg": 49.59,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "error": "no gap-free piece as long as one Welch segment",
+   "log_seconds": 8.0
+  },
+  {
+   "log_id": "179b1387-db1b-41d1-9f5d-a87be02be11d",
+   "vehicle_key": "uuid:00060000000037363536323351190031002e",
+   "hw": "MICOAIR_H743",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 666.67,
+   "full": {
+    "seconds": 77.7,
+    "n_seg": 96,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 3
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 38.8,
+    "n_seg": 51,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 3
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 38.8,
+    "n_seg": 44,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 3
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 8.0
+  },
+  {
+   "log_id": "179b1387-db1b-41d1-9f5d-a87be02be11d",
+   "vehicle_key": "uuid:00060000000037363536323351190031002e",
+   "hw": "MICOAIR_H743",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 666.67,
+   "full": {
+    "seconds": 2.2,
+    "n_seg": 2,
+    "b": 3718.726485187336,
+    "tau_m": 0.49999999999999295,
+    "Td": 0.006892339193381674,
+    "n_freq": 7,
+    "f_used": [
+     8.59,
+     18.74
+    ],
+    "mag_err_db": 3.48,
+    "phase_err_deg": 29.346,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "error": "no gap-free piece as long as one Welch segment",
+   "log_seconds": 8.0
+  },
+  {
+   "log_id": "179b1387-db1b-41d1-9f5d-a87be02be11d",
+   "vehicle_key": "uuid:00060000000037363536323351190031002e",
+   "hw": "MICOAIR_H743",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 666.67,
+   "full": {
+    "seconds": 77.7,
+    "n_seg": 96,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 4
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 38.8,
+    "n_seg": 51,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 5
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 38.8,
+    "n_seg": 44,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 5
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 8.0
+  },
+  {
+   "log_id": "225bab55-d0b4-4ae4-b166-ac0e7ae9228c",
+   "vehicle_key": "uuid:000600000000383133383033510300440022",
+   "hw": "CUAV_NORA",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM20689",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 399.68,
+   "full": {
+    "seconds": 186.2,
+    "n_seg": 286,
+    "b": 423.7676898175008,
+    "tau_m": 0.01923743512796748,
+    "Td": 0.0005584704933809001,
+    "n_freq": 20,
+    "f_used": [
+     2.34,
+     17.17
+    ],
+    "mag_err_db": 0.197,
+    "phase_err_deg": 2.053,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 93.1,
+    "n_seg": 142,
+    "b": 408.8254369042625,
+    "tau_m": 0.01856398405574882,
+    "Td": 0.0012588961051147787,
+    "n_freq": 17,
+    "f_used": [
+     3.12,
+     15.61
+    ],
+    "mag_err_db": 0.22,
+    "phase_err_deg": 2.189,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 93.1,
+    "n_seg": 142,
+    "b": 418.9027654361339,
+    "tau_m": 0.01864113475771842,
+    "Td": 0.0010009633645152822,
+    "n_freq": 21,
+    "f_used": [
+     2.34,
+     17.95
+    ],
+    "mag_err_db": 0.166,
+    "phase_err_deg": 2.938,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 5.4
+  },
+  {
+   "log_id": "225bab55-d0b4-4ae4-b166-ac0e7ae9228c",
+   "vehicle_key": "uuid:000600000000383133383033510300440022",
+   "hw": "CUAV_NORA",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM20689",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 399.68,
+   "full": {
+    "seconds": 186.2,
+    "n_seg": 286,
+    "b": 385.93746904553313,
+    "tau_m": 0.019841234152128878,
+    "Td": 0.00259836209273611,
+    "n_freq": 9,
+    "f_used": [
+     2.34,
+     9.37
+    ],
+    "mag_err_db": 0.321,
+    "phase_err_deg": 2.432,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 93.1,
+    "n_seg": 142,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 93.1,
+    "n_seg": 142,
+    "b": 371.4970702752553,
+    "tau_m": 0.019099353471118238,
+    "Td": 0.002736808659728412,
+    "n_freq": 10,
+    "f_used": [
+     2.34,
+     9.37
+    ],
+    "mag_err_db": 0.302,
+    "phase_err_deg": 2.132,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 5.4
+  },
+  {
+   "log_id": "2405a4c1-3a26-4c33-9c1a-128eae7d82ac",
+   "vehicle_key": "uuid:000600000000383632333131510e003c0024",
+   "hw": "HKUST_NXT",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 9.9
+  },
+  {
+   "log_id": "2405a4c1-3a26-4c33-9c1a-128eae7d82ac",
+   "vehicle_key": "uuid:000600000000383632333131510e003c0024",
+   "hw": "HKUST_NXT",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42688P",
+   "fifo_is_control": true,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 9.9
+  },
+  {
+   "log_id": "7b2de504-d691-4170-b31d-c3f9a579ab10",
+   "vehicle_key": "uuid:000600000000383632333131510e0049003c",
+   "hw": "HKUST_NXT",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.5
+  },
+  {
+   "log_id": "7b2de504-d691-4170-b31d-c3f9a579ab10",
+   "vehicle_key": "uuid:000600000000383632333131510e0049003c",
+   "hw": "HKUST_NXT",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 1.5
+  },
+  {
+   "log_id": "0ef8e578-84a2-4269-bf76-67573b85ef49",
+   "vehicle_key": "uuid:0006000000003836323331315110002c004a",
+   "hw": "HKUST_NXT",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 12.5
+  },
+  {
+   "log_id": "0ef8e578-84a2-4269-bf76-67573b85ef49",
+   "vehicle_key": "uuid:0006000000003836323331315110002c004a",
+   "hw": "HKUST_NXT",
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": false,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 12.5
+  },
+  {
+   "log_id": "ed574888-446e-42ee-b869-6b6f45216636",
+   "vehicle_key": "uuid:000600000000383638373039510f00320021",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 664.45,
+   "full": {
+    "seconds": 3.9,
+    "n_seg": 5,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 1.9,
+    "n_seg": 2,
+    "b": 142.12800383520343,
+    "tau_m": 0.005492013274594076,
+    "Td": 0.029999999999999718,
+    "n_freq": 7,
+    "f_used": [
+     0.78,
+     9.38
+    ],
+    "mag_err_db": 6.657,
+    "phase_err_deg": 22.849,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": true
+    }
+   },
+   "half2": {
+    "seconds": 1.9,
+    "n_seg": 2,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.5
+  },
+  {
+   "log_id": "ed574888-446e-42ee-b869-6b6f45216636",
+   "vehicle_key": "uuid:000600000000383638373039510f00320021",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 664.45,
+   "full": {
+    "seconds": 46.6,
+    "n_seg": 71,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 23.3,
+    "n_seg": 35,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 23.3,
+    "n_seg": 35,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.5
+  },
+  {
+   "log_id": "ed574888-446e-42ee-b869-6b6f45216636",
+   "vehicle_key": "uuid:000600000000383638373039510f00320021",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 664.45,
+   "full": {
+    "seconds": 3.9,
+    "n_seg": 5,
+    "b": 7626.865372976199,
+    "tau_m": 0.4999999999999995,
+    "Td": 0.0016713605698130084,
+    "n_freq": 12,
+    "f_used": [
+     6.25,
+     17.2
+    ],
+    "mag_err_db": 4.465,
+    "phase_err_deg": 13.441,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 1.9,
+    "n_seg": 2,
+    "b": 8386.749417112946,
+    "tau_m": 0.49999999999999883,
+    "Td": 0.000949558299143971,
+    "n_freq": 17,
+    "f_used": [
+     4.69,
+     19.54
+    ],
+    "mag_err_db": 5.149,
+    "phase_err_deg": 13.659,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 1.9,
+    "n_seg": 2,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.5
+  },
+  {
+   "log_id": "ed574888-446e-42ee-b869-6b6f45216636",
+   "vehicle_key": "uuid:000600000000383638373039510f00320021",
+   "hw": "CUAV_X7PRO",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 664.45,
+   "full": {
+    "seconds": 46.6,
+    "n_seg": 71,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 2
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 23.3,
+    "n_seg": 35,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 23.3,
+    "n_seg": 35,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 4
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.5
+  },
+  {
+   "log_id": "b27d09e3-4542-4496-a18b-2c3c5317024e",
+   "vehicle_key": "uuid:000600000000383832353233510d002e0040",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "att_sp",
+   "f_ctrl": 800.0,
+   "full": {
+    "seconds": 45.4,
+    "n_seg": 68,
+    "b": 463.86815718436645,
+    "tau_m": 0.0320223332683657,
+    "Td": 0.0013195969698381303,
+    "n_freq": 11,
+    "f_used": [
+     0.78,
+     10.94
+    ],
+    "mag_err_db": 2.133,
+    "phase_err_deg": 2.64,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 22.7,
+    "n_seg": 33,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 22.7,
+    "n_seg": 34,
+    "b": 443.8690830131224,
+    "tau_m": 0.03036744513464483,
+    "Td": 0.00134176718296482,
+    "n_freq": 12,
+    "f_used": [
+     0.78,
+     15.63
+    ],
+    "mag_err_db": 1.845,
+    "phase_err_deg": 4.051,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 2.1
+  },
+  {
+   "log_id": "b27d09e3-4542-4496-a18b-2c3c5317024e",
+   "vehicle_key": "uuid:000600000000383832353233510d002e0040",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "att_sp",
+   "f_ctrl": 800.0,
+   "full": {
+    "seconds": 45.4,
+    "n_seg": 68,
+    "b": 442.7148150940481,
+    "tau_m": 0.03256774391054657,
+    "Td": 0.0010997212040515874,
+    "n_freq": 12,
+    "f_used": [
+     0.78,
+     10.94
+    ],
+    "mag_err_db": 1.273,
+    "phase_err_deg": 2.925,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 22.7,
+    "n_seg": 33,
+    "b": 446.65489434670013,
+    "tau_m": 0.03286942146649986,
+    "Td": 0.0007210658765023692,
+    "n_freq": 16,
+    "f_used": [
+     0.78,
+     14.06
+    ],
+    "mag_err_db": 1.126,
+    "phase_err_deg": 2.456,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 22.7,
+    "n_seg": 34,
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 2.1
+  },
+  {
+   "log_id": "51734e3d-ace6-4599-baaa-76d2562650c3",
+   "vehicle_key": "uuid:0006000000003930353331325103001a002a",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 0,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 10.3
+  },
+  {
+   "log_id": "51734e3d-ace6-4599-baaa-76d2562650c3",
+   "vehicle_key": "uuid:0006000000003930353331325103001a002a",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "fifo_is_control": true,
+   "usable_noise": true,
+   "axis": 1,
+   "error": "pieces: ValueError('missing topic: vehicle_torque_setpoint')",
+   "log_seconds": 10.3
+  },
+  {
+   "log_id": "5cecf734-ca23-44aa-83a1-4ed9f1374fd7",
+   "vehicle_key": "uuid:000600000000393439333033510a002c002c",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 800.64,
+   "full": {
+    "seconds": 89.0,
+    "n_seg": 87,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.28,
+     "rms_deg": 2.42,
+     "n": 11
+    },
+    "b": 156.36359848137766,
+    "tau_m": 0.03483139389428705,
+    "Td": 0.004421622141262008,
+    "n_freq": 11,
+    "f_used": [
+     2.34,
+     12.49
+    ],
+    "mag_err_db": 0.603,
+    "phase_err_deg": 4.596,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 44.5,
+    "n_seg": 41,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.21,
+     "rms_deg": 2.53,
+     "n": 14
+    },
+    "b": 166.39018962167333,
+    "tau_m": 0.03420137649203302,
+    "Td": 0.004031690649788355,
+    "n_freq": 14,
+    "f_used": [
+     2.34,
+     19.51
+    ],
+    "mag_err_db": 1.012,
+    "phase_err_deg": 8.014,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 44.5,
+    "n_seg": 45,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.29,
+     "rms_deg": 1.97,
+     "n": 10
+    },
+    "b": 156.85646098857842,
+    "tau_m": 0.03640906209383128,
+    "Td": 0.0035715095536233785,
+    "n_freq": 10,
+    "f_used": [
+     2.34,
+     14.05
+    ],
+    "mag_err_db": 0.771,
+    "phase_err_deg": 4.208,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 6.5
+  },
+  {
+   "log_id": "5cecf734-ca23-44aa-83a1-4ed9f1374fd7",
+   "vehicle_key": "uuid:000600000000393439333033510a002c002c",
+   "hw": "PX4_FMU_V6X",
+   "fifo_chip": "ICM45686",
+   "control_chip": null,
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 800.64,
+   "full": {
+    "seconds": 89.0,
+    "n_seg": 87,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.21,
+     "rms_deg": 2.01,
+     "n": 12
+    },
+    "b": 160.6077367508049,
+    "tau_m": 0.03490988307838612,
+    "Td": 0.0030937375289666912,
+    "n_freq": 12,
+    "f_used": [
+     2.34,
+     12.49
+    ],
+    "mag_err_db": 0.755,
+    "phase_err_deg": 3.425,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half1": {
+    "seconds": 44.5,
+    "n_seg": 41,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.24,
+     "rms_deg": 1.76,
+     "n": 17
+    },
+    "b": 156.62456697671647,
+    "tau_m": 0.03378799520726919,
+    "Td": 0.0032612407152092663,
+    "n_freq": 17,
+    "f_used": [
+     1.56,
+     19.51
+    ],
+    "mag_err_db": 1.087,
+    "phase_err_deg": 7.805,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "half2": {
+    "seconds": 44.5,
+    "n_seg": 45,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.24,
+     "rms_deg": 2.18,
+     "n": 12
+    },
+    "b": 161.0131025874932,
+    "tau_m": 0.034033457863123374,
+    "Td": 0.003392782239397402,
+    "n_freq": 12,
+    "f_used": [
+     2.34,
+     12.49
+    ],
+    "mag_err_db": 0.823,
+    "phase_err_deg": 3.032,
+    "at_bound": {
+     "tau_m": false,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 6.5
+  },
+  {
+   "log_id": "59af4b50-8791-44a5-81af-fe47c6f4b007",
+   "vehicle_key": "uuid:000600000000393439333033510d002f001d",
+   "hw": "ACOINFO_FMU_V6U",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42670P",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 0,
+   "cls": "both",
+   "f_ctrl": 800.64,
+   "full": {
+    "seconds": 111.7,
+    "n_seg": 169,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 55.8,
+    "n_seg": 84,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 55.8,
+    "n_seg": 85,
+    "agree": {
+     "ok": true,
+     "rms_db": 0.21,
+     "rms_deg": 1.7,
+     "n": 6
+    },
+    "b": 3361.8940154874927,
+    "tau_m": 0.4999999999999838,
+    "Td": 0.003989464703383466,
+    "n_freq": 6,
+    "f_used": [
+     4.68,
+     8.58
+    ],
+    "mag_err_db": 2.685,
+    "phase_err_deg": 2.998,
+    "at_bound": {
+     "tau_m": true,
+     "Td_zero": false,
+     "Td_max": false
+    }
+   },
+   "log_seconds": 6.0
+  },
+  {
+   "log_id": "59af4b50-8791-44a5-81af-fe47c6f4b007",
+   "vehicle_key": "uuid:000600000000393439333033510d002f001d",
+   "hw": "ACOINFO_FMU_V6U",
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42670P",
+   "fifo_is_control": false,
+   "usable_noise": true,
+   "axis": 1,
+   "cls": "both",
+   "f_ctrl": 800.64,
+   "full": {
+    "seconds": 111.7,
+    "n_seg": 169,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half1": {
+    "seconds": 55.8,
+    "n_seg": 84,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 0
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "half2": {
+    "seconds": 55.8,
+    "n_seg": 85,
+    "agree": {
+     "ok": false,
+     "rms_db": null,
+     "rms_deg": null,
+     "n": 2
+    },
+    "error": "too few frequencies with enough coherence (not enough excitation)"
+   },
+   "log_seconds": 6.0
+  }
+ ],
+ "seconds": 1125.9
+}

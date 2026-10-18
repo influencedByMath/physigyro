@@ -33,6 +33,9 @@ MUTANTS = [
 ]
 
 
+TIMEOUT_S = 180     # a mutant that makes a test loop forever (e.g. a removed loop guard) counts as caught
+
+
 def sha(path):
     return hashlib.sha256(open(path, "rb").read()).hexdigest()
 
@@ -47,9 +50,13 @@ def main(SRC=SRC, MUTANTS=MUTANTS, TEST="tests/test_priors.py"):
             if text.count(old) != 1:
                 raise RuntimeError(f"mutant {name!r}: pattern found {text.count(old)} times")
             open(SRC, "wb").write(text.replace(old, new).encode())
-            r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", TEST], cwd=ROOT,
-                               capture_output=True, text=True)
-            ok = r.returncode != 0
+            try:
+                r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", TEST], cwd=ROOT,
+                                   capture_output=True, text=True, timeout=TIMEOUT_S)
+                ok = r.returncode != 0
+            except subprocess.TimeoutExpired:      # the mutant made a test run forever: a detected change
+                ok = True
+                name += " (timeout)"
             caught += ok
             print(f"{'CAUGHT ' if ok else 'MISSED '} {name}")
     finally:

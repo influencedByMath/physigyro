@@ -78,6 +78,113 @@ def frf(data, nperseg=1024):
     return f, S_rw / S_ru, np.minimum(coh_w, coh_u)
 
 
+# ---------------------------------------------------------- logs with dropouts (Phase 4 evidence pack)
+
+ACRO = {10}                      # vehicle_status NAVIGATION_STATE_ACRO (PX4 v1.16 VehicleStatus.msg)
+ATTITUDE_FROM_STICKS = {0, 1, 15}  # MANUAL (multicopter Stabilized), ALTCTL, STAB
+
+
+def instrument_for_mode(nav_state):
+    """D-14: rate setpoint in Acro, attitude setpoint where roll/pitch attitude comes from the sticks
+    (Stabilized, Altitude); every other mode (Position, auto, offboard) needs both instruments to agree."""
+    nav_state = int(nav_state)
+    return "rate_sp" if nav_state in ACRO else "att_sp" if nav_state in ATTITUDE_FROM_STICKS else "both"
+
+
+def uniform_pieces(t, Tc, max_hold=3):
+    """Split increasing sample times ``t`` into pieces on a uniform grid; returns [(t_grid, idx), ...].
+
+    Up to ``max_hold`` missing samples in a row (skipped controller publications: the motor command holds its
+    value) are filled by holding the previous sample; a longer gap (logger dropout) starts a new piece. Each sample
+    gets an integer slot from its own rounded interval, so timestamp jitter and a slow clock offset cannot shift
+    the grid against the samples; t_grid is the least-squares line through (slot, t). idx[k] is the last sample at
+    or before slot k (zero-order hold)."""
+    t = np.asarray(t, dtype=float)
+    steps = np.rint(np.diff(t) / Tc).astype(int)
+    breaks = np.where((steps > max_hold + 1) | (steps < 1))[0]
+    out = []
+    for i0, i1 in zip(np.r_[0, breaks + 1], np.r_[breaks + 1, len(t)]):
+        if i1 - i0 < 2:
+            continue
+        slot = np.r_[0, np.cumsum(steps[i0:i1 - 1])]
+        a, b = np.polyfit(slot, t[i0:i1], 1)
+        k = np.arange(slot[-1] + 1)
+        idx = i0 + np.searchsorted(slot, k, side="right") - 1
+        out.append((b + a * k, idx))
+    return out
+
+
+def body_rate_on_grid(gs, axis, tg, f_cut=100.0, edge_s=0.05):
+    """Raw FIFO body rate of ``axis`` at times ``tg``: zero-phase low-pass (4th-order Butterworth, ``f_cut``) inside
+    each gap-free segment, then linear interpolation (THESIS 7.1.1 Tier 2 step 2). The low-pass removes vibration
+    that would alias into the fit band at the controller rate; being zero-phase it adds no delay. NaN where tg is
+    outside a segment or within ``edge_s`` of its ends (filter edge effects)."""
+    from scipy.signal import butter, sosfiltfilt
+    tg = np.asarray(tg, dtype=float)
+    out = np.full(len(tg), np.nan)
+    if len(tg) == 0:
+        return out
+    seg = np.asarray(gs.segments, dtype=int).reshape(-1, 2)
+    t_first, t_last = gs.t[seg[:, 0]], gs.t[seg[:, 1] - 1]
+    near = np.flatnonzero((t_last >= tg[0]) & (t_first <= tg[-1]))     # only segments that overlap tg
+    for a, b in seg[near]:
+        ts = gs.t[a:b]
+        if len(ts) < 2 or ts[-1] - ts[0] < 2 * edge_s:
+            continue
+        m = (tg >= ts[0] + edge_s) & (tg <= ts[-1] - edge_s)
+        if not m.any():
+            continue
+        fs = (len(ts) - 1) / (ts[-1] - ts[0])
+        x = gs.gyro[a:b, axis].astype(float)
+        if f_cut < 0.45 * fs and len(ts) > 30:
+            x = sosfiltfilt(butter(4, f_cut, fs=fs, output="sos"), x)
+        out[m] = np.interp(tg[m], ts, x)
+    return out
+
+
+def piece_spectra(pieces, fs, nperseg=1024):
+    """Welch auto/cross spectra of (r, u, w) accumulated over gap-free pieces (dicts of equal-length arrays).
+
+    Each piece uses scipy.signal.csd (Hann, 50 % overlap); pieces shorter than ``nperseg`` are skipped; the
+    pieces are averaged with weights equal to their number of Welch segments."""
+    acc, n_tot, f = {}, 0, None
+    for p in pieces:
+        n = len(p["r"])
+        if n < nperseg:
+            continue
+        n_seg = 1 + (n - nperseg) // (nperseg // 2)
+        for key, (x, y) in dict(Srw=("r", "w"), Sru=("r", "u"), Srr=("r", "r"), Sww=("w", "w"), Suu=("u", "u")).items():
+            f, S = csd(p[x], p[y], fs=fs, nperseg=nperseg)
+            acc[key] = acc.get(key, 0.0) + n_seg * S
+        n_tot += n_seg
+    if n_tot == 0:
+        raise ValueError("no gap-free piece as long as one Welch segment")
+    out = {k: v / n_tot for k, v in acc.items()}
+    out.update(f=f, n_seg=n_tot)
+    return out
+
+
+def frf_from_spectra(S):
+    """G = S_rw / S_ru and the smaller of the two coherences (as ``frf``)."""
+    coh_w = np.abs(S["Srw"]) ** 2 / (S["Srr"].real * S["Sww"].real)
+    coh_u = np.abs(S["Sru"]) ** 2 / (S["Srr"].real * S["Suu"].real)
+    return S["f"], S["Srw"] / S["Sru"], np.minimum(coh_w, coh_u)
+
+
+def instruments_agree(f, G1, coh1, G2, coh2, f_band=(0.5, 20.0), min_coh=0.5, max_db=1.0, max_deg=5.0, min_n=6):
+    """D-14 check for Position/auto modes: the FRFs from the two instruments agree within ``max_db`` / ``max_deg``
+    (RMS over the band where both coherences are high; candidate 1 dB / 5 deg). Returns (ok, rms_db, rms_deg, n)."""
+    f = np.asarray(f)
+    m = (f >= f_band[0]) & (f <= f_band[1]) & (coh1 >= min_coh) & (coh2 >= min_coh)
+    n = int(m.sum())
+    if n < min_n:
+        return False, float("nan"), float("nan"), n
+    ratio = G2[m] / G1[m]
+    db = float(np.sqrt(np.mean((20 * np.log10(np.abs(ratio))) ** 2)))
+    deg = float(np.sqrt(np.mean(np.degrees(np.angle(ratio)) ** 2)))
+    return bool(db <= max_db and deg <= max_deg), db, deg, n
+
+
 def plant_model(f, b, tau_m, Td, Tc):
     s = 2j * np.pi * f
     return b / s / (tau_m * s + 1) * np.exp(-s * Td) * (1 - np.exp(-s * Tc)) / (s * Tc)
@@ -86,11 +193,15 @@ def plant_model(f, b, tau_m, Td, Tc):
 def identify(data, f_band=(0.5, 20.0), min_coh=0.5, nperseg=1024):
     """Fit (b, tau_m, Td) to the instrument-variable FRF. Returns the fit and its quality."""
     f, G, coh = frf(data, nperseg)
+    return fit_frf(f, G, coh, data["Tc"], f_band=f_band, min_coh=min_coh)
+
+
+def fit_frf(f, G, coh, Tc, f_band=(0.5, 20.0), min_coh=0.5):
+    """Fit (b, tau_m, Td) of plant_model to an FRF where the coherence is high (at least 6 frequencies)."""
     sel = (f >= f_band[0]) & (f <= f_band[1]) & (coh >= min_coh)
     if sel.sum() < 6:
         raise ValueError("too few frequencies with enough coherence (not enough excitation)")
     fsel, Gsel, w = f[sel], G[sel], np.sqrt(coh[sel])
-    Tc = data["Tc"]
 
     def resid(p):
         e = np.log(plant_model(fsel, np.exp(p[0]), np.exp(p[1]), p[2], Tc)) - np.log(Gsel)

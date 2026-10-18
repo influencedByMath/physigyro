@@ -143,6 +143,8 @@ def main():
                           "are not resolved")
     out = dict(protocols=protocols, rates=summarize_rates(rows), gains=summarize_gains(rows), gains_usable=summarize_gains([r for r in rows if r["usable"]]),
                hover_motor=summarize_motor(windows), chip_delay=summarize_chips(table),
+               rate_rows=[{k: r[k] for k in ("log_id", "chip", "hw", "fs_nominal", "fs_measured", "dropout", "ratemax",
+                                             "pub_rate", "full_rate", "fifo_is_control")} for r in rows],
                settings=dict(chip_band_hz=CHIP_BAND, rms_tol=RMS_TOL, bic_tol=BIC_TOL, px4_v116_rate_gains=PX4_V116_RATE_GAINS))
     with open(os.path.join(HERE, "priors_from_logs.json"), "w") as fh:
         json.dump(out, fh, indent=1)
