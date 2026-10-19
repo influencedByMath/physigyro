@@ -63,6 +63,7 @@ REPORT = [
     ("flown 10 Hz count from the unfiltered crossover", 'above_10_flown=sum((r["reference"].get("fc") or 0) > 10.0 for r in rows),',
      "above_10_flown=sum(fc_of(r) > 10.0 for r in rows),"),
     ("unsafe = nominal failures only", '    unsafe = st["ref_nominal_fail"] + st["ref_worst_only_fail"]', '    unsafe = st["ref_nominal_fail"]'),
+    ("front staircase without the running maximum", "        if pm > best:", "        if True:"),
 ]
 
 if __name__ == "__main__":

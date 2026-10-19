@@ -53,8 +53,9 @@ def population_row(rows):
     nom_fail = sum(not f["nominal_ok"] for f in fl)
     worst_only = sum(f["nominal_ok"] and not f["worst_ok"] for f in fl)
     fcs = [fc_of(r) for r in rows]
+    safe = [x for x, f in zip(g, fl) if x and f["nominal_ok"] and f["worst_ok"]]
     return dict(n=len(rows), A_feasible=sum(x is not None for x in g),
-                dPM=_q([x[0] for x in g if x]), dtau_F=_q([x[1] for x in g if x]), dtau_D=_q([x[2] for x in g if x]),
+                dPM=_q([x[0] for x in g if x]), dPM_safe=_q([x[0] for x in safe]), dtau_F=_q([x[1] for x in g if x]), dtau_D=_q([x[2] for x in g if x]),
                 N_B=_q([r["B"]["metrics"]["N_rel"] for r in rows if r["B"]["feasible"]]),
                 B_feasible=sum(r["B"]["feasible"] for r in rows),
                 wc_ms_A=_q([r["A"]["robust"]["worst_corners"]["Ms"] for r in rows if r["A"]["feasible"]]),
@@ -106,8 +107,9 @@ def _f(q, scale=1.0, nd=1):
 def table2_md(pops):
     """Table 2: one row per population (and scenario)."""
     head = ("| Population | n | Ref. unsafe: nominal / worst case only (of nominal passes) | Mode A feasible | "
-            "ΔPM [deg] median [p10, p90] | Δτ_F [ms] | Δτ_D [ms] | Mode B N_rel | Worst-corner M_s of the A optimum, "
-            "max | f_c > 10 Hz unfiltered (flown) | Outside 3-10 Hz |\n|---|---|---|---|---|---|---|---|---|---|---|\n")
+            "ΔPM [deg] median [p10, p90] | ΔPM, safe references only | Δτ_F [ms] | Δτ_D [ms] | Mode B N_rel | "
+            "Worst-corner M_s of the A optimum, max | f_c > 10 Hz unfiltered (flown) | Outside 3-10 Hz |\n"
+            "|---|---|---|---|---|---|---|---|---|---|---|---|\n")
     lines = []
     for name, rows in pops.items():
         groups = [(name, rows)]
@@ -119,7 +121,8 @@ def table2_md(pops):
             st = population_row(rs)
             wc = st["wc_ms_A"]
             lines.append(f"| {label} | {st['n']} | {st['ref_nominal_fail']} / {st['ref_worst_only_fail']} "
-                         f"(of {st['n_nominal_pass']}) | {st['A_feasible']} | {_f(st['dPM'])} | {_f(st['dtau_F'], 1e3, 2)} | "
+                         f"(of {st['n_nominal_pass']}) | {st['A_feasible']} | {_f(st['dPM'])} | {_f(st['dPM_safe'])} | "
+                         f"{_f(st['dtau_F'], 1e3, 2)} | "
                          f"{_f(st['dtau_D'], 1e3, 2)} | {_f(st['N_B'], 1.0, 3)} | "
                          f"{'-' if wc['n'] == 0 else format(max(r['A']['robust']['worst_corners']['Ms'] for r in rs if r['A']['feasible']), '.2f')} | "
                          f"{st['above_10_unfiltered']} ({st['above_10_flown']}) | {st['outside_3_10']} |")
@@ -205,6 +208,24 @@ def fig3(pops, out_dir):
     _save(fig, out_dir, "fig3_pm_gain")
 
 
+def front_staircase(r):
+    """The front as the staircase of the refined solutions (Mode C at each limit, A, B): sorted by noise, running
+    maximum of PM, a step at each solution's own noise, held to the largest noise limit."""
+    pts = [(p["N_rel"], p["PM"]) for p in r["front"] if p["PM"] is not None and p.get("N_rel") is not None]
+    pts += [(r[m]["metrics"]["N_rel"], r[m]["metrics"]["PM"]) for m in ("A", "B") if r[m]["feasible"]]
+    if not pts:
+        return [], []
+    x, y, best = [], [], -np.inf
+    for n, pm in sorted(pts):
+        if pm > best:
+            best = pm
+            x.append(n)
+            y.append(pm)
+    x.append(max(p["n_max"] for p in r["front"]))
+    y.append(y[-1])
+    return x, y
+
+
 def fig4(pareto, out_dir):
     """Mode C fronts (best PM for each noise limit, worst-case limits met) of the 4 Fig. 4 drones, with the reference
     (and default) setting and the Mode A / B optima."""
@@ -214,9 +235,8 @@ def fig4(pareto, out_dir):
     fig, axes = plt.subplots(2, 2, figsize=(10.0, 7.0), squeeze=False)
     for ax, r in zip(axes.ravel(), pareto):
         _style(ax)
-        fr = [(p["n_max"], p["PM"]) for p in r["front"] if p["PM"] is not None]
-        if fr:
-            x, y = zip(*fr)
+        x, y = front_staircase(r)
+        if x:
             ax.step(x, y, where="post", color=BLUE, linewidth=2.0, label="best PM at the noise limit (Mode C)")
         ref = r["reference"]
         if r.get("default"):                       # drawn first and hollow: it can coincide with the flown setting

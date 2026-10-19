@@ -58,3 +58,20 @@ def test_tables_and_figures_are_written(tmp_path):
     rp.fig3(pops, str(tmp_path))
     for ext in ("png", "pdf"):
         assert (tmp_path / f"fig3_pm_gain.{ext}").stat().st_size > 5000
+
+
+def test_front_staircase_passes_through_the_optima_and_never_falls():
+    r = dict(front=[dict(n_max=0.5, PM=None, N_rel=None), dict(n_max=0.97, PM=60.0, N_rel=0.9),
+                    dict(n_max=1.2, PM=62.0, N_rel=1.1), dict(n_max=2.0, PM=61.0, N_rel=1.5)],
+             A=dict(feasible=True, metrics=dict(N_rel=1.0, PM=61.0)), B=dict(feasible=True, metrics=dict(N_rel=0.6, PM=55.0)))
+    x, y = rp.front_staircase(r)
+    assert x == [0.6, 0.9, 1.0, 1.1, 2.0] and y == [55.0, 60.0, 61.0, 62.0, 62.0]
+
+
+def test_pm_gain_of_safe_references_is_reported_apart_from_the_repairs():
+    """For a flagged reference the Mode A gain measures the repair of an unsafe setting, not wasted margin."""
+    rows = [res(0, dpm=2.0), res(1, dpm=4.0), res(2, dpm=27.0, nom=False), res(3, dpm=20.0, worst=False)]
+    st = rp.population_row(rows)
+    assert st["dPM"]["median"] == pytest.approx(12.0)
+    assert st["dPM_safe"]["median"] == pytest.approx(3.0) and st["dPM_safe"]["n"] == 2
+    assert "ΔPM, safe references only" in rp.table2_md({"x": rows})

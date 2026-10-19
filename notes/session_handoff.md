@@ -1,11 +1,11 @@
 # Session handoff (read at the start of a new session)
 
-Last update: 2026-10-18, Phase 4: Tasks 1-2 done; evidence pack and follow-up done; decisions D-28 to D-36 recorded; the Task 3 plan waits for the author. Written for: Claude starting a new session, and the author.
+Last update: 2026-10-19, Phase 4: Tasks 1-3 done (Task 3 = RQ1, D-37); decisions D-28 to D-37 recorded; STOP after Task 3 for the author. Written for: Claude starting a new session, and the author.
 
 ## Where things stand
 
 - **Branch `phase4`** (created from the tip of `phase3`): everything is committed locally. **`phase3` and `phase4` are NOT merged** into `main`; the author decides the merge. **No GitHub push** until the author asks.
-- **Tests:** `.venv/Scripts/python -m pytest -q` (343 pass). Run the full suite before every commit.
+- **Tests:** `.venv/Scripts/python -m pytest -q` (389 pass). Run the full suite before every commit.
 - **Decided:**
   - **D-28** Tier 1 priors (evidence `notes/tier1_priors.md`); the ranges of f_c, τ_m and T_d are revised by D-36;
   - **D-29** Fig. 1 with two panels: (a, main) PX4 default with the ESC bank off, (b) bank on. Caption computed (`experiments/phase4/figures/fig1_caption.md`); crossover band 3-10 Hz since D-36;
@@ -21,8 +21,9 @@ Last update: 2026-10-18, Phase 4: Tasks 1-2 done; evidence pack and follow-up do
     - (6) Task 3 real-gain cases need an identification and a steady window (fit half: 26 cases, 15 vehicles).
 - **THESIS Section 11, item 10:** the reviewer's 10 declined points, the Scenario B limitation and the training crossover range, one sentence each.
 - **Evidence:** `notes/evidence_pack_A2_A4.md`, `notes/followup_A4_F1_F4.md` (tables `experiments/phase4/evidence_tables.md`, `followup_tables.md`).
-- **Next: the author reviews `notes/task3_plan.md`** (questions T3-1 to T3-6; planning estimates from scratch scripts). **Task 3 is NOT started; do not start it before the author approves the plan.**
-- **Before Task 4:** A5 (training-set size, Scenario B share). The author decides it now that D-36 is recorded; input: the optimizer run time (Task 3 plan, Section 7).
+- **D-37** Task 3 design (T3-1..T3-6 option (a)): optimizer limits = nominal + D-36 worst case on the 8 corners; both halves (test last); 1,000 synthetic + 950 real-noise cases; fast coarse grid + full-grid refinement; 10 Hz by the unfiltered crossover; flagged synthetic drones kept; "reference unsafe" always with both numbers.
+- **Task 3 done (2026-10-19): `notes/task3_results.md`** (Table 2, findings, A5 recommendation, rulings). Tables `experiments/phase4/rq1_tables.md`; figures `figures/fig3_pm_gain`, `fig4_pareto`. Code: `src/tier3.py`, `optimizer.optimize_checked`, `experiments/phase4/rq1_cases.py` (S2), `rq1_run.py` (S3; resumable parts), `rq1_report.py` (S4). **Next: the author reviews Task 3 and decides A5** (recommendation 10,000 cases) and the 4 test cases below 3 Hz. Task 4 is NOT started.
+- **Before Task 4:** A5 (training-set size, Scenario B share). Measured: 3.4 s per case on 6 workers with the D-37 optimizer (Task 3 results, Section 8).
 - **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first. Deferred minor: ESC RPM averaged from first take-off to last landing in multi-flight logs.
 - Plan ledger (git-ignored): `.superpowers/sdd/phase4_plan/progress.md` (rulings, process notes).
 
@@ -39,7 +40,7 @@ Last update: 2026-10-18, Phase 4: Tasks 1-2 done; evidence pack and follow-up do
 
 - **Decisions:**
   - No serious decision without evidence and the author's permission; ask with AskUserQuestion and a recommendation.
-  - Every decision goes into THESIS Section 2 (next ID: **D-37**) **and** `notes/decision_log.md`.
+  - Every decision goes into THESIS Section 2 (next ID: **D-38**) **and** `notes/decision_log.md`.
 - **Stopping:** stop and report immediately on any new landmine (unexpected data or code problem).
 - **Testing:**
   - Write tests first and see them fail.
@@ -63,7 +64,7 @@ Last update: 2026-10-18, Phase 4: Tasks 1-2 done; evidence pack and follow-up do
 - **Controller rate:**
   - Use the measured rate (median interval of `vehicle_angular_velocity`, high-rate or sysid logger profile only, `priors.full_rate_logged`).
   - 42 of 102 fit logs differ from `IMU_GYRO_RATEMAX` by more than 5 %.
-- **Synthetic drones (D-36):** f_c 3-10 Hz, τ_m 15-60 ms, T_d 0.3-8 ms (log-uniform; T_d net of the chip filter); PM window 60-95°, integral corner 0.03, r in [0.5, 3]; (FIFO rate, controller rate) pairs from the 37 same-IMU full-rate fit logs (`priors_from_logs.json` `rate_rows`). Chip delays (D-33, fit-error rule, `priors_from_logs.json` `chip_delay[chip]['rms']`): ICM-42688-P 0.91-1.37 ms, ICM-42686-P 2.00-3.02 ms, ICM-45686 0.25-0.89 ms, IIM-42652 1.14-1.16 ms; the chip comes from the generator's source vehicle. **The code still holds the D-28 values and the old design** (`robust_limits.F_C/TAU/TD`, `synthetic_drones` defaults; they reproduce the evidence pack): Task 3 step S1 implements D-36 in new code (`f_options.synthetic_population` already takes every D-36 parameter).
+- **Synthetic drones (D-36; code `src/tier3.py`, the Task 3 sampler):** f_c 3-10 Hz, τ_m 15-60 ms, T_d 0.3-8 ms (log-uniform; T_d net of the chip filter); PM window 60-95°, integral corner 0.03, r in [0.5, 3]; (FIFO rate, controller rate) pairs from the 37 same-IMU full-rate fit logs (`priors_from_logs.json` `rate_rows`). Chip delays (D-33, fit-error rule, `priors_from_logs.json` `chip_delay[chip]['rms']`): ICM-42688-P 0.91-1.37 ms, ICM-42686-P 2.00-3.02 ms, ICM-45686 0.25-0.89 ms, IIM-42652 1.14-1.16 ms; the chip comes from the generator's source vehicle. D-36 lives in `src/tier3.py` (gains designed on the plant including the D-33 chip lower bound); `robust_limits` / `f_options` keep the D-28 defaults only to reproduce the evidence pack.
 - **Hover f_m of synthetic drones:** the generator's source vehicle RPM/60 times the sampled frequency scale (`noise_generator.sample` meta `source`, `scale`).
 - **Real-gain cases:**
   - plants from `sysid.piece_spectra` + `fit_frf` with the D-14 instrument rule, up to 8 held skipped publications, 1.28 s segments (the D-14 6-frequency rule depends on this resolution) and the gates of `plant_variation.accept`, **frozen in D-36** (never change them after seeing test-half results);
@@ -78,9 +79,9 @@ Last update: 2026-10-18, Phase 4: Tasks 1-2 done; evidence pack and follow-up do
   - never both (Review Focus 2).
 - **Phase delay with notches:** valid only below the first notch; above it, sum the factor phases (`fig1_bode.factors`).
 - **Limits (D-30..D-32):** nominal PM ≥ 30°, $M_s$ ≤ 2.0, GM ≥ 6 dB; worst case over the set by $M_{s,wc}$ with its implied PM / GM (`a4_followup.separate_limits`, `robust.passes(..., wc=robust_limits.wc_limits(Ms_wc))`).
-- **Noise band (D-36):** f_lo = max(5 f_c, 20 Hz) to 780 Hz. **The code still uses 5 f_c** (`LoopCase`): change it in Task 3 step S1, test-first.
-- **Optimizer:** `optimizer.LIMITS` holds the nominal limits only (values = D-30/D-31; the comment still says TBD); robust limits in the optimizer are the author's question T3-1. Run time (risk R4): a two-peak Scenario A case (57 notch options) takes about 80 s on one core with the full grid, about 12 s with the feasibility fast grid (500 points, 1 Hz, 24 x 18); the fast optimum broke the noise limit on the full grid in 1 of 4 planning cases, so refine and report on the full grid.
-- **Real-gain cases need both an identification and a library spectrum (D-36 (6)):** b79d2e3d has no steady window (Q10). Fit half: 26 cases from 15 vehicles; 9 flagged (5 nominal, 4 worst case only); 2 above 10 Hz (unfiltered); 4 with f_lo clamped at 20 Hz; Scenario B: b27d09e3, 5cecf734.
+- **Noise band (D-36):** f_lo = max(5 f_c, 20 Hz) to 780 Hz (`LoopCase`, `loop_model.F_LO_MIN`).
+- **Optimizer (D-37):** `optimizer.optimize_checked(case, base, options_fast, mode, robust=Robust(...), coarse=fast_case, options_full=..., reference=...)`: coarse search on `FAST`, candidates checked and refined on the full case incl. the 8 corners; a feasible reference bounds the optimum; `brute_force` check; `LIMITS` = D-30/D-31. Run time (risk R4): a two-peak Scenario A case (57 notch options) takes about 80 s on one core with the full grid, about 12 s with the feasibility fast grid (500 points, 1 Hz, 24 x 18); the fast optimum broke the noise limit on the full grid in 1 of 4 planning cases, so refine and report on the full grid.
+- **Real-gain cases need both an identification and a library spectrum (D-36 (6); built by `rq1_cases.py`, `fit_`/`test_rq1_cases.json`):** b79d2e3d has no steady window (Q10). Fit half: 26 cases from 15 vehicles; 9 flagged (5 nominal, 4 worst case only); 2 above 10 Hz (unfiltered); 4 with f_lo clamped at 20 Hz; Scenario B: b27d09e3, 5cecf734.
 - **Scenario B:** only 5 generator entries carry motor harmonics (51603946 has valid RPM in 1 of 3 windows).
 - **Fig. 1:** `fig1_bode.make_figure` writes the two-panel figure and the caption (crossover band 3-10 Hz, noise band from max(5 f_c, 20 Hz)); the script takes an optional output folder and prints UTF-8. At 2 kHz the curves change by up to 0.16 ms (panel a) / 0.19 ms (panel b) in the crossover band.
 - **Phase 3 limitations still apply** (THESIS 7.5.1).

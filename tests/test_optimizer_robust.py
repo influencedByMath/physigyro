@@ -149,3 +149,15 @@ def test_a_feasible_reference_bounds_the_optimum(mode):
     else:
         assert r["metrics"]["N_rel"] <= 1.0 + 1e-9
     assert passes_all(full, r["settings"], spec)[0]
+
+
+def test_refinement_itself_keeps_the_worst_case_limits():
+    """refine() with a Robust spec must stay inside the worst-case limits on its own (the check after it only
+    protects safety, not optimality): in the fixture the unconstrained mode-B refinement runs to worst-corner Ms 3.47."""
+    full, fast, spec = cases()
+    r = opt.optimize(full, PX4_V116_MC_DEFAULT, OPTIONS, "B", robust=spec, coarse=fast, n_g=16, n_d=12)
+    fg0, fd0 = r["grid_point"]
+    fg, fd, m, _ = opt.refine(full, PX4_V116_MC_DEFAULT, r["option"], fg0, fd0, "B", pm_ref=full.ref_metrics["PM"],
+                              robust=spec)
+    s = replace(PX4_V116_MC_DEFAULT, **r["option"].fields, f_gyro=fg, f_dterm=fd)
+    assert passes_all(full, s, spec)[0]

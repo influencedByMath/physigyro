@@ -127,6 +127,15 @@ All rulings in this table up to the evidence pack were accepted by the author on
 | (D-36 round) E11 validates over the same band as the noise metric: above max(5 f_c, 20 Hz) | E11 validates the metric; below 20 Hz the gyro also holds commanded motion | THESIS 6, 7.4.5, 8 |
 | (D-36 round) Stale TBDs updated where a decision exists: THESIS 7.2 (Ms_max, f_max), 7.3 (PM floor), Section 6 (robust stability), 7.1.1 Tier 2 step 6 (frozen gates), Tier 3 step 1 (no sampling from Tier 2 distributions) | They contradicted D-23, D-30, D-31, D-34, D-36 | THESIS |
 | (D-36 round) The open question whether the optimizer's limits S include the worst-case limits is left to the author with the Task 3 plan | It decides what "optimal" means in RQ1 and costs run time | `notes/task3_plan.md` |
+| (Task 3) Synthetic gains designed on the nominal plant including the D-33 chip lower bound (the planning run designed without it) | D-33 "nominal Td + lower bound"; Tier 3 step 2a designs on the drone's plant; the real PM window was measured on plants containing the chip filter | `src/tier3.py` |
+| (Task 3) Real-gain cases: identification and steady windows from the same log; test identification on `test_logs.json` records only (as the fit half) | Frozen pipeline, the same rule on both halves | `experiments/phase4/rq1_cases.py` |
+| (Task 3) Real-gain spectrum = power mean of the case's windows on its axis; real-noise spectrum = vehicle spectrum (D-24 (2)) with the vehicle's chip for D-33; D-13 tracking spectra for every RPM case, checked against the library | Consistency with the library and D-13 | `rq1_cases.py`, `rq1_run.py` |
+| (Task 3) Real Scenario B notch positions at the window-mean RPM | Consistent with the window spectra (b27d09e3 roll worst-corner Ms 3.04 instead of 3.03) | `rq1_cases.build_cases` |
+| (Task 3) Scenario A notch centres = the two most prominent peaks above the robust floor (Phase 3 rule) | Same rule as D-26 | `noise_model.detect_peaks` |
+| (Task 3) Lazy worst-case check: coarse candidates in objective order must pass every limit on the full grid before the refinement; a feasible reference is always a candidate and a refinement start | Safe by construction; the first run without the reference gave optima worse than a feasible reference (22 + 38 of 956 synthetic cases), so it was fixed test-first and every part rerun | `optimizer.optimize_checked` |
+| (Task 3) Mode C fronts only for the 4 Fig. 4 drones, as the staircase of refined solutions | Table 2 needs Modes A and B; the grid front left refined optima off the line | `rq1_run.solve`, `rq1_report.front_staircase` |
+| (Task 3) The 4 test cases below 3 Hz stay in every result; Table 2 counts "outside 3-10 Hz" | No rule excludes them; nothing changed after the test half was seen; question to the author | `notes/task3_results.md` Section 4 |
+| (Task 3) Table 2 adds "ΔPM, safe references only" | For a flagged reference the Mode A gain is a repair, not wasted margin (test half: +2.1 deg vs +4.5 deg) | `rq1_report.population_row` |
 
 ## D. Corrections of earlier claims (state honestly; useful for Limitations)
 
@@ -156,7 +165,7 @@ All rulings in this table up to the evidence pack were accepted by the author on
 - ~~A4.~~ Decided as D-32, D-33 and D-36 (±20 %, 1 controller sample, Ms_wc 3.0; D-14 identification settings kept; flagged drones kept and reported).
 - A5: training-set size and Scenario B share (preliminary estimate in `notes/followup_A4_F1_F4.md` Section 8: 5 generator RPM sources, natural share 10 %; about 5 test vehicles with RPM). **Author 2026-10-18: deferred until F1-F4 are recorded (now D-36); the author decides the final size next.** Input: the optimizer run time (`notes/task3_plan.md`, risk R4).
 - ~~F1-F4.~~ Decided as D-36 (3)-(5) (the recommendations, with f_c 3-10 Hz).
-- ~~Task 3 plan.~~ **Approved 2026-10-19 as D-37** (options (a) of T3-1 to T3-6); Task 3 in progress. Was: (questions T3-1 to T3-6: optimizer limits, which half, sample size, optimizer grid, the 10 Hz definition, synthetic drones that fail only the worst case at the defaults).
+- ~~Task 3 plan.~~ **Approved 2026-10-19 as D-37** (options (a) of T3-1 to T3-6); **Task 3 done 2026-10-19: `notes/task3_results.md`.** Open for the author: A5 (preliminary recommendation 10,000 cases with the D-37 optimizer, about 9.5 h on 6 workers; Section 8 there); the 4 test cases below 3 Hz (report separately?); the test half's 9 of 28 nominally unsafe flown settings (F5). Was: (questions T3-1 to T3-6: optimizer limits, which half, sample size, optimizer grid, the 10 Hz definition, synthetic drones that fail only the worst case at the defaults).
 - Phase 5: fallback for flagged real drones (the repair line of THESIS 7.8 ends at an unsafe reference; a known-stable setting exists for all 10 flagged fit-half settings).
 - VERIFY: the ICM-42688-P on-chip filter path (datasheet vs PX4 driver; 585 Hz AAF cannot explain the measured roll-off).
 
