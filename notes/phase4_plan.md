@@ -27,7 +27,7 @@
 | A2 | PM floor $PM_{min}$ | 30° | Before Task 3 |
 | A3 | $M_{s,max}$ | 2.0 (6 dB) | Before Task 3 |
 | A4 | Uncertainty set: $\delta_b$, $\delta_\tau$, $\Delta_d$, plus the ICM chip-delay range (D-25) | 20 %, 20 %, 1 control sample; chip delay from Task 1 step 4 | Before Task 3 |
-| A5 | Training-set size and the share of Scenario B (RPM) cases | 1,000 debug, then 10,000-30,000 | Before Task 4 |
+| A5 | Training-set size and the share of Scenario B (RPM) cases | 1,000 debug, then 10,000-30,000 | **Decided 2026-10-19 as D-38: 10,000 cases** |
 
 ---
 
@@ -91,6 +91,8 @@ Steps (test first):
 - **Limitations carried along:** the ICM chip delay range (D-25) and the Phase 3 generator limitations (THESIS 7.5.1).
 
 ## Task 4: `dataset_gen.py` (training set). Needs A5
+
+> **2026-10-19:** A5 decided (D-38, 10,000 cases). Detailed plan: `notes/task4_plan.md` (waits for the author; Task 4 not started).
 
 - **Pipeline:** Tier 3 drones (7.1.1) + generator spectra → optimizer labels for modes A and B.
 - **Run:** 1,000 cases to debug, then the final size.

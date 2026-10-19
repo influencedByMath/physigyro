@@ -12,7 +12,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 
 ---
 
-## A. Decisions D-01 to D-37
+## A. Decisions D-01 to D-39
 
 | ID | Date | Decision (short) | Evidence or reason | Status | Paper section |
 |---|---|---|---|---|---|
@@ -53,6 +53,8 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | D-35 | 10-18 | The 31 fit logs with logger dropouts are not identified (cut list) | Author; new path with its own risks | active | Limitations |
 | D-36 | 10-18 | **A4 and F1-F4 final:** (1) ±20 % on b and τ_m, delay step 1 controller sample, Ms_wc 3.0 (nominal limits of D-30/D-31 unchanged); chip delay by D-33, rule and treatment; D-14 identification settings kept, gates frozen; (2) flagged real drones kept in the test set and reported; (3) τ_m 15-60 ms, T_d 0.3-8 ms (net of the chip filter), identified plants only as a sensitivity check; (4) PM window 60-95°, integral corner 0.03; (5) f_c 3-10 Hz, real drones above 10 Hz reported separately, f_lo = max(5 f_c, 20 Hz); (6) Task 3 real-gain cases need an identification and a steady window | `notes/followup_A4_F1_F4.md`: the 5 worst-case failures are nominally marginal (Ms 1.81-1.94) and fail by the delay step, not extrapolation; band extension loses 1-8 other identifications; Ms_wc 3 midway between "about 2" and "about 4" (convention; Skogestad and Postlethwaite 2005): keeps 78 % of real and 97 % of synthetic nominal passes; the prior covers 19 of 28 identified plants (D-28: 11); the design keeps 76 % instead of 50 % at the defaults; no synthetic drone with f_c ≥ 10 Hz safe at the defaults in 13 populations; D-23 Q5 band; fit half: 26 of 28 identified cases qualify for Task 3 | active | Methods 7.1.1, 7.2, 7.8; Results (E3); Limitations |
 | D-37 | 10-19 | **Task 3 design** (plan approved with options (a)): (1) optimizer limits = nominal limits on the nominal plant and D-36 worst-case limits on the 8 corners; (2) real-gain cases on both halves, separately, test half last on frozen code; (3) 1,000 synthetic drones + 950 real-noise cases, results per crossover band; (4) fast coarse grid, full-grid refinement and reporting, brute-force check on 20 cases; (5) "above 10 Hz" by the unfiltered crossover (flown count secondary); (6) synthetic drones failing only the worst case at the defaults kept and flagged; (7) "reference unsafe" always with both numbers (22 % = 5 of 23 nominal passes fail the worst case; 36 % = 10 of 28 flown settings; Task 3 set 35 % = 9 of 26, 19 % = 4 of 21) | `notes/task3_plan.md`: lazy worst-case check about 0.02 s per point; fast grid 6.7× faster but broke the noise limit on the full grid in 1 of 4 cases (N 1.023) | active | Methods 7.3, 7.8; Results (E3) |
+| D-38 | 10-19 | **A5, training set (Task 4):** (1) 10,000 cases labelled with exactly the D-37 optimizer (Modes A and B, nominal + worst-case limits on the 8 corners, full-grid check and refinement, reference-seeded); (2) Scenario B at its natural share (~10 %, 5 of 50 generator sources); (3) the 1,000 synthetic RQ1 cases count as the first 1,000; (4) fallback 5,000 only if the schedule tightens, not 30,000 (~28 h); (5) no fast-grid-only labels or greedy notch search without a new check and the author's decision; (6) real-noise cases with test spectra never enter training | Measured: 18,733 s on one worker per 1,000 synthetic cases, ~3.4 s per case on 6 workers (9,000 new cases ~8.5 h); 101 of 1,000 RQ1 cases Scenario B; fast-grid optima can break the full-grid limits. Plan `notes/task4_plan.md` | active | Methods 7.6; Task 4 |
+| D-39 | 10-19 | **Test-half reporting:** (1) the 4 test cases below 3 Hz unfiltered (f5af01aa pitch 1.95, a515d8f0 pitch 2.73, 603b2aa6 roll 2.92 / pitch 2.90 Hz) are reported separately like those above 10 Hz: own count column in Table 2; every case outside 3-10 Hz marked "outside the 3-10 Hz training prior" (Table 2 footnote, band-table column, Table S1 notes); not dropped, kept in every total; (2) the test-half observations (9 of 28 vs 5 of 26 nominally unsafe; all 4 test Scenario B cases fail nominally; c6f66b3d, d10980b0, b98012f4 extreme; 6 cases fly the FFT notch) go to THESIS 11 as findings, not limitations; they do not invalidate RQ1 (safe references only: +2.1° on the test half) | Only the reporting changed after the test half was seen. All 4 cases below 3 Hz are safe references (ΔPM 0.0-4.4°, band median 1.0°); 3 of them fly the FFT notch. THESIS 7.3.1, 11 | active | Results (E3); Discussion |
 
 ---
 
@@ -136,6 +138,7 @@ All rulings in this table up to the evidence pack were accepted by the author on
 | (Task 3) Mode C fronts only for the 4 Fig. 4 drones, as the staircase of refined solutions | Table 2 needs Modes A and B; the grid front left refined optima off the line | `rq1_run.solve`, `rq1_report.front_staircase` |
 | (Task 3) The 4 test cases below 3 Hz stay in every result; Table 2 counts "outside 3-10 Hz" | No rule excludes them; nothing changed after the test half was seen; question to the author | `notes/task3_results.md` Section 4 |
 | (Task 3) Table 2 adds "ΔPM, safe references only" | For a flagged reference the Mode A gain is a repair, not wasted margin (test half: +2.1 deg vs +4.5 deg) | `rq1_report.population_row` |
+| (D-39) Table S1 escapes the pipe characters in case ids; each band table ends with a blank line | Both pre-existing since S4: Markdown viewers split case ids such as fit\|215afd8c\|roll into extra cells and read the next band title as a table row; found when regenerating the tables; fixed test-first, no number changed | `rq1_report.table_s1_md`, `band_md` |
 
 ## D. Corrections of earlier claims (state honestly; useful for Limitations)
 
@@ -163,9 +166,9 @@ All rulings in this table up to the evidence pack were accepted by the author on
 - ~~A2: PM floor.~~ Decided as D-30 (30°).
 - ~~A3: M_s,max.~~ Decided as D-31 (2.0).
 - ~~A4.~~ Decided as D-32, D-33 and D-36 (±20 %, 1 controller sample, Ms_wc 3.0; D-14 identification settings kept; flagged drones kept and reported).
-- A5: training-set size and Scenario B share (preliminary estimate in `notes/followup_A4_F1_F4.md` Section 8: 5 generator RPM sources, natural share 10 %; about 5 test vehicles with RPM). **Author 2026-10-18: deferred until F1-F4 are recorded (now D-36); the author decides the final size next.** Input: the optimizer run time (`notes/task3_plan.md`, risk R4).
+- ~~A5.~~ **Decided 2026-10-19 as D-38 (10,000 cases with the D-37 optimizer).** Was: A5: training-set size and Scenario B share (preliminary estimate in `notes/followup_A4_F1_F4.md` Section 8: 5 generator RPM sources, natural share 10 %; about 5 test vehicles with RPM). **Author 2026-10-18: deferred until F1-F4 are recorded (now D-36); the author decides the final size next.** Input: the optimizer run time (`notes/task3_plan.md`, risk R4).
 - ~~F1-F4.~~ Decided as D-36 (3)-(5) (the recommendations, with f_c 3-10 Hz).
-- ~~Task 3 plan.~~ **Approved 2026-10-19 as D-37** (options (a) of T3-1 to T3-6); **Task 3 done 2026-10-19: `notes/task3_results.md`.** Open for the author: A5 (preliminary recommendation 10,000 cases with the D-37 optimizer, about 9.5 h on 6 workers; Section 8 there); the 4 test cases below 3 Hz (report separately?); the test half's 9 of 28 nominally unsafe flown settings (F5). Was: (questions T3-1 to T3-6: optimizer limits, which half, sample size, optimizer grid, the 10 Hz definition, synthetic drones that fail only the worst case at the defaults).
+- ~~Task 3 plan.~~ **Approved 2026-10-19 as D-37** (options (a) of T3-1 to T3-6); **Task 3 done 2026-10-19: `notes/task3_results.md`.** **The author's decisions on the report: D-38 (A5) and D-39 (cases below 3 Hz; test-half findings). Next: `notes/task4_plan.md` (questions T4-1 to T4-5) waits for the author; Task 4 not started.** Was open for the author: A5 (preliminary recommendation 10,000 cases with the D-37 optimizer, about 9.5 h on 6 workers; Section 8 there); the 4 test cases below 3 Hz (report separately?); the test half's 9 of 28 nominally unsafe flown settings (F5). Was: (questions T3-1 to T3-6: optimizer limits, which half, sample size, optimizer grid, the 10 Hz definition, synthetic drones that fail only the worst case at the defaults).
 - Phase 5: fallback for flagged real drones (the repair line of THESIS 7.8 ends at an unsafe reference; a known-stable setting exists for all 10 flagged fit-half settings).
 - VERIFY: the ICM-42688-P on-chip filter path (datasheet vs PX4 driver; 585 Hz AAF cannot explain the measured roll-off).
 
@@ -191,6 +194,14 @@ All rulings in this table up to the evidence pack were accepted by the author on
 15. **`body_rate_on_grid` re-filters every piece** (run time only).
 16. **Held skipped publications** (up to 8) assume that the motor command holds.
 17. **Scenario B rests on 5 generator sources** (about 10 % of training) and about 5 test vehicles.
-18. **Synthetic crossovers cover 3-10 Hz only;** real drones above 10 Hz are reported separately (2 of 26 fit-half real-gain cases by the unfiltered crossover).
+18. **Synthetic crossovers cover 3-10 Hz only;** real drones above 10 Hz (2 of 26 fit-half, 3 of 28 test-half real-gain cases by the unfiltered crossover) and the 4 test-half cases below 3 Hz are reported separately and flagged "outside the 3-10 Hz training prior" (D-39 (1)).
 19. **Coverage gap at high crossover:** about 1.7 % of the kept synthetic drones lie at 8-10 Hz, but 5 of 26 real fit-half cases do (follows from F3).
 20. **"Reference unsafe" has two numbers** (D-37 (7)): 22 % of the nominal passes fail the worst case (5 of 23); 36 % of all flown settings are flagged (10 of 28; Task 3 set 9 of 26).
+
+## G. Findings of the held-out test half (D-39 (2); findings, not limitations)
+
+1. 9 of 28 test-half flown settings (32 %) fail the nominal limits, against 5 of 26 (19 %) on the fit half.
+2. All 4 test-half Scenario B cases (4695924f, b98012f4; roll and pitch) fail the nominal limits.
+3. Three extreme cases: c6f66b3d roll (PM 17.4°, M_s 9.25), d10980b0 roll (21.4°, 3.91), b98012f4 pitch (15.2°, 4.88): wrong single identifications (F5) or model limits.
+4. 6 test-half cases fly the unmodelled FFT notch.
+5. They do not invalidate RQ1: the "safe references only" column gives a median ΔPM of +2.1° on the test half (all cases +4.5°).

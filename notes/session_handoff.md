@@ -1,11 +1,11 @@
 # Session handoff (read at the start of a new session)
 
-Last update: 2026-10-19, Phase 4: Tasks 1-3 done (Task 3 = RQ1, D-37); decisions D-28 to D-37 recorded; STOP after Task 3 for the author. Written for: Claude starting a new session, and the author.
+Last update: 2026-10-19, Phase 4: Tasks 1-3 done (Task 3 = RQ1, D-37); decisions D-28 to D-39 recorded; Task 4 plan written, STOP for the author's approval. Written for: Claude starting a new session, and the author.
 
 ## Where things stand
 
 - **Branch `phase4`** (created from the tip of `phase3`): everything is committed locally. **`phase3` and `phase4` are NOT merged** into `main`; the author decides the merge. **No GitHub push** until the author asks.
-- **Tests:** `.venv/Scripts/python -m pytest -q` (389 pass). Run the full suite before every commit.
+- **Tests:** `.venv/Scripts/python -m pytest -q` (394 pass). Run the full suite before every commit.
 - **Decided:**
   - **D-28** Tier 1 priors (evidence `notes/tier1_priors.md`); the ranges of f_c, τ_m and T_d are revised by D-36;
   - **D-29** Fig. 1 with two panels: (a, main) PX4 default with the ESC bank off, (b) bank on. Caption computed (`experiments/phase4/figures/fig1_caption.md`); crossover band 3-10 Hz since D-36;
@@ -23,14 +23,16 @@ Last update: 2026-10-19, Phase 4: Tasks 1-3 done (Task 3 = RQ1, D-37); decisions
 - **Evidence:** `notes/evidence_pack_A2_A4.md`, `notes/followup_A4_F1_F4.md` (tables `experiments/phase4/evidence_tables.md`, `followup_tables.md`).
 - **D-37** Task 3 design (T3-1..T3-6 option (a)): optimizer limits = nominal + D-36 worst case on the 8 corners; both halves (test last); 1,000 synthetic + 950 real-noise cases; fast coarse grid + full-grid refinement; 10 Hz by the unfiltered crossover; flagged synthetic drones kept; "reference unsafe" always with both numbers.
 - **Task 3 done (2026-10-19): `notes/task3_results.md`** (Table 2, findings, A5 recommendation, rulings). Tables `experiments/phase4/rq1_tables.md`; figures `figures/fig3_pm_gain`, `fig4_pareto`. Code: `src/tier3.py`, `optimizer.optimize_checked`, `experiments/phase4/rq1_cases.py` (S2), `rq1_run.py` (S3; resumable parts), `rq1_report.py` (S4). **Next: the author reviews Task 3 and decides A5** (recommendation 10,000 cases) and the 4 test cases below 3 Hz. Task 4 is NOT started.
-- **Before Task 4:** A5 (training-set size, Scenario B share). Measured: 3.4 s per case on 6 workers with the D-37 optimizer (Task 3 results, Section 8).
+- **D-38** A5: 10,000 cases labelled with exactly the D-37 optimizer; Scenario B at its natural share (~10 %, 5 sources); the 1,000 RQ1 synthetic cases are the first 1,000; fallback 5,000, not 30,000; no fast-grid-only labels or greedy notch search without a new check and the author's decision; no test spectra in training.
+- **D-39** test-half reporting: the 4 test cases below 3 Hz are reported separately (Table 2 column, "outside the 3-10 Hz training prior" in the Table 2 footnote, band tables and Table S1; kept in all totals); the test-half observations are findings in THESIS 11 (safe references only: +2.1°). New THESIS 7.3.1 holds Table 2 and the band tables, copied verbatim from `rq1_tables.md`.
+- **Next: the author reviews `notes/task4_plan.md`** (questions T4-1 to T4-5). **Task 4 is NOT started; do not start it before the author approves the plan.** Measured inputs: 3.4 s per case on 6 workers; sampler 0.07 s per kept drone; seed 20261018 reproduces the RQ1 drones first (200 of 200 checked).
 - **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first. Deferred minor: ESC RPM averaged from first take-off to last landing in multi-flight logs.
 - Plan ledger (git-ignored): `.superpowers/sdd/phase4_plan/progress.md` (rulings, process notes).
 
 ## Read first (in this order)
 
-1. `THESIS.md`: Section 0; Section 2 (D-01 to D-36); 7.1-7.1.1, 7.2, 7.8; 7.4.7 and 7.5.1; Section 10 Phase 4; Section 17 (VERIFY items F1-F5).
-2. `notes/task3_plan.md` (waits for the author), then `notes/followup_A4_F1_F4.md` and `notes/evidence_pack_A2_A4.md` (the evidence behind D-36).
+1. `THESIS.md`: Section 0; Section 2 (D-01 to D-39); 7.1-7.1.1, 7.2, 7.8; 7.4.7 and 7.5.1; Section 10 Phase 4; Section 17 (VERIFY items F1-F5).
+2. `notes/task4_plan.md` (waits for the author), `notes/task3_results.md`, then `notes/followup_A4_F1_F4.md` and `notes/evidence_pack_A2_A4.md` (the evidence behind D-36).
 3. `notes/phase4_plan.md`: the approved plan (Tasks 3-4 next).
 4. `notes/tier1_priors.md`: Task 1 evidence.
 5. `notes/decision_log.md`: decisions, rulings, corrections. Keep it updated.
@@ -40,7 +42,7 @@ Last update: 2026-10-19, Phase 4: Tasks 1-3 done (Task 3 = RQ1, D-37); decisions
 
 - **Decisions:**
   - No serious decision without evidence and the author's permission; ask with AskUserQuestion and a recommendation.
-  - Every decision goes into THESIS Section 2 (next ID: **D-38**) **and** `notes/decision_log.md`.
+  - Every decision goes into THESIS Section 2 (next ID: **D-40**) **and** `notes/decision_log.md`.
 - **Stopping:** stop and report immediately on any new landmine (unexpected data or code problem).
 - **Testing:**
   - Write tests first and see them fail.
