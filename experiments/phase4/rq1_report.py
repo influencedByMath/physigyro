@@ -10,7 +10,9 @@ rq1_tables.md. Every comparison reports noise, delay and stability together (D-0
 - Mode B: the least relative noise N_rel at PM >= PM of the reference;
 all optima meet the nominal limits and the D-36 worst-case limits over the uncertainty set (D-37 (1)).
 "Reference unsafe" is always given with both numbers, one sentence each (D-37 (7)); "above 10 Hz" by the unfiltered
-crossover with the flown count second (D-37 (5)); crossovers outside the 3-10 Hz training range are counted too.
+crossover with the flown count second (D-37 (5)); crossovers below 3 Hz are counted apart in the same way, and every
+case outside the 3-10 Hz training prior is flagged in Table 2, the band tables and Table S1 but stays in the totals
+(D-39 (1)).
 """
 import json
 import os
@@ -25,6 +27,7 @@ sys.path.insert(0, os.path.join(ROOT, "src"))
 BANDS = (3.0, 4.0, 5.0, 6.5, 8.0, 10.0)
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"      # validated palette of Fig. 1 (dataviz validator)
 INK, MUTED, GRID = "#1f2328", "#5b6470", "#e6e8eb"
+PRIOR_NOTE = "outside the 3-10 Hz training prior"                 # D-36 (5), D-39 (1)
 
 
 def _q(values):
@@ -37,6 +40,10 @@ def _q(values):
 
 def fc_of(r):
     return r.get("fc_unfiltered", r.get("f_c"))
+
+
+def outside_prior(f):
+    return f < 3.0 or f > 10.0
 
 
 def gains(r):
@@ -62,7 +69,8 @@ def population_row(rows):
                 ref_nominal_fail=nom_fail, ref_worst_only_fail=worst_only, n_nominal_pass=len(rows) - nom_fail,
                 above_10_unfiltered=sum(f > 10.0 for f in fcs),
                 above_10_flown=sum((r["reference"].get("fc") or 0) > 10.0 for r in rows),
-                outside_3_10=sum(f < 3.0 or f > 10.0 for f in fcs))
+                below_3_unfiltered=sum(f < 3.0 for f in fcs),
+                outside_3_10=sum(outside_prior(f) for f in fcs))
 
 
 def _pct(a, b):
@@ -108,7 +116,7 @@ def table2_md(pops):
     """Table 2: one row per population (and scenario)."""
     head = ("| Population | n | Ref. unsafe: nominal / worst case only (of nominal passes) | Mode A feasible | "
             "ΔPM [deg] median [p10, p90] | ΔPM, safe references only | Δτ_F [ms] | Δτ_D [ms] | Mode B N_rel | "
-            "Worst-corner M_s of the A optimum, max | f_c > 10 Hz unfiltered (flown) | Outside 3-10 Hz |\n"
+            "Worst-corner M_s of the A optimum, max | f_c > 10 Hz unfiltered (flown) | f_c < 3 Hz unfiltered |\n"
             "|---|---|---|---|---|---|---|---|---|---|---|---|\n")
     lines = []
     for name, rows in pops.items():
@@ -125,16 +133,19 @@ def table2_md(pops):
                          f"{_f(st['dtau_F'], 1e3, 2)} | "
                          f"{_f(st['dtau_D'], 1e3, 2)} | {_f(st['N_B'], 1.0, 3)} | "
                          f"{'-' if wc['n'] == 0 else format(max(r['A']['robust']['worst_corners']['Ms'] for r in rs if r['A']['feasible']), '.2f')} | "
-                         f"{st['above_10_unfiltered']} ({st['above_10_flown']}) | {st['outside_3_10']} |")
-    return head + "\n".join(lines) + "\n"
+                         f"{st['above_10_unfiltered']} ({st['above_10_flown']}) | {st['below_3_unfiltered']} |")
+    note = (f"\nCrossovers above 10 Hz and below 3 Hz (unfiltered) are {PRIOR_NOTE} (D-36 (5), D-39 (1)): they are "
+            "flagged (band tables, Table S1) and stay in every population total.\n")
+    return head + "\n".join(lines) + "\n" + note
 
 
 def band_md(name, rows):
-    out = [f"**{name}, by unfiltered crossover**\n", "| f_c band [Hz] | n | ΔPM [deg] | Mode B N_rel | Ref. unsafe |",
-           "|---|---|---|---|---|"]
+    out = [f"**{name}, by unfiltered crossover**\n",
+           "| f_c band [Hz] | n | ΔPM [deg] | Mode B N_rel | Ref. unsafe | Training prior |", "|---|---|---|---|---|---|"]
     for b in band_table(rows):
-        out.append(f"| {b['band']} | {b['n']} | {_f(b['dPM'])} | {_f(b['N_B'], 1.0, 3)} | {b['unsafe']} |")
-    return "\n".join(out) + "\n"
+        prior = PRIOR_NOTE if b["band"] in ("< 3", "> 10") else "inside"
+        out.append(f"| {b['band']} | {b['n']} | {_f(b['dPM'])} | {_f(b['N_B'], 1.0, 3)} | {b['unsafe']} | {prior} |")
+    return "\n".join(out) + "\n\n"
 
 
 def table_s1_md(rows):
@@ -151,8 +162,10 @@ def table_s1_md(rows):
         as_ = "infeasible" if g is None else f"{a['metrics']['PM']:.1f} / {a['metrics']['N_rel']:.2f} / {1e3 * g[1]:+.2f} / {1e3 * g[2]:+.2f}"
         bs = "infeasible" if not b["feasible"] else f"{b['metrics']['N_rel']:.2f} / {b['metrics']['PM']:.1f}"
         gm = ref["GM"] if isinstance(ref["GM"], (int, float)) else float("inf")
-        notes = "; ".join(sorted({f.split(":")[0].split("(")[0].strip() for f in (r.get("flags") or [])}))
-        lines.append(f"| {r['id']} | {r['scenario']} | {fc_of(r):.2f} | {ds} | {ref['PM']:.1f} / {gm:.1f} / {ref['Ms']:.2f} / "
+        notes = "; ".join(sorted({f.split(":")[0].split("(")[0].strip() for f in (r.get("flags") or [])} |
+                                 ({PRIOR_NOTE} if outside_prior(fc_of(r)) else set())))
+        cid = r["id"].replace("|", "\\|")
+        lines.append(f"| {cid} | {r['scenario']} | {fc_of(r):.2f} | {ds} | {ref['PM']:.1f} / {gm:.1f} / {ref['Ms']:.2f} / "
                      f"{r['reference_robust']['worst_corners']['Ms']:.2f} | {flag} | {as_} | {bs} | {notes} |")
     return head + "\n".join(lines) + "\n"
 

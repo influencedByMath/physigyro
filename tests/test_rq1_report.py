@@ -75,3 +75,43 @@ def test_pm_gain_of_safe_references_is_reported_apart_from_the_repairs():
     assert st["dPM"]["median"] == pytest.approx(12.0)
     assert st["dPM_safe"]["median"] == pytest.approx(3.0) and st["dPM_safe"]["n"] == 2
     assert "ΔPM, safe references only" in rp.table2_md({"x": rows})
+
+
+PRIOR_NOTE = "outside the 3-10 Hz training prior"
+
+
+def test_table2_counts_crossovers_below_3_hz_apart_and_marks_the_training_prior():
+    """D-39 (1): cases below 3 Hz are reported separately like those above 10 Hz, flagged, and kept in the totals."""
+    rows = [res(0, f_c=2.5), res(1, f_c=5.0), res(2, f_c=10.5), res(3, f_c=1.9)]
+    st = rp.population_row(rows)
+    assert st["n"] == 4 and st["below_3_unfiltered"] == 2 and st["above_10_unfiltered"] == 1
+    md = rp.table2_md({"x": rows})
+    assert "f_c < 3 Hz unfiltered" in md and "| 1 (1) | 2 |" in md
+    assert PRIOR_NOTE in md
+
+
+def test_band_tables_mark_the_bands_outside_the_training_prior():
+    rows = [res(0, f_c=2.5), res(1, f_c=5.0), res(2, f_c=10.5)]
+    lines = rp.band_md("x", rows).splitlines()
+    row = {ln.split("|")[1].strip(): ln for ln in lines if ln.startswith("| ")}
+    assert PRIOR_NOTE in row["< 3"] and PRIOR_NOTE in row["> 10"]
+    assert PRIOR_NOTE not in row["4-5"] and "inside" in row["4-5"]
+
+
+def test_table_s1_marks_each_case_outside_the_training_prior():
+    rows = [dict(res(0, f_c=2.7), reference_robust=dict(worst_corners=dict(Ms=2.2))),
+            dict(res(1, f_c=5.0), reference_robust=dict(worst_corners=dict(Ms=2.2)))]
+    lines = rp.table_s1_md(rows).splitlines()
+    assert PRIOR_NOTE in next(ln for ln in lines if ln.startswith("| c0 "))
+    assert PRIOR_NOTE not in next(ln for ln in lines if ln.startswith("| c1 "))
+
+
+def test_band_tables_end_with_a_blank_line_so_the_next_title_is_not_a_table_row():
+    assert rp.band_md("x", [res(0, f_c=5.0)]).endswith("|\n\n")
+
+
+def test_table_s1_escapes_the_pipes_in_case_ids():
+    r = dict(res(0, f_c=5.0), id="fit|ab12|roll", reference_robust=dict(worst_corners=dict(Ms=2.2)))
+    head, sep, row = rp.table_s1_md([r]).splitlines()
+    assert row.startswith(r"| fit\|ab12\|roll |")
+    assert row.replace(r"\|", "").count("|") == head.count("|")
