@@ -122,6 +122,21 @@ def initial_floor(f, logP, floor, band, pct=20, width_dec=1 / 6):
     return np.linalg.lstsq(B, base, rcond=None)[0], base
 
 
+def detect_peaks(f, P, f_lo=20.0, f_hi=780.0, n=2, prominence=0.5, min_sep_hz=8.0, band=(20.0, 780.0)):
+    """Frequencies [Hz] of the ``n`` most prominent peaks of log10 PSD above the robust floor (the peak rule of
+    fit_spectrum: 20th-percentile lower envelope, ``prominence`` in decades, D-26), inside [f_lo, f_hi], most
+    prominent first. Used as the static-notch centres of Scenario A (THESIS 7.3)."""
+    f, P = np.asarray(f, float), np.asarray(P, float)
+    m = (f >= band[0]) & (f <= band[1])
+    f, logP = f[m], np.log10(np.maximum(P[m], 1e-30))
+    _, base = initial_floor(f, logP, "spline", band)
+    df = float(np.median(np.diff(f)))
+    pk, props = find_peaks(logP - base, prominence=prominence, distance=max(1, int(min_sep_hz / df)))
+    inside = (f[pk] >= f_lo) & (f[pk] <= f_hi)
+    pk, prom = pk[inside], props["prominences"][inside]
+    return [float(f[i]) for i in pk[np.argsort(prom)[::-1]][:n]]
+
+
 def fit_spectrum(f, P, band=(20.0, 780.0), floor="powerlaw", motor_hz=None, n_harm=3, prominence=0.5,
                  max_free=6, min_sep_hz=8.0, lowpass=None, fix_floor=False):
     """Fit the model to one PSD (1-D, native bins). ``motor_hz``: valid mean motor frequencies [Hz] or None.

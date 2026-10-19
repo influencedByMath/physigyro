@@ -12,6 +12,11 @@ PM >= PM_min, all checked at every crossover.
 
 Solver: vectorized coarse grid, best feasible point, then COBYLA refinement of
 (log f_g, log f_d) with the notch option fixed.
+
+Task 3 (D-37): with ``robust`` the limits S also hold the separate worst-case limits (D-32, D-36) for the 8 corner
+plants of the uncertainty set, so every optimum passes the safety check of THESIS 7.8 by construction; with
+``coarse`` the grid search runs on a coarse LoopCase (fast grid) and every candidate, the refinement and the
+reported metrics use the full LoopCase. Candidates are tried in the order of the objective (lazy check).
 """
 import time
 from dataclasses import dataclass, replace
@@ -19,9 +24,33 @@ from dataclasses import dataclass, replace
 import numpy as np
 from scipy.optimize import minimize
 
+import robust as rb
 from loop_model import FilterSettings, LoopCase, notch_stack
 
-LIMITS = dict(PM_min=30.0, GM_min=6.0, Ms_max=2.0)   # candidates; final values TBD (THESIS 7.8)
+LIMITS = dict(PM_min=30.0, GM_min=6.0, Ms_max=2.0)   # nominal limits: D-30, D-31 (THESIS 7.8)
+FAST = dict(n_stab=500, noise_df=1.0, n_g=24, n_d=18)     # coarse search grid (D-37 (4); feasibility fast grid)
+FULL = dict(n_stab=1500, noise_df=0.5, n_g=40, n_d=30)    # refinement and reporting grid (LoopCase defaults)
+
+
+@dataclass
+class Robust:
+    """Uncertainty set and worst-case limits: corners b (1 +- delta_b), tau_m (1 +- delta_tau), Td + {0, delta_d};
+    wc = dict(PM=, Ms=, GM=) for every corner plant (D-32, D-36 (1))."""
+    delta_b: float
+    delta_tau: float
+    delta_d: float
+    wc: dict
+
+
+def robust_of(case: LoopCase, s: FilterSettings, spec: Robust):
+    """robust.robust_metrics of setting s on the stability grid of ``case`` (stability path as in LoopCase.evaluate)."""
+    return rb.robust_metrics(case.plant, case.gains, case.rates, s, case.motor_hz, spec.delta_b, spec.delta_tau,
+                             spec.delta_d, n_stab=len(case.f_stab))
+
+
+def corners_ok(rm, wc):
+    w = rm["worst_corners"]
+    return bool(w["stable"] and w["PM"] >= wc["PM"] and w["GM"] >= wc["GM"] and w["Ms"] <= wc["Ms"])
 
 
 @dataclass
@@ -117,8 +146,9 @@ def best_on_grid(grid, mode, pm_ref=None, n_max=1.0):
     return best
 
 
-def refine(case: LoopCase, base, opt: NotchOption, fg0, fd0, mode, pm_ref=None, n_max=1.0, lim=LIMITS):
-    """COBYLA on (log f_g, log f_d), notch option fixed. Keeps the grid point if refinement fails."""
+def refine(case: LoopCase, base, opt: NotchOption, fg0, fd0, mode, pm_ref=None, n_max=1.0, lim=LIMITS, robust=None):
+    """COBYLA on (log f_g, log f_d), notch option fixed. Keeps the grid point if refinement fails.
+    With ``robust`` (Robust) the worst-case limits of the corner plants are constraints too."""
     rg = ranges(case.rates.fs)
     lo = np.log([rg["f_gyro"][0], rg["f_dterm"][0]])
     hi = np.log([rg["f_gyro"][1], rg["f_dterm"][1]])
@@ -127,13 +157,20 @@ def refine(case: LoopCase, base, opt: NotchOption, fg0, fd0, mode, pm_ref=None, 
         s = replace(base, **opt.fields, f_gyro=float(np.exp(x[0])), f_dterm=float(np.exp(x[1])))
         return case.evaluate(s, S_eff=opt.S_eff)
 
-    cache = {}
+    cache, rcache = {}, {}
 
     def get(x):
         k = tuple(np.round(x, 10))
         if k not in cache:
             cache[k] = ev(x)
         return cache[k]
+
+    def getr(x):
+        k = tuple(np.round(x, 10))
+        if k not in rcache:
+            s = replace(base, **opt.fields, f_gyro=float(np.exp(x[0])), f_dterm=float(np.exp(x[1])))
+            rcache[k] = robust_of(case, s, robust)["worst_corners"]
+        return rcache[k]
 
     cons = [lambda x: get(x)["PM"] - lim["PM_min"],
             lambda x: min(get(x)["GM"], 60.0) - lim["GM_min"],
@@ -144,6 +181,10 @@ def refine(case: LoopCase, base, opt: NotchOption, fg0, fd0, mode, pm_ref=None, 
         cons.append(lambda x: n_max - get(x)["N_rel"])
     else:
         cons.append(lambda x: get(x)["PM"] - pm_ref)
+    if robust is not None:
+        wc = robust.wc
+        cons += [lambda x: getr(x)["PM"] - wc["PM"], lambda x: min(getr(x)["GM"], 60.0) - wc["GM"],
+                 lambda x: wc["Ms"] - getr(x)["Ms"], lambda x: 1.0 if getr(x)["stable"] else -1.0]
     sign = -1.0 if mode in ("A", "C") else 1.0
     key = "PM" if mode in ("A", "C") else "N_rel"
     x0 = np.log([fg0, fd0])
@@ -157,8 +198,82 @@ def refine(case: LoopCase, base, opt: NotchOption, fg0, fd0, mode, pm_ref=None, 
     return float(np.exp(x[0])), float(np.exp(x[1])), get(x), len(cache)
 
 
-def optimize(case: LoopCase, base: FilterSettings, options, mode="A", n_max=1.0, grid=None, n_g=40, n_d=30):
-    """Full solve for one mode. Returns dict with the setting, its metrics and timing."""
+def _full_check(case, s, opt, mode, pm_ref, n_max, lim, robust):
+    """(passes, metrics, robust metrics) of setting s on the full LoopCase."""
+    m = case.evaluate(s, S_eff=opt.S_eff)
+    ok = bool(feasible(m, mode, pm_ref, n_max, lim))
+    rm = None
+    if ok and robust is not None:
+        rm = robust_of(case, s, robust)
+        ok = corners_ok(rm, robust.wc)
+    return ok, m, rm
+
+
+def optimize_checked(case: LoopCase, base: FilterSettings, options, mode="A", n_max=1.0, robust=None, coarse=None,
+                     grid=None, n_g=FAST["n_g"], n_d=FAST["n_d"], max_candidates=3000, lim=LIMITS):
+    """D-37 solve: grid on ``coarse`` (or ``case``); the nominal-feasible grid points in the order of the objective
+    are checked on the full ``case`` (nominal limits, mode constraint, worst-case limits) until one passes; the
+    refinement starts there, on the full case. Returns the setting with its full-grid metrics."""
+    t = time.perf_counter()
+    if grid is None:
+        grid = grid_search(coarse if coarse is not None else case, base, options, n_g, n_d)
+    t_grid = time.perf_counter() - t
+    pm_ref = case.ref_metrics["PM"]
+    pm_ref_c = (coarse if coarse is not None else case).ref_metrics["PM"]
+    cand = []
+    for k, (opt, r) in enumerate(grid):
+        ok = feasible(r, mode, pm_ref_c, n_max, lim)
+        obj = _objective(r, mode)
+        for i, j in zip(*np.nonzero(ok)):
+            cand.append((float(obj[i, j]), k, int(i), int(j)))
+    cand.sort()
+    n_checked = 0
+    for _, k, i, j in cand[:max_candidates]:
+        opt, r = grid[k]
+        fg0, fd0 = float(r["f_gyro"][i]), float(r["f_dterm"][j])
+        s0 = replace(base, **opt.fields, f_gyro=fg0, f_dterm=fd0)
+        n_checked += 1
+        ok, m0, rm0 = _full_check(case, s0, opt, mode, pm_ref, n_max, lim, robust)
+        if not ok:
+            continue
+        fg, fd, m, n_eval = refine(case, base, opt, fg0, fd0, mode, pm_ref, n_max, lim, robust)
+        s = replace(base, **opt.fields, f_gyro=fg, f_dterm=fd)
+        ok1, m1, rm1 = _full_check(case, s, opt, mode, pm_ref, n_max, lim, robust)
+        if not ok1:                       # refinement left the feasible set: keep the checked grid point
+            s, m1, rm1 = s0, m0, rm0
+        if robust is not None and rm1 is None:
+            rm1 = robust_of(case, s, robust)
+        return dict(feasible=True, settings=s, option=opt, metrics=m1, robust=rm1, grid_point=(fg0, fd0),
+                    n_candidates=n_checked, n_feasible_coarse=len(cand), n_refine_evals=n_eval, t_grid=t_grid,
+                    t_total=time.perf_counter() - t)
+    return dict(feasible=False, n_candidates=n_checked, n_feasible_coarse=len(cand), t_grid=t_grid,
+                t_total=time.perf_counter() - t)
+
+
+def brute_force(case: LoopCase, base: FilterSettings, option: NotchOption, mode="A", n_max=1.0, robust=None,
+                n_g=120, n_d=100, lim=LIMITS):
+    """Fine grid search of one notch option on the full ``case`` (THESIS 7.3 brute-force check): the best grid point
+    that meets the nominal limits, the mode constraint and (with ``robust``) the worst-case limits."""
+    grid = grid_search(case, base, [option], n_g, n_d)
+    _, r = grid[0]
+    ok = feasible(r, mode, case.ref_metrics["PM"], n_max, lim)
+    obj = _objective(r, mode)
+    cand = sorted((float(obj[i, j]), int(i), int(j)) for i, j in zip(*np.nonzero(ok)))
+    for n, (_, i, j) in enumerate(cand, 1):
+        s = replace(base, **option.fields, f_gyro=float(r["f_gyro"][i]), f_dterm=float(r["f_dterm"][j]))
+        if robust is not None and not corners_ok(robust_of(case, s, robust), robust.wc):
+            continue
+        return dict(feasible=True, settings=s, metrics=case.evaluate(s, S_eff=option.S_eff), f_gyro=s.f_gyro,
+                    f_dterm=s.f_dterm, n_candidates=n)
+    return dict(feasible=False, n_candidates=len(cand))
+
+
+def optimize(case: LoopCase, base: FilterSettings, options, mode="A", n_max=1.0, grid=None, n_g=40, n_d=30,
+             robust=None, coarse=None):
+    """Full solve for one mode. Returns dict with the setting, its metrics and timing. With ``robust`` or ``coarse``
+    the D-37 solve (optimize_checked) is used."""
+    if robust is not None or coarse is not None:
+        return optimize_checked(case, base, options, mode, n_max, robust, coarse, grid, n_g, n_d)
     t = time.perf_counter()
     if grid is None:
         grid = grid_search(case, base, options, n_g, n_d)
@@ -174,10 +289,28 @@ def optimize(case: LoopCase, base: FilterSettings, options, mode="A", n_max=1.0,
                 t_grid=t_grid, t_total=time.perf_counter() - t, n_refine_evals=n_eval)
 
 
-def pareto_front(grid, n_max_values):
-    """Mode C from the stored grid: best PM for each noise limit."""
+def pareto_front(grid, n_max_values, accept=None):
+    """Mode C from the stored grid: best PM for each noise limit. ``accept(option, f_g, f_d)`` (optional) must also
+    hold, e.g. the worst-case check of robust_accept; points are tried in the order of PM."""
     front = []
     for nm in n_max_values:
-        b = best_on_grid(grid, "C", n_max=nm)
-        front.append((nm, None if b is None else -b[0], None if b is None else b[1].label))
+        if accept is None:
+            b = best_on_grid(grid, "C", n_max=nm)
+            front.append((nm, None if b is None else -b[0], None if b is None else b[1].label))
+            continue
+        cand = []
+        for opt, r in grid:
+            ok = feasible(r, "C", n_max=nm)
+            for i, j in zip(*np.nonzero(ok)):
+                cand.append((-float(r["PM"][i, j]), opt, float(r["f_gyro"][i]), float(r["f_dterm"][j])))
+        cand.sort(key=lambda c: c[0])
+        hit = next((c for c in cand if accept(c[1], c[2], c[3])), None)
+        front.append((nm, None if hit is None else -hit[0], None if hit is None else hit[1].label))
     return front
+
+
+def robust_accept(case: LoopCase, base: FilterSettings, spec: Robust):
+    """accept() for pareto_front: the corner plants of ``case`` meet the worst-case limits of ``spec``."""
+    def accept(opt, fg, fd):
+        return corners_ok(robust_of(case, replace(base, **opt.fields, f_gyro=fg, f_dterm=fd), spec), spec.wc)
+    return accept

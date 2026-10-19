@@ -140,3 +140,26 @@ def test_chip_lowpass_found_with_fixed_floor():
     res = nm.fit_chip_lowpass(rolled, [(250.0, 3.0), (300.0, 3.0), (700.0, 6.0)], prominence=0.5, fix_floor=True,
                               min_bic_gain=10.0)
     assert res["lowpass"] is not None and res["bic_gain"] >= 10.0
+
+
+# ------------------------------------------------- Scenario A notch centres (Task 3)
+
+def test_detect_peaks_returns_the_most_prominent_peaks_in_the_band_first():
+    """Ranked by prominence above the robust floor (decades); on a flat floor that is the peak height."""
+    S = synth(floor_coef=(-6.0, 0.0), peaks=((85.0, 4e-6, 3.0), (170.0, 4e-5, 3.0), (330.0, 1e-5, 4.0)))
+    got = nm.detect_peaks(F, S, f_lo=20.0, f_hi=780.0, n=2)
+    assert len(got) == 2
+    assert got[0] == pytest.approx(170.0, abs=1.5) and got[1] == pytest.approx(330.0, abs=1.5)
+
+
+def test_detect_peaks_ignores_peaks_outside_the_noise_band_and_flat_spectra():
+    S = synth(peaks=((30.0, 4e-4, 2.0), (330.0, 1e-5, 4.0)))
+    got = nm.detect_peaks(F, S, f_lo=50.0, f_hi=780.0, n=2)
+    assert len(got) == 1 and got[0] == pytest.approx(330.0, abs=1.5)
+    assert nm.detect_peaks(F, synth(peaks=()), f_lo=20.0, f_hi=780.0) == []
+
+
+def test_detect_peaks_uses_the_prominence_rule():
+    S = synth(peaks=((330.0, 1e-5, 4.0),))
+    assert len(nm.detect_peaks(F, S, prominence=0.5)) == 1
+    assert nm.detect_peaks(F, S, prominence=5.0) == []

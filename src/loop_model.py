@@ -63,6 +63,7 @@ class FilterSettings:
 
 # PX4 v1.16 multicopter defaults (decision D-09). ESC notch bank is off by default.
 PX4_V116_MC_DEFAULT = FilterSettings(f_gyro=40.0, f_dterm=30.0)
+F_LO_MIN = 20.0          # lower edge of the frozen noise band (D-23 Q5); f_lo = max(5 fc, F_LO_MIN) (D-36 (5))
 
 
 # ------------------------------------------------------------ building blocks
@@ -219,11 +220,11 @@ class LoopCase:
         self.f_hi = f_hi
         self.f_stab = _stability_grid(rates, n_stab)
         self._psd_f, self._psd = np.asarray(psd_f), np.asarray(psd)
-        # reference crossover sets the lower noise limit f_lo = 5 fc (fixed per drone)
+        # reference crossover sets the lower noise limit f_lo = max(5 fc, 20 Hz) (D-36 (5); fixed per drone)
         self.ref_metrics = self.evaluate(reference, _noise=False)
         if f_lo is None and not np.isfinite(self.ref_metrics["fc"]):
             raise ValueError("reference setting has no gain crossover: f_lo = 5 fc is undefined")
-        self.f_lo = 5.0 * self.ref_metrics["fc"] if f_lo is None else f_lo
+        self.f_lo = max(5.0 * self.ref_metrics["fc"], F_LO_MIN) if f_lo is None else f_lo
         self.f_noise = np.arange(self.f_lo, f_hi + 1e-9, noise_df)
         lp = np.interp(self.f_noise, self._psd_f, np.log(np.maximum(self._psd, 1e-30)))
         self.S = np.exp(lp)

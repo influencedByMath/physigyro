@@ -112,3 +112,17 @@ def test_margins_do_not_depend_on_hitting_a_notch_centre():
     assert st0 == st1 and st0
     assert pm1 == pytest.approx(pm0, abs=0.05) and gm1 == pytest.approx(gm0, abs=0.05)
     assert ms1 == pytest.approx(ms0, rel=1e-3) and t1 == pytest.approx(t0, rel=1e-3)
+
+
+def test_noise_band_starts_at_max_of_5_fc_and_20_hz():
+    """D-36 (5): f_lo = max(5 f_c, 20 Hz) with f_c the reference crossover; the band never leaves the D-23 Q5 band."""
+    rates = Rates(fs=6400, f_ctrl=800)
+    plant = Plant(1.0, 0.03, 0.002)
+    f = np.linspace(0, 3200, 2049)
+    psd = 1e-6 + 0.0 * f
+    slow = LoopCase(plant, design_gains(3.0, 1.5, plant, rates, i_ratio=0.03)[0], rates, f, psd)
+    assert slow.ref_metrics["fc"] < 4.0
+    assert slow.f_lo == 20.0 and slow.f_noise[0] == 20.0
+    fast = LoopCase(plant, design_gains(8.0, 1.5, plant, rates, i_ratio=0.03)[0], rates, f, psd)
+    assert fast.f_lo == pytest.approx(5.0 * fast.ref_metrics["fc"]) and fast.f_lo > 20.0
+    assert LoopCase(plant, design_gains(3.0, 1.5, plant, rates)[0], rates, f, psd, f_lo=12.0).f_lo == 12.0   # explicit
