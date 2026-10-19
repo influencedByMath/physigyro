@@ -186,7 +186,8 @@ def fig3(pops, out_dir):
             v = np.array([sc * x[k] for x, _ in g])
             if len(v):
                 ax.hist(v, bins=min(30, max(6, len(v) // 8)), color=BLUE, edgecolor="white", linewidth=0.6)
-                ax.axvline(np.median(v), color=INK, linewidth=1.0, linestyle=(0, (3, 2)))
+                ax.axvline(np.median(v), color=INK, linewidth=1.0, linestyle=(0, (3, 2)),
+                           label="median" if (i == 0 and j == 0) else None)
                 y0 = -0.06 * ax.get_ylim()[1]
                 flag = [sc * x[k] for x, r in g if not (r["reference_flags"]["nominal_ok"] and r["reference_flags"]["worst_ok"])]
                 out = [sc * x[k] for x, r in g if not 3.0 <= fc_of(r) <= 10.0]
@@ -218,14 +219,20 @@ def fig4(pareto, out_dir):
             x, y = zip(*fr)
             ax.step(x, y, where="post", color=BLUE, linewidth=2.0, label="best PM at the noise limit (Mode C)")
         ref = r["reference"]
-        ax.plot([1.0], [ref["PM"]], "o", color=INK, markersize=7, label="reference")
-        if r.get("default"):
-            ax.plot([r["default"]["N_rel"]], [r["default"]["PM"]], "s", color=MUTED, markersize=7, label="log default")
+        if r.get("default"):                       # drawn first and hollow: it can coincide with the flown setting
+            ax.plot([r["default"]["N_rel"]], [r["default"]["PM"]], "s", markerfacecolor="none", markeredgecolor=MUTED,
+                    markeredgewidth=1.6, markersize=11, label="log default")
+        ax.plot([1.0], [ref["PM"]], "o", color=INK, markersize=6, zorder=5,
+                label="reference (flown)" if r.get("default") is not None else "reference (PX4 default)")
         for mode, mk in (("A", "^"), ("B", "v")):
             if r[mode]["feasible"]:
                 m = r[mode]["metrics"]
                 ax.plot([m["N_rel"]], [m["PM"]], mk, color=ORANGE, markersize=8, label=f"Mode {mode} optimum")
         ax.set_xscale("log")
+        from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
+        ax.xaxis.set_major_locator(FixedLocator([0.1, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0]))
+        ax.xaxis.set_minor_locator(NullLocator())
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:g}"))
         ax.set_title(f"{r['role']}: {r['id']}", color=INK, fontsize=9, loc="left")
         ax.set_xlabel("relative noise N_rel", color=MUTED, fontsize=8.5)
         ax.set_ylabel("PM [deg]", color=MUTED, fontsize=8.5)

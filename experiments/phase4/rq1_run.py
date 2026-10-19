@@ -132,9 +132,21 @@ def solve(plant, gains, rates, psd_f, psd, motor_hz, reference, base, scenario, 
         out[mode] = res
     out["seconds"] = round(time.perf_counter() - t, 2)
     if front:
-        g_full = opt.grid_search(full, base, o_full, opt.FULL["n_g"], opt.FULL["n_d"])
-        out["front"] = [dict(n_max=nm_, PM=pm, option=lab) for nm_, pm, lab in
-                        opt.pareto_front(g_full, N_MAX_FRONT, accept=opt.robust_accept(full, base, spec))]
+        # Mode C with the same refined, reference-seeded solve as Modes A and B; the front value at a noise limit is
+        # the best PM of every refined solution (C at each limit, A, B) whose noise is within the limit, so it is
+        # monotone and never below a plotted optimum.
+        sols = [(out[m]["metrics"]["N_rel"], out[m]["metrics"]["PM"], m) for m in ("A", "B") if out[m]["feasible"]]
+        for nm_ in N_MAX_FRONT:
+            r = opt.optimize_checked(full, base, o_fast, "C", n_max=nm_, robust=spec, coarse=fast, grid=grid,
+                                     options_full=o_full, reference=reference)
+            if r["feasible"]:
+                sols.append((float(r["metrics"]["N_rel"]), float(r["metrics"]["PM"]), "C"))
+        out["front"] = []
+        for nm_ in N_MAX_FRONT:
+            ok = [s for s in sols if s[0] <= nm_ + 1e-12]
+            best = max(ok, key=lambda s: s[1]) if ok else None
+            out["front"].append(dict(n_max=nm_, PM=None if best is None else best[1],
+                                     N_rel=None if best is None else best[0], source=None if best is None else best[2]))
     return out
 
 

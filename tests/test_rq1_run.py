@@ -90,3 +90,18 @@ def test_figure_drones_follow_fixed_rules():
     assert pick["synthetic median"] == "s5" or pick["synthetic median"] == "s6"
     assert pick["synthetic 8-10 Hz"] in {"s8", "s9", "s10", "s11"}
     assert pick["Scenario B real"] == "fit|b27d09e3|roll" and pick["flagged real"] == "fit|4e73d30d|pitch"
+
+
+def test_front_is_refined_monotone_and_never_below_a_plotted_optimum():
+    plant, g, rates = drone()
+    out = rr.solve(plant, g, rates, F, PSD, None, PX4_V116_MC_DEFAULT, PX4_V116_MC_DEFAULT, "A", 1 / 800.0,
+                   n_g=8, n_d=6, front=True)
+    pts = [(p["n_max"], p["PM"]) for p in out["front"] if p["PM"] is not None]
+    assert [p[0] for p in pts] == sorted(p[0] for p in pts)
+    assert all(b[1] >= a[1] - 1e-9 for a, b in zip(pts, pts[1:]))              # more noise allowed: never less PM
+    for mode in ("A", "B"):
+        m = out[mode]["metrics"]
+        for nm_, pm in pts:
+            if nm_ >= m["N_rel"]:
+                assert pm >= m["PM"] - 1e-9
+    assert all(p["source"] in ("C", "A", "B") for p in out["front"] if p["PM"] is not None)
