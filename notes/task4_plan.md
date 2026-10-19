@@ -1,6 +1,6 @@
 # Task 4 plan: `dataset_gen.py`, the training set (D-38)
 
-Written 2026-10-19. **Plan only: Task 4 is not started.** It starts after the author approves this plan and answers T4-1 to T4-5 (Section 8).
+Written 2026-10-19. **Approved 2026-10-19 as D-40** with T4-1 (a), T4-2 (a), T4-3 noted for Task 5, T4-4 accepted (threshold set in Task 5), T4-5: run on 2026-10-20 in a new session, after the author has switched off Windows sleep. **Task 4 is not started.** Start prompt: `notes/task4_start_prompt.md`.
 
 All timings below are measured in Task 3, not estimated: `experiments/phase4/rq1_synthetic.json` and a scratch timing run of the sampler.
 
