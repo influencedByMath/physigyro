@@ -210,10 +210,14 @@ def _full_check(case, s, opt, mode, pm_ref, n_max, lim, robust):
 
 
 def optimize_checked(case: LoopCase, base: FilterSettings, options, mode="A", n_max=1.0, robust=None, coarse=None,
-                     grid=None, n_g=FAST["n_g"], n_d=FAST["n_d"], max_candidates=3000, lim=LIMITS):
+                     grid=None, n_g=FAST["n_g"], n_d=FAST["n_d"], max_candidates=3000, lim=LIMITS, options_full=None):
     """D-37 solve: grid on ``coarse`` (or ``case``); the nominal-feasible grid points in the order of the objective
     are checked on the full ``case`` (nominal limits, mode constraint, worst-case limits) until one passes; the
-    refinement starts there, on the full case. Returns the setting with its full-grid metrics."""
+    refinement starts there, on the full case. Returns the setting with its full-grid metrics.
+    ``options_full``: the same options built on ``case`` (their S_eff lie on its noise grid); default ``options``."""
+    options_full = options if options_full is None else options_full
+    if [o.label for o in options_full] != [o.label for o in options]:
+        raise ValueError("options_full must hold the same options in the same order")
     t = time.perf_counter()
     if grid is None:
         grid = grid_search(coarse if coarse is not None else case, base, options, n_g, n_d)
@@ -229,7 +233,8 @@ def optimize_checked(case: LoopCase, base: FilterSettings, options, mode="A", n_
     cand.sort()
     n_checked = 0
     for _, k, i, j in cand[:max_candidates]:
-        opt, r = grid[k]
+        _, r = grid[k]
+        opt = options_full[k]
         fg0, fd0 = float(r["f_gyro"][i]), float(r["f_dterm"][j])
         s0 = replace(base, **opt.fields, f_gyro=fg0, f_dterm=fd0)
         n_checked += 1

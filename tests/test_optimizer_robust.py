@@ -105,3 +105,26 @@ def test_brute_force_on_the_chosen_option_does_not_beat_the_refined_optimum(mode
     else:
         assert bf["metrics"]["N_rel"] >= r["metrics"]["N_rel"] * (1 - 0.01)
     assert set(bf) >= {"feasible", "settings", "metrics", "f_gyro", "f_dterm", "n_candidates"}
+
+
+def test_refinement_uses_the_full_grid_version_of_each_option():
+    """Options with an effective (tracking-notch) spectrum live on their case's noise grid: the coarse search uses the
+    coarse versions, every full-grid check, the refinement and the reported metrics the full versions."""
+    from loop_model import FilterSettings
+    rates, plant = Rates(6400, 800), Plant(1.0, 0.03, 0.002)
+    g, _ = design_gains(6.0, 1.5, plant, rates, i_ratio=0.03)
+    psd = 1e-6 + 1e-3 * np.exp(-0.5 * ((F - 105) / 4) ** 2)
+    motor = np.array([100.0, 104.0, 107.0, 110.0])
+    base = FilterSettings(f_gyro=40.0, f_dterm=30.0, dnf_min=25.0)
+    full = LoopCase(plant, g, rates, F, psd, motor_hz=motor)
+    fast = LoopCase(plant, g, rates, F, psd, motor_hz=motor, n_stab=opt.FAST["n_stab"], noise_df=opt.FAST["noise_df"])
+    track = lambda bw, h, fmin: (F, 0.2 * psd)                      # any effective spectrum will do
+    o_fast = opt.scenario_b_options(fast, base, bws=(10, 20), hmcs=(1, 2), tracking=track)
+    o_full = opt.scenario_b_options(full, base, bws=(10, 20), hmcs=(1, 2), tracking=track)
+    spec = opt.Robust(0.2, 0.2, 1 / 800, t3.worst_case_limits())
+    r = opt.optimize_checked(full, base, o_fast, "B", robust=spec, coarse=fast, n_g=12, n_d=10, options_full=o_full)
+    assert r["feasible"]
+    k = [o.label for o in o_full].index(r["option"].label)
+    assert r["option"] is o_full[k]
+    m = full.evaluate(r["settings"], S_eff=o_full[k].S_eff)
+    assert r["metrics"]["N_rel"] == pytest.approx(m["N_rel"], rel=1e-12)
