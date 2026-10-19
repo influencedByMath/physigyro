@@ -1,6 +1,6 @@
 # Task 3 plan: RQ1 results (E3: Fig. 3, Fig. 4, Table 2)
 
-**Status: DRAFT, waiting for the author's approval. Task 3 is not started.**
+**Status: APPROVED by the author on 2026-10-19 with options (a) of T3-1 to T3-6, recorded as D-37. Task 3 in progress (S1-S4); STOP and report after S4.**
 Written 2026-10-18 for the author, after the decisions D-29 to D-36.
 
 **What the numbers here are:**

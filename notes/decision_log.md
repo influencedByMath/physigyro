@@ -6,13 +6,13 @@ Written for: the author, as the source when writing the paper. **The full wordin
 - the small **implementation rulings** made during the work;
 - every **correction** of an earlier claim.
 
-Keep it updated in every phase. Last update: 2026-10-18 (Phase 4, D-36).
+Keep it updated in every phase. Last update: 2026-10-19 (Phase 4, D-37).
 
 Status values: **active** (in force), **extended** (still in force, with additions by a later decision), **partly superseded** (one part replaced; named), **done** (a one-off action).
 
 ---
 
-## A. Decisions D-01 to D-36
+## A. Decisions D-01 to D-37
 
 | ID | Date | Decision (short) | Evidence or reason | Status | Paper section |
 |---|---|---|---|---|---|
@@ -52,6 +52,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | D-34 | 10-18 | Author accepted all implementation rulings made without asking (Section C, ledger); provisional identification gates frozen with A4 | Author | active; gates frozen in D-36 | - |
 | D-35 | 10-18 | The 31 fit logs with logger dropouts are not identified (cut list) | Author; new path with its own risks | active | Limitations |
 | D-36 | 10-18 | **A4 and F1-F4 final:** (1) ±20 % on b and τ_m, delay step 1 controller sample, Ms_wc 3.0 (nominal limits of D-30/D-31 unchanged); chip delay by D-33, rule and treatment; D-14 identification settings kept, gates frozen; (2) flagged real drones kept in the test set and reported; (3) τ_m 15-60 ms, T_d 0.3-8 ms (net of the chip filter), identified plants only as a sensitivity check; (4) PM window 60-95°, integral corner 0.03; (5) f_c 3-10 Hz, real drones above 10 Hz reported separately, f_lo = max(5 f_c, 20 Hz); (6) Task 3 real-gain cases need an identification and a steady window | `notes/followup_A4_F1_F4.md`: the 5 worst-case failures are nominally marginal (Ms 1.81-1.94) and fail by the delay step, not extrapolation; band extension loses 1-8 other identifications; Ms_wc 3 midway between "about 2" and "about 4" (convention; Skogestad and Postlethwaite 2005): keeps 78 % of real and 97 % of synthetic nominal passes; the prior covers 19 of 28 identified plants (D-28: 11); the design keeps 76 % instead of 50 % at the defaults; no synthetic drone with f_c ≥ 10 Hz safe at the defaults in 13 populations; D-23 Q5 band; fit half: 26 of 28 identified cases qualify for Task 3 | active | Methods 7.1.1, 7.2, 7.8; Results (E3); Limitations |
+| D-37 | 10-19 | **Task 3 design** (plan approved with options (a)): (1) optimizer limits = nominal limits on the nominal plant and D-36 worst-case limits on the 8 corners; (2) real-gain cases on both halves, separately, test half last on frozen code; (3) 1,000 synthetic drones + 950 real-noise cases, results per crossover band; (4) fast coarse grid, full-grid refinement and reporting, brute-force check on 20 cases; (5) "above 10 Hz" by the unfiltered crossover (flown count secondary); (6) synthetic drones failing only the worst case at the defaults kept and flagged; (7) "reference unsafe" always with both numbers (22 % = 5 of 23 nominal passes fail the worst case; 36 % = 10 of 28 flown settings; Task 3 set 35 % = 9 of 26, 19 % = 4 of 21) | `notes/task3_plan.md`: lazy worst-case check about 0.02 s per point; fast grid 6.7× faster but broke the noise limit on the full grid in 1 of 4 cases (N 1.023) | active | Methods 7.3, 7.8; Results (E3) |
 
 ---
 
@@ -94,7 +95,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 
 ## C. Implementation rulings (made during the work, reported to the author)
 
-All rulings in this table up to the evidence pack were accepted by the author on 2026-10-18 (D-34). The rows marked (follow-up) were made afterwards and are reported in `notes/followup_A4_F1_F4.md` Section 10.
+All rulings in this table up to the evidence pack were accepted by the author on 2026-10-18 (D-34); the Fig. 1 redraw and the 2 kHz correction of the D-36 round were accepted on 2026-10-19. The rows marked (follow-up) were made afterwards and are reported in `notes/followup_A4_F1_F4.md` Section 10.
 
 | Ruling | Why | Where |
 |---|---|---|
@@ -155,7 +156,7 @@ All rulings in this table up to the evidence pack were accepted by the author on
 - ~~A4.~~ Decided as D-32, D-33 and D-36 (±20 %, 1 controller sample, Ms_wc 3.0; D-14 identification settings kept; flagged drones kept and reported).
 - A5: training-set size and Scenario B share (preliminary estimate in `notes/followup_A4_F1_F4.md` Section 8: 5 generator RPM sources, natural share 10 %; about 5 test vehicles with RPM). **Author 2026-10-18: deferred until F1-F4 are recorded (now D-36); the author decides the final size next.** Input: the optimizer run time (`notes/task3_plan.md`, risk R4).
 - ~~F1-F4.~~ Decided as D-36 (3)-(5) (the recommendations, with f_c 3-10 Hz).
-- **Task 3 plan: `notes/task3_plan.md`, waits for the author's approval** (questions T3-1 to T3-6: optimizer limits, which half, sample size, optimizer grid, the 10 Hz definition, synthetic drones that fail only the worst case at the defaults).
+- ~~Task 3 plan.~~ **Approved 2026-10-19 as D-37** (options (a) of T3-1 to T3-6); Task 3 in progress. Was: (questions T3-1 to T3-6: optimizer limits, which half, sample size, optimizer grid, the 10 Hz definition, synthetic drones that fail only the worst case at the defaults).
 - Phase 5: fallback for flagged real drones (the repair line of THESIS 7.8 ends at an unsafe reference; a known-stable setting exists for all 10 flagged fit-half settings).
 - VERIFY: the ICM-42688-P on-chip filter path (datasheet vs PX4 driver; 585 Hz AAF cannot explain the measured roll-off).
 
@@ -182,3 +183,5 @@ All rulings in this table up to the evidence pack were accepted by the author on
 16. **Held skipped publications** (up to 8) assume that the motor command holds.
 17. **Scenario B rests on 5 generator sources** (about 10 % of training) and about 5 test vehicles.
 18. **Synthetic crossovers cover 3-10 Hz only;** real drones above 10 Hz are reported separately (2 of 26 fit-half real-gain cases by the unfiltered crossover).
+19. **Coverage gap at high crossover:** about 1.7 % of the kept synthetic drones lie at 8-10 Hz, but 5 of 26 real fit-half cases do (follows from F3).
+20. **"Reference unsafe" has two numbers** (D-37 (7)): 22 % of the nominal passes fail the worst case (5 of 23); 36 % of all flown settings are flagged (10 of 28; Task 3 set 9 of 26).
