@@ -128,3 +128,24 @@ def test_refinement_uses_the_full_grid_version_of_each_option():
     assert r["option"] is o_full[k]
     m = full.evaluate(r["settings"], S_eff=o_full[k].S_eff)
     assert r["metrics"]["N_rel"] == pytest.approx(m["N_rel"], rel=1e-12)
+
+
+@pytest.mark.parametrize("mode", ["A", "B"])
+def test_a_feasible_reference_bounds_the_optimum(mode):
+    """The reference is a candidate and a refinement start: when it meets every limit, Mode A never ends below its PM
+    and Mode B never above its noise, however coarse the grid (rq1 runs found up to -0.22 deg / +5 % without this)."""
+    rates, plant = Rates(6400, 800), Plant(1.0, 0.03, 0.002)
+    g, _ = design_gains(5.0, 1.2, plant, rates, i_ratio=0.03)
+    full = LoopCase(plant, g, rates, F, PSD)
+    fast = LoopCase(plant, g, rates, F, PSD, n_stab=opt.FAST["n_stab"], noise_df=opt.FAST["noise_df"], f_lo=full.f_lo)
+    spec = opt.Robust(0.2, 0.2, 1 / 800, t3.worst_case_limits())
+    assert passes_all(full, PX4_V116_MC_DEFAULT, spec)[0]
+    options = opt.scenario_a_options([])                                    # 'no notch' only: the reference's option
+    r = opt.optimize_checked(full, PX4_V116_MC_DEFAULT, options, mode, robust=spec, coarse=fast, n_g=2, n_d=2,
+                             reference=PX4_V116_MC_DEFAULT)
+    assert r["feasible"]
+    if mode == "A":
+        assert r["metrics"]["PM"] >= full.ref_metrics["PM"] - 1e-9
+    else:
+        assert r["metrics"]["N_rel"] <= 1.0 + 1e-9
+    assert passes_all(full, r["settings"], spec)[0]

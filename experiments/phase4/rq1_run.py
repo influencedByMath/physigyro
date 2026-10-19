@@ -117,9 +117,11 @@ def solve(plant, gains, rates, psd_f, psd, motor_hz, reference, base, scenario, 
     t = time.perf_counter()
     grid = opt.grid_search(fast, base, o_fast, n_g, n_d)
     for mode in ("A", "B"):
-        r = opt.optimize_checked(full, base, o_fast, mode, robust=spec, coarse=fast, grid=grid, options_full=o_full)
+        r = opt.optimize_checked(full, base, o_fast, mode, robust=spec, coarse=fast, grid=grid, options_full=o_full,
+                                 reference=reference)
         res = dict(feasible=r["feasible"], n_candidates=r["n_candidates"], n_feasible_coarse=r["n_feasible_coarse"])
         if r["feasible"]:
+            res.update(start=r["start"])
             res.update(settings=settings_dict(r["settings"]), option=r["option"].label, metrics=metrics_of(r["metrics"]),
                        robust=robust_of_dict(r["robust"]))
             if brute:

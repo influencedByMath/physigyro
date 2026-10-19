@@ -42,6 +42,15 @@ def test_solve_gives_full_grid_robust_optima_and_the_reference_flags():
     json.dumps(out)                                              # JSON-serialisable
 
 
+def test_solve_never_returns_an_optimum_worse_than_a_feasible_reference():
+    plant, g, rates = drone()
+    out = rr.solve(plant, g, rates, F, PSD, None, PX4_V116_MC_DEFAULT, PX4_V116_MC_DEFAULT, "A", 1 / 800.0,
+                   n_g=2, n_d=2)
+    assert out["reference_flags"]["nominal_ok"] and out["reference_flags"]["worst_ok"]
+    assert out["A"]["metrics"]["PM"] >= out["reference"]["PM"] - 1e-9
+    assert out["B"]["metrics"]["N_rel"] <= 1.0 + 1e-9
+
+
 def test_generator_draw_scenario_b_motors_follow_the_source_vehicle_and_the_scale():
     gen = dict(sources=[0, 1])
     entries = [dict(motor_hz=[80.0, 82.0], n_harm=2), dict(motor_hz=None, n_harm=0)]

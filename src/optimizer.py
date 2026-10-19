@@ -210,11 +210,14 @@ def _full_check(case, s, opt, mode, pm_ref, n_max, lim, robust):
 
 
 def optimize_checked(case: LoopCase, base: FilterSettings, options, mode="A", n_max=1.0, robust=None, coarse=None,
-                     grid=None, n_g=FAST["n_g"], n_d=FAST["n_d"], max_candidates=3000, lim=LIMITS, options_full=None):
+                     grid=None, n_g=FAST["n_g"], n_d=FAST["n_d"], max_candidates=3000, lim=LIMITS, options_full=None,
+                     reference=None):
     """D-37 solve: grid on ``coarse`` (or ``case``); the nominal-feasible grid points in the order of the objective
     are checked on the full ``case`` (nominal limits, mode constraint, worst-case limits) until one passes; the
     refinement starts there, on the full case. Returns the setting with its full-grid metrics.
-    ``options_full``: the same options built on ``case`` (their S_eff lie on its noise grid); default ``options``."""
+    ``options_full``: the same options built on ``case`` (their S_eff lie on its noise grid); default ``options``.
+    ``reference``: the reference setting of ``case``; when it meets every limit it is a candidate and a second
+    refinement starts from it, so the optimum is never worse than a feasible reference."""
     options_full = options if options_full is None else options_full
     if [o.label for o in options_full] != [o.label for o in options]:
         raise ValueError("options_full must hold the same options in the same order")
@@ -232,6 +235,7 @@ def optimize_checked(case: LoopCase, base: FilterSettings, options, mode="A", n_
             cand.append((float(obj[i, j]), k, int(i), int(j)))
     cand.sort()
     n_checked = 0
+    found = None
     for _, k, i, j in cand[:max_candidates]:
         _, r = grid[k]
         opt = options_full[k]
@@ -248,11 +252,46 @@ def optimize_checked(case: LoopCase, base: FilterSettings, options, mode="A", n_
             s, m1, rm1 = s0, m0, rm0
         if robust is not None and rm1 is None:
             rm1 = robust_of(case, s, robust)
-        return dict(feasible=True, settings=s, option=opt, metrics=m1, robust=rm1, grid_point=(fg0, fd0),
-                    n_candidates=n_checked, n_feasible_coarse=len(cand), n_refine_evals=n_eval, t_grid=t_grid,
-                    t_total=time.perf_counter() - t)
-    return dict(feasible=False, n_candidates=n_checked, n_feasible_coarse=len(cand), t_grid=t_grid,
-                t_total=time.perf_counter() - t)
+        found = dict(feasible=True, settings=s, option=opt, metrics=m1, robust=rm1, grid_point=(fg0, fd0),
+                     n_refine_evals=n_eval, start="grid")
+        break
+    if reference is not None:
+        rres = _from_reference(case, base, options_full, reference, mode, pm_ref, n_max, lim, robust)
+        if rres is not None and (found is None or _objective(rres["metrics"], mode) < _objective(found["metrics"], mode)):
+            found = rres
+    timing = dict(n_candidates=n_checked, n_feasible_coarse=len(cand), t_grid=t_grid, t_total=time.perf_counter() - t)
+    if found is None:
+        return dict(feasible=False, **timing)
+    return dict(found, **timing)
+
+
+def _from_reference(case, base, options_full, reference, mode, pm_ref, n_max, lim, robust):
+    """The reference as a candidate: refined inside the option that reproduces it, or kept as it is when no option
+    does (e.g. flown static notches in Scenario A); None if the reference breaks a limit."""
+    opt = next((o for o in options_full
+                if replace(base, **o.fields, f_gyro=reference.f_gyro, f_dterm=reference.f_dterm) == reference), None)
+    if opt is None:
+        m = case.ref_metrics
+        ok = bool(feasible(m, mode, pm_ref, n_max, lim))
+        rm = robust_of(case, reference, robust) if robust is not None else None
+        if not ok or (rm is not None and not corners_ok(rm, robust.wc)):
+            return None
+        fields = dict(notches=reference.notches, dnf_esc=reference.dnf_esc, dnf_bw=reference.dnf_bw,
+                      dnf_hmc=reference.dnf_hmc, dnf_min=reference.dnf_min)
+        return dict(feasible=True, settings=reference, option=NotchOption("reference setting", fields), metrics=m,
+                    robust=rm, grid_point=(reference.f_gyro, reference.f_dterm), n_refine_evals=0, start="reference")
+    ok, m0, rm0 = _full_check(case, reference, opt, mode, pm_ref, n_max, lim, robust)
+    if not ok:
+        return None
+    fg, fd, _, n_eval = refine(case, base, opt, reference.f_gyro, reference.f_dterm, mode, pm_ref, n_max, lim, robust)
+    s = replace(base, **opt.fields, f_gyro=fg, f_dterm=fd)
+    ok1, m1, rm1 = _full_check(case, s, opt, mode, pm_ref, n_max, lim, robust)
+    if not ok1:
+        s, m1, rm1 = reference, m0, rm0
+    if robust is not None and rm1 is None:
+        rm1 = robust_of(case, s, robust)
+    return dict(feasible=True, settings=s, option=opt, metrics=m1, robust=rm1,
+                grid_point=(reference.f_gyro, reference.f_dterm), n_refine_evals=n_eval, start="reference")
 
 
 def brute_force(case: LoopCase, base: FilterSettings, option: NotchOption, mode="A", n_max=1.0, robust=None,
