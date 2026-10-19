@@ -1,0 +1,2069 @@
+{
+ "half": "test",
+ "cases": [
+  {
+   "id": "test|11941f71|pitch",
+   "half": "test",
+   "log_id": "11941f71-6c8d-4b34-ad4a-4b23b127ee50",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000383134373033510400490029",
+   "cls": "att_sp",
+   "plant": {
+    "b": 429.0844120283626,
+    "tau_m": 0.027303187512985203,
+    "Td": 0.0006431500404916066
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.05000000074505806,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 667.56,
+   "fs": 2002.9376220703125,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "flags": [],
+   "fc_unfiltered": 8.503144061389147,
+   "pm_unfiltered": 76.49950519878043,
+   "nperseg": 1336,
+   "window_ids": [
+    "11941f71-6c8d-4b34-ad4a-4b23b127ee50|w0"
+   ],
+   "windows": [
+    [
+     27.101781,
+     37.101781
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|1388d408|roll",
+   "half": "test",
+   "log_id": "1388d408-ef0c-42a9-a031-02b6b6dfba4d",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000600000000393633313533511700430040",
+   "cls": "att_sp",
+   "plant": {
+    "b": 333.5033976790451,
+    "tau_m": 0.026978058823536735,
+    "Td": 0.0009354045966898302
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.0015999999595806003
+   },
+   "f_ctrl": 666.22,
+   "fs": 1998.669189453125,
+   "actual": {
+    "f_gyro": 80.0,
+    "f_dterm": 40.0,
+    "notches": [],
+    "dnf_esc": true,
+    "dnf_bw": 14.0,
+    "dnf_hmc": 3,
+    "dnf_min": 70.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM42688P",
+   "control_chip": "BMI088",
+   "flags": [
+    "ESC notch on, no valid RPM: notch left out",
+    "Td corrected -0.91 ms (FIFO chip ICM42688P -> control chip BMI088)"
+   ],
+   "fc_unfiltered": 5.970170738425764,
+   "pm_unfiltered": 61.01456022452852,
+   "nperseg": 5414,
+   "window_ids": [
+    "1388d408-ef0c-42a9-a031-02b6b6dfba4d|w0",
+    "1388d408-ef0c-42a9-a031-02b6b6dfba4d|w1",
+    "1388d408-ef0c-42a9-a031-02b6b6dfba4d|w2"
+   ],
+   "windows": [
+    [
+     11.628305999999998,
+     21.628306
+    ],
+    [
+     40.628305999999995,
+     50.628305999999995
+    ],
+    [
+     80.628306,
+     90.628306
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|1388d408|pitch",
+   "half": "test",
+   "log_id": "1388d408-ef0c-42a9-a031-02b6b6dfba4d",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000393633313533511700430040",
+   "cls": "att_sp",
+   "plant": {
+    "b": 339.67276179445025,
+    "tau_m": 0.025578708778682704,
+    "Td": 0.0
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.0015999999595806003
+   },
+   "f_ctrl": 666.22,
+   "fs": 1998.669189453125,
+   "actual": {
+    "f_gyro": 80.0,
+    "f_dterm": 40.0,
+    "notches": [],
+    "dnf_esc": true,
+    "dnf_bw": 14.0,
+    "dnf_hmc": 3,
+    "dnf_min": 70.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM42688P",
+   "control_chip": "BMI088",
+   "flags": [
+    "ESC notch on, no valid RPM: notch left out",
+    "Td corrected -0.91 ms (FIFO chip ICM42688P -> control chip BMI088)",
+    "corrected Td clamped at 0"
+   ],
+   "fc_unfiltered": 6.172467262171351,
+   "pm_unfiltered": 64.27605641460161,
+   "nperseg": 5414,
+   "window_ids": [
+    "1388d408-ef0c-42a9-a031-02b6b6dfba4d|w0",
+    "1388d408-ef0c-42a9-a031-02b6b6dfba4d|w1",
+    "1388d408-ef0c-42a9-a031-02b6b6dfba4d|w2"
+   ],
+   "windows": [
+    [
+     11.628305999999998,
+     21.628306
+    ],
+    [
+     40.628305999999995,
+     50.628305999999995
+    ],
+    [
+     80.628306,
+     90.628306
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|4695924f|roll",
+   "half": "test",
+   "log_id": "4695924f-fc7c-4513-8918-9e70a412dfb3",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:0006000000003832363135335119004c0045",
+   "cls": "att_sp",
+   "plant": {
+    "b": 600.7707941443139,
+    "tau_m": 0.04178223060059561,
+    "Td": 6.069698591979749e-06
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 666.67,
+   "fs": 8370.535144088259,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": true,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": [
+    95.411,
+    101.941,
+    98.116,
+    97.882
+   ],
+   "scenario": "B",
+   "rpm_tracking": true,
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "flags": [
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 8.48698878623537,
+   "pm_unfiltered": 67.95789515121182,
+   "nperseg": 5347,
+   "window_ids": [
+    "4695924f-fc7c-4513-8918-9e70a412dfb3|w0"
+   ],
+   "windows": [
+    [
+     92.372674,
+     102.372674
+    ]
+   ],
+   "fs_fifo": 8370.535144088259,
+   "tracking_keys": [
+    "10|1|25",
+    "10|2|25",
+    "10|3|25",
+    "15|1|25",
+    "15|2|25",
+    "15|3|25",
+    "20|1|25",
+    "20|2|25",
+    "20|3|25",
+    "30|1|25",
+    "30|2|25",
+    "30|3|25",
+    "5|1|25",
+    "5|2|25",
+    "5|3|25",
+    "7.5|1|25",
+    "7.5|2|25",
+    "7.5|3|25"
+   ]
+  },
+  {
+   "id": "test|4695924f|pitch",
+   "half": "test",
+   "log_id": "4695924f-fc7c-4513-8918-9e70a412dfb3",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:0006000000003832363135335119004c0045",
+   "cls": "att_sp",
+   "plant": {
+    "b": 496.91938910431594,
+    "tau_m": 0.038134817587662115,
+    "Td": 6.03241377613984e-05
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 666.67,
+   "fs": 8370.535144088259,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": true,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": [
+    95.411,
+    101.941,
+    98.116,
+    97.882
+   ],
+   "scenario": "B",
+   "rpm_tracking": true,
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "flags": [
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 7.7504072994419175,
+   "pm_unfiltered": 69.4163260149095,
+   "nperseg": 5347,
+   "window_ids": [
+    "4695924f-fc7c-4513-8918-9e70a412dfb3|w0"
+   ],
+   "windows": [
+    [
+     92.372674,
+     102.372674
+    ]
+   ],
+   "fs_fifo": 8370.535144088259,
+   "tracking_keys": [
+    "10|1|25",
+    "10|2|25",
+    "10|3|25",
+    "15|1|25",
+    "15|2|25",
+    "15|3|25",
+    "20|1|25",
+    "20|2|25",
+    "20|3|25",
+    "30|1|25",
+    "30|2|25",
+    "30|3|25",
+    "5|1|25",
+    "5|2|25",
+    "5|3|25",
+    "7.5|1|25",
+    "7.5|2|25",
+    "7.5|3|25"
+   ]
+  },
+  {
+   "id": "test|603b2aa6|roll",
+   "half": "test",
+   "log_id": "603b2aa6-5df3-4469-bd96-bea51fa258ea",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000600000000333839363033510800260028",
+   "cls": "both",
+   "plant": {
+    "b": 125.82946011143235,
+    "tau_m": 0.026389166658906192,
+    "Td": 0.010837120408618225
+   },
+   "gains": {
+    "Kp": 0.16042469441890717,
+    "Ki": 0.20126041769981384,
+    "Kd": 0.0018248046981170774
+   },
+   "f_ctrl": 800.0,
+   "fs": 8370.535144088259,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [
+     [
+      95.0,
+      25.0
+     ],
+     [
+      61.0,
+      10.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "IIM42652",
+   "control_chip": null,
+   "flags": [
+    "FFT notch on: not modelled",
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 2.918531630923335,
+   "pm_unfiltered": 60.117896086654135,
+   "nperseg": 5268,
+   "window_ids": [
+    "603b2aa6-5df3-4469-bd96-bea51fa258ea|w0",
+    "603b2aa6-5df3-4469-bd96-bea51fa258ea|w1",
+    "603b2aa6-5df3-4469-bd96-bea51fa258ea|w2"
+   ],
+   "windows": [
+    [
+     28.6189,
+     38.6189
+    ],
+    [
+     38.6189,
+     48.6189
+    ],
+    [
+     70.6189,
+     80.6189
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|603b2aa6|pitch",
+   "half": "test",
+   "log_id": "603b2aa6-5df3-4469-bd96-bea51fa258ea",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000333839363033510800260028",
+   "cls": "both",
+   "plant": {
+    "b": 137.20683462239847,
+    "tau_m": 0.025722552673169977,
+    "Td": 0.007431137434808672
+   },
+   "gains": {
+    "Kp": 0.1442178338766098,
+    "Ki": 0.18121309578418732,
+    "Kd": 0.002030279953032732
+   },
+   "f_ctrl": 800.0,
+   "fs": 8370.535144088259,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [
+     [
+      95.0,
+      25.0
+     ],
+     [
+      61.0,
+      10.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "IIM42652",
+   "control_chip": null,
+   "flags": [
+    "FFT notch on: not modelled",
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 2.8998812730127073,
+   "pm_unfiltered": 67.10572620033352,
+   "nperseg": 5268,
+   "window_ids": [
+    "603b2aa6-5df3-4469-bd96-bea51fa258ea|w0",
+    "603b2aa6-5df3-4469-bd96-bea51fa258ea|w1",
+    "603b2aa6-5df3-4469-bd96-bea51fa258ea|w2"
+   ],
+   "windows": [
+    [
+     28.6189,
+     38.6189
+    ],
+    [
+     38.6189,
+     48.6189
+    ],
+    [
+     70.6189,
+     80.6189
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|755239e3|roll",
+   "half": "test",
+   "log_id": "755239e3-c5c6-4deb-912d-3fa3dc72a9c0",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000600000000313336383133510300360025",
+   "cls": "att_sp",
+   "plant": {
+    "b": 1169.062646987016,
+    "tau_m": 0.019888377115105278,
+    "Td": 2.8272774843121063e-27
+   },
+   "gains": {
+    "Kp": 0.05250000119209286,
+    "Ki": 0.06999999985098837,
+    "Kd": 0.0010499999912455676
+   },
+   "f_ctrl": 400.0,
+   "fs": 1991.056884765625,
+   "actual": {
+    "f_gyro": 120.0,
+    "f_dterm": 60.0,
+    "notches": [
+     [
+      31.0,
+      3.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "flags": [],
+   "fc_unfiltered": 9.75517441555288,
+   "pm_unfiltered": 84.77943532940661,
+   "nperseg": 1331,
+   "window_ids": [
+    "755239e3-c5c6-4deb-912d-3fa3dc72a9c0|w0",
+    "755239e3-c5c6-4deb-912d-3fa3dc72a9c0|w1"
+   ],
+   "windows": [
+    [
+     13.985612,
+     23.985612
+    ],
+    [
+     62.985612,
+     72.985612
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|755239e3|pitch",
+   "half": "test",
+   "log_id": "755239e3-c5c6-4deb-912d-3fa3dc72a9c0",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000313336383133510300360025",
+   "cls": "att_sp",
+   "plant": {
+    "b": 749.0186427943222,
+    "tau_m": 0.01680331551097411,
+    "Td": 0.0008383704154818284
+   },
+   "gains": {
+    "Kp": 0.0600000032782555,
+    "Ki": 0.08000000238418581,
+    "Kd": 0.0012000000283122064
+   },
+   "f_ctrl": 400.0,
+   "fs": 1991.056884765625,
+   "actual": {
+    "f_gyro": 120.0,
+    "f_dterm": 60.0,
+    "notches": [
+     [
+      31.0,
+      3.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "flags": [],
+   "fc_unfiltered": 7.647814466252657,
+   "pm_unfiltered": 88.07138880993655,
+   "nperseg": 1331,
+   "window_ids": [
+    "755239e3-c5c6-4deb-912d-3fa3dc72a9c0|w0",
+    "755239e3-c5c6-4deb-912d-3fa3dc72a9c0|w1"
+   ],
+   "windows": [
+    [
+     13.985612,
+     23.985612
+    ],
+    [
+     62.985612,
+     72.985612
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|808d3c4f|roll",
+   "half": "test",
+   "log_id": "808d3c4f-7744-42d1-ac7e-e66f0af6e25c",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000600000000393538363432511000420038",
+   "cls": "att_sp",
+   "plant": {
+    "b": 396.0346459718593,
+    "tau_m": 0.01913545740531743,
+    "Td": 0.00041686767170480383
+   },
+   "gains": {
+    "Kp": 0.06997407227754593,
+    "Ki": 0.08528773486614227,
+    "Kd": 5.366539426177042e-06
+   },
+   "f_ctrl": 397.93,
+   "fs": 7958.3125,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [
+     [
+      35.0,
+      35.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42688P",
+   "flags": [],
+   "fc_unfiltered": 3.976722719164538,
+   "pm_unfiltered": 59.364184411808985,
+   "nperseg": 5306,
+   "window_ids": [
+    "808d3c4f-7744-42d1-ac7e-e66f0af6e25c|w0",
+    "808d3c4f-7744-42d1-ac7e-e66f0af6e25c|w1",
+    "808d3c4f-7744-42d1-ac7e-e66f0af6e25c|w2"
+   ],
+   "windows": [
+    [
+     54.023035,
+     64.023035
+    ],
+    [
+     69.023035,
+     79.023035
+    ],
+    [
+     85.023035,
+     95.023035
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|808d3c4f|pitch",
+   "half": "test",
+   "log_id": "808d3c4f-7744-42d1-ac7e-e66f0af6e25c",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000393538363432511000420038",
+   "cls": "att_sp",
+   "plant": {
+    "b": 351.64250563597284,
+    "tau_m": 0.019337194520684407,
+    "Td": 0.0020505666286271813
+   },
+   "gains": {
+    "Kp": 0.09056295454502106,
+    "Ki": 0.09814389795064926,
+    "Kd": 0.00012087297363905236
+   },
+   "f_ctrl": 397.93,
+   "fs": 7958.3125,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [
+     [
+      35.0,
+      35.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM42688P",
+   "control_chip": "ICM42688P",
+   "flags": [],
+   "fc_unfiltered": 4.4514478853142245,
+   "pm_unfiltered": 56.21331428917732,
+   "nperseg": 5306,
+   "window_ids": [
+    "808d3c4f-7744-42d1-ac7e-e66f0af6e25c|w0",
+    "808d3c4f-7744-42d1-ac7e-e66f0af6e25c|w1",
+    "808d3c4f-7744-42d1-ac7e-e66f0af6e25c|w2"
+   ],
+   "windows": [
+    [
+     54.023035,
+     64.023035
+    ],
+    [
+     69.023035,
+     79.023035
+    ],
+    [
+     85.023035,
+     95.023035
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|8c6f7526|pitch",
+   "half": "test",
+   "log_id": "8c6f7526-f072-4c75-ad9e-ed3da6560de2",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000333137373333510700260021",
+   "cls": "both",
+   "plant": {
+    "b": 242.15490721165602,
+    "tau_m": 0.041511726185407355,
+    "Td": 0.005971953718200822
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 800.0,
+   "fs": 6346.22021484375,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "flags": [],
+   "fc_unfiltered": 4.290104301524204,
+   "pm_unfiltered": 57.67951613288797,
+   "nperseg": 4236,
+   "window_ids": [
+    "8c6f7526-f072-4c75-ad9e-ed3da6560de2|w0",
+    "8c6f7526-f072-4c75-ad9e-ed3da6560de2|w1",
+    "8c6f7526-f072-4c75-ad9e-ed3da6560de2|w2"
+   ],
+   "windows": [
+    [
+     226.52222799999998,
+     236.52222799999998
+    ],
+    [
+     240.52222799999998,
+     250.52222799999998
+    ],
+    [
+     250.52222799999998,
+     260.522228
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|a515d8f0|pitch",
+   "half": "test",
+   "log_id": "a515d8f0-9b7b-4a3d-a212-0abfb96439fe",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:00060000000032313638313251080049002c",
+   "cls": "both",
+   "plant": {
+    "b": 222.9473729737606,
+    "tau_m": 0.019402147711203233,
+    "Td": 0.013201058945233154
+   },
+   "gains": {
+    "Kp": 0.07999999821186066,
+    "Ki": 0.02500000037252903,
+    "Kd": 0.0007999999797903001
+   },
+   "f_ctrl": 800.0,
+   "fs": 6400.0,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [
+     [
+      42.0,
+      15.0
+     ],
+     [
+      49.0,
+      15.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM45686",
+   "control_chip": null,
+   "flags": [
+    "FFT notch on: not modelled",
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 2.72525256256035,
+   "pm_unfiltered": 66.75488436622634,
+   "nperseg": 4237,
+   "window_ids": [
+    "a515d8f0-9b7b-4a3d-a212-0abfb96439fe|w0",
+    "a515d8f0-9b7b-4a3d-a212-0abfb96439fe|w1",
+    "a515d8f0-9b7b-4a3d-a212-0abfb96439fe|w2"
+   ],
+   "windows": [
+    [
+     76.022409,
+     86.022409
+    ],
+    [
+     103.022409,
+     113.022409
+    ],
+    [
+     193.022409,
+     203.022409
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|b0c97dcd|pitch",
+   "half": "test",
+   "log_id": "b0c97dcd-f4fb-412c-9fe5-73b3ec766878",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000353037313033510c0048001f",
+   "cls": "att_sp",
+   "plant": {
+    "b": 261.31877567513396,
+    "tau_m": 0.029254486887867966,
+    "Td": 5.766584861780047e-05
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 800.0,
+   "fs": 6411.77099609375,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "flags": [],
+   "fc_unfiltered": 5.278484028790008,
+   "pm_unfiltered": 76.47293988095232,
+   "nperseg": 4251,
+   "window_ids": [
+    "b0c97dcd-f4fb-412c-9fe5-73b3ec766878|w0"
+   ],
+   "windows": [
+    [
+     52.724554,
+     62.724554
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|b98012f4|roll",
+   "half": "test",
+   "log_id": "b98012f4-0cee-4c44-9244-7274556249f0",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000600000000333138313033510e004c0036",
+   "cls": "att_sp",
+   "plant": {
+    "b": 554.4595045548792,
+    "tau_m": 0.04602790667117221,
+    "Td": 3.4584990052349156e-13
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 400.64,
+   "fs": 8012.8203125,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": [
+    85.804,
+    83.8905,
+    83.25999999999999,
+    84.4565
+   ],
+   "scenario": "B",
+   "rpm_tracking": true,
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "flags": [],
+   "fc_unfiltered": 7.506820242609185,
+   "pm_unfiltered": 63.78881436135355,
+   "nperseg": 5342,
+   "window_ids": [
+    "b98012f4-0cee-4c44-9244-7274556249f0|w0",
+    "b98012f4-0cee-4c44-9244-7274556249f0|w1"
+   ],
+   "windows": [
+    [
+     108.660234,
+     118.660234
+    ],
+    [
+     118.660234,
+     128.660234
+    ]
+   ],
+   "fs_fifo": 8012.750269303651,
+   "tracking_keys": [
+    "10|1|25",
+    "10|2|25",
+    "10|3|25",
+    "15|1|25",
+    "15|2|25",
+    "15|3|25",
+    "20|1|25",
+    "20|2|25",
+    "20|3|25",
+    "30|1|25",
+    "30|2|25",
+    "30|3|25",
+    "5|1|25",
+    "5|2|25",
+    "5|3|25",
+    "7.5|1|25",
+    "7.5|2|25",
+    "7.5|3|25"
+   ]
+  },
+  {
+   "id": "test|b98012f4|pitch",
+   "half": "test",
+   "log_id": "b98012f4-0cee-4c44-9244-7274556249f0",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000333138313033510e004c0036",
+   "cls": "att_sp",
+   "plant": {
+    "b": 940.767400435512,
+    "tau_m": 0.04746586477812636,
+    "Td": 0.000762003797624855
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 400.64,
+   "fs": 8012.8203125,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": [
+    85.804,
+    83.8905,
+    83.25999999999999,
+    84.4565
+   ],
+   "scenario": "B",
+   "rpm_tracking": true,
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "flags": [],
+   "fc_unfiltered": 11.058913219460784,
+   "pm_unfiltered": 62.630269424213445,
+   "nperseg": 5342,
+   "window_ids": [
+    "b98012f4-0cee-4c44-9244-7274556249f0|w0",
+    "b98012f4-0cee-4c44-9244-7274556249f0|w1"
+   ],
+   "windows": [
+    [
+     108.660234,
+     118.660234
+    ],
+    [
+     118.660234,
+     128.660234
+    ]
+   ],
+   "fs_fifo": 8012.750269303651,
+   "tracking_keys": [
+    "10|1|25",
+    "10|2|25",
+    "10|3|25",
+    "15|1|25",
+    "15|2|25",
+    "15|3|25",
+    "20|1|25",
+    "20|2|25",
+    "20|3|25",
+    "30|1|25",
+    "30|2|25",
+    "30|3|25",
+    "5|1|25",
+    "5|2|25",
+    "5|3|25",
+    "7.5|1|25",
+    "7.5|2|25",
+    "7.5|3|25"
+   ]
+  },
+  {
+   "id": "test|c10c0a91|roll",
+   "half": "test",
+   "log_id": "c10c0a91-2d9a-4b9b-a659-03bb7749b776",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000600000000333137373333510700310042",
+   "cls": "both",
+   "plant": {
+    "b": 643.4346696246379,
+    "tau_m": 0.023828406129400178,
+    "Td": 0.0
+   },
+   "gains": {
+    "Kp": 0.120000006556511,
+    "Ki": 0.16000000476837162,
+    "Kd": 0.002720000076591969
+   },
+   "f_ctrl": 800.0,
+   "fs": 6393.10986328125,
+   "actual": {
+    "f_gyro": 30.0,
+    "f_dterm": 25.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "IIM42652",
+   "control_chip": "ICM45686",
+   "flags": [
+    "FFT notch on: not modelled",
+    "Td corrected -0.89 ms (FIFO chip IIM42652 -> control chip ICM45686)",
+    "corrected Td clamped at 0"
+   ],
+   "fc_unfiltered": 11.768068554370947,
+   "pm_unfiltered": 85.60953827698975,
+   "nperseg": 5398,
+   "window_ids": [
+    "c10c0a91-2d9a-4b9b-a659-03bb7749b776|w0",
+    "c10c0a91-2d9a-4b9b-a659-03bb7749b776|w1",
+    "c10c0a91-2d9a-4b9b-a659-03bb7749b776|w2"
+   ],
+   "windows": [
+    [
+     29.148339,
+     39.148339
+    ],
+    [
+     41.148339,
+     51.148339
+    ],
+    [
+     51.148339,
+     61.148339
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|c2e156d6|roll",
+   "half": "test",
+   "log_id": "c2e156d6-bb47-4f0e-917d-96b0d94d138d",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000600000000383236313533511400350025",
+   "cls": "att_sp",
+   "plant": {
+    "b": 210.05287937162308,
+    "tau_m": 0.032481364716094134,
+    "Td": 0.0044168516816031015
+   },
+   "gains": {
+    "Kp": 0.14000000059604645,
+    "Ki": 0.30000001192092896,
+    "Kd": 0.004000000189989805
+   },
+   "f_ctrl": 666.22,
+   "fs": 1999.0272216796875,
+   "actual": {
+    "f_gyro": 30.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 30.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "BMI088",
+   "control_chip": "BMI088",
+   "flags": [],
+   "fc_unfiltered": 4.289666070268603,
+   "pm_unfiltered": 75.35090016455615,
+   "nperseg": 1333,
+   "window_ids": [
+    "c2e156d6-bb47-4f0e-917d-96b0d94d138d|w0",
+    "c2e156d6-bb47-4f0e-917d-96b0d94d138d|w1",
+    "c2e156d6-bb47-4f0e-917d-96b0d94d138d|w2"
+   ],
+   "windows": [
+    [
+     31.521317,
+     41.521316999999996
+    ],
+    [
+     67.521317,
+     77.521317
+    ],
+    [
+     78.521317,
+     88.521317
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|c6f66b3d|roll",
+   "half": "test",
+   "log_id": "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:00060000000031393832333351180045001e",
+   "cls": "att_sp",
+   "plant": {
+    "b": 305.2796135300811,
+    "tau_m": 0.01092851463832686,
+    "Td": 0.006764880999462288
+   },
+   "gains": {
+    "Kp": 0.11339594082342863,
+    "Ki": 0.15019672260113026,
+    "Kd": 0.004679999747946861
+   },
+   "f_ctrl": 400.0,
+   "fs": 6446.7724609375,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "flags": [],
+   "fc_unfiltered": 15.608414628814437,
+   "pm_unfiltered": 73.66804995900272,
+   "nperseg": 4300,
+   "window_ids": [
+    "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4|w0",
+    "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4|w1",
+    "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4|w2"
+   ],
+   "windows": [
+    [
+     9.463957,
+     19.463957
+    ],
+    [
+     27.46395700000002,
+     37.46395700000002
+    ],
+    [
+     50.463957000000036,
+     60.463957000000036
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|c6f66b3d|pitch",
+   "half": "test",
+   "log_id": "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:00060000000031393832333351180045001e",
+   "cls": "both",
+   "plant": {
+    "b": 169.41035997499245,
+    "tau_m": 0.015676719907777414,
+    "Td": 8.329267149281526e-18
+   },
+   "gains": {
+    "Kp": 0.2970760533285812,
+    "Ki": 0.3499999940395355,
+    "Kd": 0.0050399998275935665
+   },
+   "f_ctrl": 400.0,
+   "fs": 6446.7724609375,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM45686",
+   "control_chip": "ICM45686",
+   "flags": [],
+   "fc_unfiltered": 8.186396291976534,
+   "pm_unfiltered": 87.73460912929032,
+   "nperseg": 4300,
+   "window_ids": [
+    "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4|w0",
+    "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4|w1",
+    "c6f66b3d-2688-4b46-ac9b-ce65e10bf5d4|w2"
+   ],
+   "windows": [
+    [
+     9.463957,
+     19.463957
+    ],
+    [
+     27.46395700000002,
+     37.46395700000002
+    ],
+    [
+     50.463957000000036,
+     60.463957000000036
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|c7d83413|pitch",
+   "half": "test",
+   "log_id": "c7d83413-2cbb-400b-a0a9-b89f82c7879a",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000313138373333510f002d002e",
+   "cls": "both",
+   "plant": {
+    "b": 322.7772232397205,
+    "tau_m": 0.019308501926011593,
+    "Td": 0.002374003813745155
+   },
+   "gains": {
+    "Kp": 0.08240028470754623,
+    "Ki": 0.10000000149011612,
+    "Kd": 0.0015999999595806003
+   },
+   "f_ctrl": 665.78,
+   "fs": 2000.0,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "BMI055",
+   "control_chip": null,
+   "flags": [
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 4.169514441751437,
+   "pm_unfiltered": 83.23837904212441,
+   "nperseg": 1332,
+   "window_ids": [
+    "c7d83413-2cbb-400b-a0a9-b89f82c7879a|w0",
+    "c7d83413-2cbb-400b-a0a9-b89f82c7879a|w1",
+    "c7d83413-2cbb-400b-a0a9-b89f82c7879a|w2"
+   ],
+   "windows": [
+    [
+     7.986969,
+     17.986969000000002
+    ],
+    [
+     23.986969000000002,
+     33.986969
+    ],
+    [
+     39.986969,
+     49.986969
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|ceb1a318|pitch",
+   "half": "test",
+   "log_id": "ceb1a318-607a-485d-b162-363393042a49",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:0006000000003431373432335110002a0028",
+   "cls": "both",
+   "plant": {
+    "b": 211.0408480487865,
+    "tau_m": 0.04055754285149698,
+    "Td": 1.237584354385938e-17
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 800.0,
+   "fs": 6400.0,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": true,
+    "dnf_bw": 10.0,
+    "dnf_hmc": 2,
+    "dnf_min": 35.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM45686",
+   "control_chip": null,
+   "flags": [
+    "ESC notch on, no valid RPM: notch left out",
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 3.89859592892318,
+   "pm_unfiltered": 67.84033359541372,
+   "nperseg": 4292,
+   "window_ids": [
+    "ceb1a318-607a-485d-b162-363393042a49|w0",
+    "ceb1a318-607a-485d-b162-363393042a49|w1",
+    "ceb1a318-607a-485d-b162-363393042a49|w2"
+   ],
+   "windows": [
+    [
+     27.740857,
+     37.740857
+    ],
+    [
+     91.740857,
+     101.740857
+    ],
+    [
+     109.740857,
+     119.740857
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|d10980b0|roll",
+   "half": "test",
+   "log_id": "d10980b0-633e-4068-9c2a-dd362befc2aa",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000600000000363138343233511400200024",
+   "cls": "both",
+   "plant": {
+    "b": 574.8502966842015,
+    "tau_m": 0.03455500289557596,
+    "Td": 0.005163336408100626
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 809.06,
+   "fs": 8091.080078125,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "BMI055",
+   "control_chip": "ICM42688P",
+   "flags": [
+    "Td corrected +0.91 ms (FIFO chip BMI055 -> control chip ICM42688P)"
+   ],
+   "fc_unfiltered": 9.2789328756395,
+   "pm_unfiltered": 55.812323909368736,
+   "nperseg": 1334,
+   "window_ids": [
+    "d10980b0-633e-4068-9c2a-dd362befc2aa|w0",
+    "d10980b0-633e-4068-9c2a-dd362befc2aa|w1",
+    "d10980b0-633e-4068-9c2a-dd362befc2aa|w2"
+   ],
+   "windows": [
+    [
+     41.605417,
+     51.605417
+    ],
+    [
+     81.605417,
+     91.605417
+    ],
+    [
+     103.605417,
+     113.605417
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|d10980b0|pitch",
+   "half": "test",
+   "log_id": "d10980b0-633e-4068-9c2a-dd362befc2aa",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000363138343233511400200024",
+   "cls": "both",
+   "plant": {
+    "b": 426.1638453271576,
+    "tau_m": 0.02940075933880484,
+    "Td": 0.006843391532926859
+   },
+   "gains": {
+    "Kp": 0.15000000596046448,
+    "Ki": 0.20000000298023224,
+    "Kd": 0.003000000026077032
+   },
+   "f_ctrl": 809.06,
+   "fs": 8091.080078125,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "BMI055",
+   "control_chip": "ICM42688P",
+   "flags": [
+    "Td corrected +0.91 ms (FIFO chip BMI055 -> control chip ICM42688P)"
+   ],
+   "fc_unfiltered": 7.988327429352749,
+   "pm_unfiltered": 56.942183027072986,
+   "nperseg": 1334,
+   "window_ids": [
+    "d10980b0-633e-4068-9c2a-dd362befc2aa|w0",
+    "d10980b0-633e-4068-9c2a-dd362befc2aa|w1",
+    "d10980b0-633e-4068-9c2a-dd362befc2aa|w2"
+   ],
+   "windows": [
+    [
+     41.605417,
+     51.605417
+    ],
+    [
+     81.605417,
+     91.605417
+    ],
+    [
+     103.605417,
+     113.605417
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|df1e6fd3|roll",
+   "half": "test",
+   "log_id": "df1e6fd3-c0fc-4786-aa8a-7fbe4fc06d54",
+   "axis": 0,
+   "axis_name": "roll",
+   "vehicle_key": "uuid:000900000000000000008292b37f212b580e",
+   "cls": "att_sp",
+   "plant": {
+    "b": 182.23802915994452,
+    "tau_m": 0.03842865031799315,
+    "Td": 0.006636126744993942
+   },
+   "gains": {
+    "Kp": 0.13500000536441803,
+    "Ki": 0.2199999988079071,
+    "Kd": 0.0027000000700354576
+   },
+   "f_ctrl": 800.0,
+   "fs": 8370.535144088259,
+   "actual": {
+    "f_gyro": 30.0,
+    "f_dterm": 30.0,
+    "notches": [
+     [
+      45.0,
+      10.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM42686P",
+   "control_chip": null,
+   "flags": [
+    "FFT notch on: not modelled",
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 3.242537611026027,
+   "pm_unfiltered": 61.60744095992966,
+   "nperseg": 5333,
+   "window_ids": [
+    "df1e6fd3-c0fc-4786-aa8a-7fbe4fc06d54|w0",
+    "df1e6fd3-c0fc-4786-aa8a-7fbe4fc06d54|w1"
+   ],
+   "windows": [
+    [
+     62.588809,
+     72.588809
+    ],
+    [
+     75.588809,
+     85.588809
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|df1e6fd3|pitch",
+   "half": "test",
+   "log_id": "df1e6fd3-c0fc-4786-aa8a-7fbe4fc06d54",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000900000000000000008292b37f212b580e",
+   "cls": "att_sp",
+   "plant": {
+    "b": 173.7743775368189,
+    "tau_m": 0.035961677293890826,
+    "Td": 0.005749910624124885
+   },
+   "gains": {
+    "Kp": 0.13500000536441803,
+    "Ki": 0.2199999988079071,
+    "Kd": 0.0027000000700354576
+   },
+   "f_ctrl": 800.0,
+   "fs": 8370.535144088259,
+   "actual": {
+    "f_gyro": 30.0,
+    "f_dterm": 30.0,
+    "notches": [
+     [
+      45.0,
+      10.0
+     ]
+    ],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM42686P",
+   "control_chip": null,
+   "flags": [
+    "FFT notch on: not modelled",
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 3.18012743341368,
+   "pm_unfiltered": 64.65550652701215,
+   "nperseg": 5333,
+   "window_ids": [
+    "df1e6fd3-c0fc-4786-aa8a-7fbe4fc06d54|w0",
+    "df1e6fd3-c0fc-4786-aa8a-7fbe4fc06d54|w1"
+   ],
+   "windows": [
+    [
+     62.588809,
+     72.588809
+    ],
+    [
+     75.588809,
+     85.588809
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|f5af01aa|pitch",
+   "half": "test",
+   "log_id": "f5af01aa-f763-49c9-a87a-b27d5891d61e",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:000600000000333839363033510e002c0019",
+   "cls": "att_sp",
+   "plant": {
+    "b": 281.8771519083061,
+    "tau_m": 0.04633084578554786,
+    "Td": 5.841408447232478e-21
+   },
+   "gains": {
+    "Kp": 0.05000000074505806,
+    "Ki": 0.019999999552965164,
+    "Kd": 0.00039999998989515007
+   },
+   "f_ctrl": 399.2,
+   "fs": 8370.535144088259,
+   "actual": {
+    "f_gyro": 25.0,
+    "f_dterm": 20.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "ICM42688P",
+   "control_chip": null,
+   "flags": [
+    "control IMU unknown: Td keeps the FIFO chip's filter"
+   ],
+   "fc_unfiltered": 1.9532158605242076,
+   "pm_unfiltered": 63.25122786027572,
+   "nperseg": 5260,
+   "window_ids": [
+    "f5af01aa-f763-49c9-a87a-b27d5891d61e|w0",
+    "f5af01aa-f763-49c9-a87a-b27d5891d61e|w1",
+    "f5af01aa-f763-49c9-a87a-b27d5891d61e|w2"
+   ],
+   "windows": [
+    [
+     10.800806999999997,
+     20.800807
+    ],
+    [
+     83.80080699999993,
+     93.80080699999993
+    ],
+    [
+     109.80080699999992,
+     119.80080699999992
+    ]
+   ],
+   "tracking_keys": []
+  },
+  {
+   "id": "test|fdfe3483|pitch",
+   "half": "test",
+   "log_id": "fdfe3483-24fc-406f-8066-b579810eb696",
+   "axis": 1,
+   "axis_name": "pitch",
+   "vehicle_key": "uuid:00060000000030373630353251100050002f",
+   "cls": "both",
+   "plant": {
+    "b": 492.13644578745993,
+    "tau_m": 0.03225223711243353,
+    "Td": 6.066206570340055e-23
+   },
+   "gains": {
+    "Kp": 0.04949999842047692,
+    "Ki": 0.08999999895691868,
+    "Kd": 0.0013499999759718773
+   },
+   "f_ctrl": 795.54,
+   "fs": 7952.48291015625,
+   "actual": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "default": {
+    "f_gyro": 40.0,
+    "f_dterm": 30.0,
+    "notches": [],
+    "dnf_esc": false,
+    "dnf_bw": 15.0,
+    "dnf_hmc": 3,
+    "dnf_min": 25.0
+   },
+   "defaults_known": true,
+   "motor_hz": null,
+   "scenario": "A",
+   "rpm_tracking": false,
+   "fifo_chip": "IIM42652",
+   "control_chip": "IIM42652",
+   "flags": [],
+   "fc_unfiltered": 3.556107572531023,
+   "pm_unfiltered": 81.25860375649799,
+   "nperseg": 5302,
+   "window_ids": [
+    "fdfe3483-24fc-406f-8066-b579810eb696|w0",
+    "fdfe3483-24fc-406f-8066-b579810eb696|w1",
+    "fdfe3483-24fc-406f-8066-b579810eb696|w2"
+   ],
+   "windows": [
+    [
+     17.72179,
+     27.72179
+    ],
+    [
+     37.72179,
+     47.72179
+    ],
+    [
+     49.72179,
+     59.72179
+    ]
+   ],
+   "tracking_keys": []
+  }
+ ],
+ "excluded": [],
+ "seconds": 419.4,
+ "source": "plant_variation.analyze + robust_limits.real_cases on the test half",
+ "n_candidate_logs": 41
+}
