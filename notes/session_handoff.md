@@ -1,11 +1,11 @@
 # Session handoff (read at the start of a new session)
 
-Last update: 2026-10-19, Phase 4: Tasks 1-3 done (Task 3 = RQ1, D-37); decisions D-28 to D-40 recorded; Task 4 plan approved (D-40); Task 4 runs on 2026-10-20 in a new session. Written for: Claude starting a new session, and the author.
+Last update: 2026-10-20, Phase 4: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = training set, `notes/task4_results.md`); decisions D-28 to D-40 recorded; next ID D-41. **STOP: the author reviews Task 4 before Task 5.** Written for: Claude starting a new session, and the author.
 
 ## Where things stand
 
 - **Branch `phase4`** (created from the tip of `phase3`): everything is committed locally. **`phase3` and `phase4` are NOT merged** into `main`; the author decides the merge. **No GitHub push** until the author asks.
-- **Tests:** `.venv/Scripts/python -m pytest -q` (394 pass). Run the full suite before every commit.
+- **Tests:** `.venv/Scripts/python -m pytest -q` (437 pass, about 3.5 min). Run the full suite before every commit.
 - **Decided:**
   - **D-28** Tier 1 priors (evidence `notes/tier1_priors.md`); the ranges of f_c, τ_m and T_d are revised by D-36;
   - **D-29** Fig. 1 with two panels: (a, main) PX4 default with the ESC bank off, (b) bank on. Caption computed (`experiments/phase4/figures/fig1_caption.md`); crossover band 3-10 Hz since D-36;
@@ -26,7 +26,9 @@ Last update: 2026-10-19, Phase 4: Tasks 1-3 done (Task 3 = RQ1, D-37); decisions
 - **D-38** A5: 10,000 cases labelled with exactly the D-37 optimizer; Scenario B at its natural share (~10 %, 5 sources); the 1,000 RQ1 synthetic cases are the first 1,000; fallback 5,000, not 30,000; no fast-grid-only labels or greedy notch search without a new check and the author's decision; no test spectra in training.
 - **D-39** test-half reporting: the 4 test cases below 3 Hz are reported separately (Table 2 column, "outside the 3-10 Hz training prior" in the Table 2 footnote, band tables and Table S1; kept in all totals); the test-half observations are findings in THESIS 11 (safe references only: +2.1°). New THESIS 7.3.1 holds Table 2 and the band tables, copied verbatim from `rq1_tables.md`.
 - **D-40** Task 4 plan approved as written: T4-1 (a) the 520 fit real-noise cases are a separate validation set for Task 5; T4-2 (a) records + meta in git, spectra npz local and git-ignored with SHA-256 in the meta and a bit-exact regeneration test; T4-3 noted for Task 5; T4-4 extension threshold set in Task 5; T4-5 run on 2026-10-20 in a new session.
-- **Next: Task 4 in a new session, started with `notes/task4_start_prompt.md`.** Task 4 is NOT started yet. Report after the run: final counts, anomalies, meta contents, the first 10 rows of `train_v1.jsonl.gz`, the full suite. Measured inputs: 3.4 s per case on 6 workers; sampler 0.07 s per kept drone; seed 20261018 reproduces the RQ1 drones first (200 of 200 checked).
+- **Task 4 done 2026-10-20 (`notes/task4_results.md`):** `data/labels/train_v1.jsonl.gz` (10,000 records `syn0000`-`syn9999`, RQ1 format + `gains` + `origin`) and `train_v1_meta.json` in git (data commit `df6b02e`, code `9324a5f`); `train_v1_spectra.npz` (float32 10,000 × 1,521) local and git-ignored, SHA-256 in the meta, regenerate with `.venv/Scripts/python experiments/phase4/dataset_gen.py check-spectra` (9 min). Check the set with `dataset_gen.py verify`. One run of 9 h 22 min, no restart; reuse check 20/20 bit-identical; 973 Scenario B, 420 flagged; every optimum within the limits.
+- **Open for the author (asked at the Task 4 report):** 24 cases without a Mode A label and 1 without a Mode B label, all flagged drones (21 infeasible on the coarse grid; 2 search gaps syn6473, syn7266; search cap of 3,000 candidates reached in syn8559 (A) and syn2012 (B)). Task 5 must select by `A.feasible` / `B.feasible`.
+- **Next: Task 5 (ML tuner), only after the author's review.** Inputs: `train_v1` (10,000 generator cases), the 520 fit real-noise cases as a separate validation set (T4-1 (a)), grouping by generator source suggested (T4-3), learning curve 1,000 / 2,500 / 5,000 / 10,000 and the extension threshold (T4-4).
 - **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first. Deferred minor: ESC RPM averaged from first take-off to last landing in multi-flight logs.
 - Plan ledger (git-ignored): `.superpowers/sdd/phase4_plan/progress.md` (rulings, process notes).
 

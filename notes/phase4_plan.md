@@ -92,7 +92,7 @@ Steps (test first):
 
 ## Task 4: `dataset_gen.py` (training set). Needs A5
 
-> **2026-10-19:** A5 decided (D-38, 10,000 cases). Detailed plan: `notes/task4_plan.md` (approved as D-40; run 2026-10-20 in a new session; Task 4 not started).
+> **2026-10-19:** A5 decided (D-38, 10,000 cases). Detailed plan: `notes/task4_plan.md` (approved as D-40). **Done 2026-10-20:** `data/labels/train_v1.jsonl.gz`, results `notes/task4_results.md`.
 
 - **Pipeline:** Tier 3 drones (7.1.1) + generator spectra → optimizer labels for modes A and B.
 - **Run:** 1,000 cases to debug, then the final size.

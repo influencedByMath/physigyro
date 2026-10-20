@@ -6,7 +6,7 @@ Written for: the author, as the source when writing the paper. **The full wordin
 - the small **implementation rulings** made during the work;
 - every **correction** of an earlier claim.
 
-Keep it updated in every phase. Last update: 2026-10-19 (Phase 4, D-37).
+Keep it updated in every phase. Last update: 2026-10-20 (Phase 4, Task 4 done: `notes/task4_results.md`).
 
 Status values: **active** (in force), **extended** (still in force, with additions by a later decision), **partly superseded** (one part replaced; named), **done** (a one-off action).
 
@@ -140,6 +140,16 @@ All rulings in this table up to the evidence pack were accepted by the author on
 | (Task 3) The 4 test cases below 3 Hz stay in every result; Table 2 counts "outside 3-10 Hz" | No rule excludes them; nothing changed after the test half was seen; question to the author | `notes/task3_results.md` Section 4 |
 | (Task 3) Table 2 adds "ΔPM, safe references only" | For a flagged reference the Mode A gain is a repair, not wasted margin (test half: +2.1 deg vs +4.5 deg) | `rq1_report.population_row` |
 | (D-39) Table S1 escapes the pipe characters in case ids; each band table ends with a blank line | Both pre-existing since S4: Markdown viewers split case ids such as fit\|215afd8c\|roll into extra cells and read the next band title as a table row; found when regenerating the tables; fixed test-first, no number changed | `rq1_report.table_s1_md`, `band_md` |
+| (Task 4) Records add only `gains` and `origin` to the RQ1 record format; the default's robust metrics are the record's `reference_robust` | The sampler's `default` is bit-identical to `reference_robust` (checked at the merge for all 10,000), so no duplicate field | `dataset_gen.merge` |
+| (Task 4) Chunk loop `label_chunks`: the logic of `rq1_run.run_part` plus a header line (seed, n, git hash, config hash), an fsync per chunk and a format/limits check of every chunk | `run_part` has neither the header nor a per-chunk hook; `rq1_run.py` stays unchanged, so RQ1 stays reproducible | `experiments/phase4/dataset_gen.py` |
+| (Task 4) Guard 3 enforced in code: after every chunk the SHA-256 over all tracked `.py` files must be unchanged | The workers import the source files from disk; a mutation check during the run would change labels silently | `dataset_gen.source_digest` |
+| (Task 4) A dirty tree includes untracked files | An untracked `.py` file could be imported and is not in the git hash | `dataset_gen.require_clean_tree` |
+| (Task 4) Count check before labelling: in-window, kept, Scenario B and flagged shares within 5 combined binomial sd of the RQ1 shares, else stop | "A count far from the plan" as an automatic landmine; the RQ1 shares carry their own sampling error (n = 1,000) | `dataset_gen.count_check` |
+| (Task 4) Reuse check: 20 RQ1 cases drawn with seed 20261024, absolute tolerance 1e-9, every field except the solver seconds | Plan Section 2; result 20/20, largest difference 0 | `dataset_gen.reuse_check` |
+| (Task 4) A torn last line of the partial file is dropped and relabelled; any other broken line refuses | A crash during a write must not stop a restart; anything else is a real defect | `dataset_gen.read_partial` |
+| (Task 4) Bit-exact spectra: the suite checks the first 200 rows and the SHA-256 in the meta; the full regeneration is `dataset_gen.py check-spectra` (9 min; MATCH after the run); npz uncompressed, gzip with mtime 0 | A full regeneration is too slow for every suite run; both output files are deterministic | `tests/test_dataset_gen.py`, `dataset_gen.py` |
+| (Task 4) The 24 cases without a Mode A label and the 1 without a Mode B label are kept as the D-37 optimizer produced them and reported | All are flagged drones; no limit is broken; changing the search would change the label algorithm (D-38 (5)); question to the author | `notes/task4_results.md` Section 5 |
+| (Task 4, docs) THESIS Section 2, D-24: the magnitude written with lvert/rvert instead of bare pipes | A bare pipe inside a table cell split the D-24 row into extra cells (pre-existing since 2026-10-15); no content change | THESIS.md |
 
 ## D. Corrections of earlier claims (state honestly; useful for Limitations)
 
@@ -170,6 +180,7 @@ All rulings in this table up to the evidence pack were accepted by the author on
 - ~~A5.~~ **Decided 2026-10-19 as D-38 (10,000 cases with the D-37 optimizer).** Was: A5: training-set size and Scenario B share (preliminary estimate in `notes/followup_A4_F1_F4.md` Section 8: 5 generator RPM sources, natural share 10 %; about 5 test vehicles with RPM). **Author 2026-10-18: deferred until F1-F4 are recorded (now D-36); the author decides the final size next.** Input: the optimizer run time (`notes/task3_plan.md`, risk R4).
 - ~~F1-F4.~~ Decided as D-36 (3)-(5) (the recommendations, with f_c 3-10 Hz).
 - ~~Task 3 plan.~~ **Approved 2026-10-19 as D-37** (options (a) of T3-1 to T3-6); **Task 3 done 2026-10-19: `notes/task3_results.md`.** **The author's decisions on the report: D-38 (A5) and D-39 (cases below 3 Hz; test-half findings). Next: `notes/task4_plan.md` approved as D-40; Task 4 runs on 2026-10-20 in a new session (start prompt `notes/task4_start_prompt.md`).** Was open for the author: A5 (preliminary recommendation 10,000 cases with the D-37 optimizer, about 9.5 h on 6 workers; Section 8 there); the 4 test cases below 3 Hz (report separately?); the test half's 9 of 28 nominally unsafe flown settings (F5). Was: (questions T3-1 to T3-6: optimizer limits, which half, sample size, optimizer grid, the 10 Hz definition, synthetic drones that fail only the worst case at the defaults).
+- **Task 4 done 2026-10-20 (`notes/task4_results.md`).** Open for the author: how Task 5 treats the 24 training cases without a Mode A label and the 1 without a Mode B label (all flagged drones: 21 infeasible on the coarse grid, 2 search gaps where the Mode B optimum meets every Mode A constraint, 2 at the 3,000-candidate search cap).
 - Phase 5: fallback for flagged real drones (the repair line of THESIS 7.8 ends at an unsafe reference; a known-stable setting exists for all 10 flagged fit-half settings).
 - VERIFY: the ICM-42688-P on-chip filter path (datasheet vs PX4 driver; 585 Hz AAF cannot explain the measured roll-off).
 
