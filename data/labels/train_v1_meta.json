@@ -1,0 +1,196 @@
+{
+ "task": "Task 4 training set (THESIS 7.6; D-38, D-40; notes/task4_plan.md)",
+ "code": "experiments/phase4/dataset_gen.py",
+ "seed": 20261018,
+ "n": 10000,
+ "git": "9324a5f5fb87a86d006e3144ae6e2b99c3e19051",
+ "config_hash": "22fb31eef7b785398f71835e0388a7f2f523e5676becdbb4d5c1c8ab9e9e96c8",
+ "rq1": {
+  "file": "experiments/phase4/rq1_synthetic.json",
+  "commit": "1e9c5619a7da99e21aab6d7fcc72018a8c2b0766",
+  "n": 1000,
+  "reuse_check": {
+   "picked": [
+    "syn0020",
+    "syn0039",
+    "syn0049",
+    "syn0141",
+    "syn0232",
+    "syn0312",
+    "syn0332",
+    "syn0394",
+    "syn0483",
+    "syn0490",
+    "syn0541",
+    "syn0569",
+    "syn0639",
+    "syn0673",
+    "syn0727",
+    "syn0728",
+    "syn0744",
+    "syn0763",
+    "syn0788",
+    "syn0887"
+   ],
+   "n": 20,
+   "seed": 20261024,
+   "tol": 1e-09,
+   "ok": true,
+   "n_mismatch": 0,
+   "max_abs_diff": 0.0,
+   "mismatches": []
+  }
+ },
+ "limits": {
+  "PM_min": 30.0,
+  "Ms_max": 2.0,
+  "GM_min": 6.0,
+  "wc": {
+   "PM": 19.188136453720922,
+   "Ms": 3.0,
+   "GM": 3.5218251811136247
+  }
+ },
+ "width": 0.2,
+ "delay_samples": 1.0,
+ "delay_step": "1 controller sample + the rest of the chip-delay range (D-33, D-36 (1))",
+ "fast": {
+  "n_stab": 500,
+  "noise_df": 1.0,
+  "n_g": 24,
+  "n_d": 18
+ },
+ "full": {
+  "n_stab": 1500,
+  "noise_df": 0.5,
+  "n_g": 40,
+  "n_d": 30
+ },
+ "f_hi": 780.0,
+ "f_grid": {
+  "start": 20.0,
+  "stop": 780.0,
+  "step": 0.5,
+  "n": 1521
+ },
+ "chip_delays": {
+  "ICM42688P": [
+   0.000906,
+   0.0013720000000000002
+  ],
+  "ICM45686": [
+   0.00025,
+   0.0008900000000000001
+  ],
+  "IIM42652": [
+   0.001141,
+   0.001156
+  ],
+  "ICM42686P": [
+   0.001996,
+   0.003019
+  ]
+ },
+ "spectra": {
+  "file": "data/labels/train_v1_spectra.npz",
+  "in_git": false,
+  "arrays": {
+   "f": "float64 (1521,)",
+   "S": "float32 [10000, 1521]",
+   "ids": "<U7 (10000,)"
+  },
+  "note": "labels were computed on the float64 spectra; regenerate with 'dataset_gen.py check-spectra'"
+ },
+ "records": {
+  "file": "data/labels/train_v1.jsonl.gz",
+  "format": "one JSON record per line (rq1_run._synthetic_work record + gains + origin)",
+  "added_keys": [
+   "gains",
+   "origin"
+  ]
+ },
+ "sha256": {
+  "inputs": {
+   "model_fits.json": "b16278649ece22a6535247a54155b278dfe2682828469ddaf1551c3792e7011a",
+   "generator_check.json": "ce23d18c78089453faf5e2d707fe6e3eb965cde30b1f73ed0bab529f748e9957",
+   "priors_from_logs.json": "a9a2f6eee20b4673a15d91d908d34d008b28b0c701d33d60f6a88b9bc9645b11",
+   "fit_windows.csv": "be02c86d2aa470c88f91ed3b27219c6ab86df775be29ba28cae9ff9aee49fe55",
+   "fit_psd_native.npz": "7e49cb16c94bbe5155697d7cf6a26026f4258e5583703643822ff3ff5cfcc85d",
+   "rq1_synthetic.json": "4bf3af0266a1aab5b70eb38b70db9e0693963dcc3935ab8f0e759cc47d05bad2"
+  },
+  "outputs": {
+   "train_v1.jsonl.gz": "b393e570ac7517122f2a2d15b5c65e5b27ea9d1f55e490bc752f75e41c341967",
+   "train_v1_spectra.npz": "576b045d542ddf30717a1977e21bae012867871d8923c46cbdd2881db451923e"
+  }
+ },
+ "versions": {
+  "python": "3.13.2",
+  "numpy": "2.3.4",
+  "scipy": "1.16.3",
+  "joblib": "1.5.2",
+  "platform": "Windows-11-10.0.26200-SP0"
+ },
+ "n_jobs": 6,
+ "chunk": 48,
+ "start": "2026-10-20T11:42:11+0800",
+ "end": "2026-10-20T21:03:51+0800",
+ "invocations": [
+  "2026-10-20T11:42:11+0800"
+ ],
+ "counts": {
+  "draws": 21095,
+  "in_window": 11539,
+  "kept": 10000,
+  "scenario_b": 973,
+  "flagged": 420,
+  "scenario_b_share": 0.0973,
+  "kept_share": 0.8666262241095416,
+  "in_window_share": 0.5470016591609386,
+  "flagged_share": 0.042,
+  "rq1_reference": {
+   "draws": 2223,
+   "in_window": 1152,
+   "kept": 1000,
+   "scenario_b": 101,
+   "flagged": 44
+  }
+ },
+ "labels": {
+  "all": {
+   "n": 10000,
+   "feasible_A": 9976,
+   "feasible_B": 9999,
+   "scenario_b": 973,
+   "flagged": 420,
+   "solver_seconds": {
+    "total": 202019.9,
+    "median": 17.78,
+    "p90": 25.001000000000005
+   }
+  },
+  "new": {
+   "n": 9000,
+   "feasible_A": 8976,
+   "feasible_B": 8999,
+   "scenario_b": 872,
+   "flagged": 376,
+   "solver_seconds": {
+    "total": 183286.9,
+    "median": 17.88,
+    "p90": 23.521000000000004
+   }
+  },
+  "rq1": {
+   "n": 1000,
+   "feasible_A": 1000,
+   "feasible_B": 1000,
+   "scenario_b": 101,
+   "flagged": 44,
+   "solver_seconds": {
+    "total": 18733.0,
+    "median": 16.67,
+    "p90": 31.092
+   }
+  }
+ }
+}
