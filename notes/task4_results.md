@@ -50,7 +50,7 @@ All shares lie within 2.6 combined binomial sd of the RQ1 shares (the run stops 
 | RQ1 (first 1,000) | 1,000 | 3.33 [0.48, 8.13] | 1,000 | 0.569 [0.294, 0.939] |
 | new 9,000 | 8,976 | 3.18 [0.51, 7.76] | 8,999 | 0.573 [0.299, 0.942] |
 
-## 5. Finding: 24 cases without a Mode A label, 1 without a Mode B label (question for you)
+## 5. Finding: 24 cases without a Mode A label, 1 without a Mode B label (decided as D-41)
 
 All 24 are **flagged** drones (24 of 420 flagged, 5.7 %; 16 Scenario A, 8 Scenario B). The PX4 default fails the worst case, so it cannot seed the search. The RQ1 sample had none (0 of its 44 flagged drones). No limit is broken; these are the outputs of exactly the D-37 optimizer.
 
@@ -62,6 +62,8 @@ All 24 are **flagged** drones (24 of 420 flagged, 5.7 %; 16 Scenario A, 8 Scenar
 
 The records hold `feasible`, `n_candidates` and `n_feasible_coarse` per mode, so every group can be selected in Task 5 without changing the data.
 
+**Decided 2026-10-20 (D-41, the recommended option):** `train_v1` stays as it is. Task 5 trains and evaluates Mode A on the 9,976 and Mode B on the 9,999 labelled cases; the 25 unlabelled modes are reported, and the 2 search gaps and 2 cap hits are a stated limitation. Nothing is rerun.
+
 ## 6. Rulings made during Task 4 (each with its cost if wrong)
 
 1. **Fields added to the RQ1 record format: only `gains` and `origin`.** The sampler's default metrics are bit-identical to the record's `reference_robust` (checked at the merge for all 10,000), so they are not stored twice. Cost: none.
@@ -72,7 +74,7 @@ The records hold `feasible`, `n_candidates` and `n_feasible_coarse` per mode, so
 6. **Reuse check:** picks drawn with seed 20261024 (the brute-force check used 20261023); absolute tolerance 1e-9; every field except the solver seconds compared.
 7. **A torn last line of the partial file** (crash during a write) is dropped and its cases relabelled; any other broken line refuses. Not needed in this run.
 8. **Bit-exact spectra:** the suite compares the first 200 rows and the SHA-256 in the meta; the full regeneration is the `check-spectra` command (9 min, too slow for every suite run). npz uncompressed (NumPy writes a fixed zip time stamp); records gzip with mtime 0, so both files are deterministic.
-9. **Infeasible labels are kept as produced** (Section 5) and reported; how Task 5 uses them is your decision.
+9. **Infeasible labels are kept as produced** (Section 5) and reported; their use in Task 5 was decided by you as D-41.
 
 ## 7. Process notes
 

@@ -1,6 +1,6 @@
 # Session handoff (read at the start of a new session)
 
-Last update: 2026-10-20, Phase 4: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = training set, `notes/task4_results.md`); decisions D-28 to D-40 recorded; next ID D-41. **STOP: the author reviews Task 4 before Task 5.** Written for: Claude starting a new session, and the author.
+Last update: 2026-10-20, Phase 4: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = training set, `notes/task4_results.md`); decisions D-28 to D-41 recorded; next ID D-42. **STOP: the author reviews Task 4 before Task 5.** Written for: Claude starting a new session, and the author.
 
 ## Where things stand
 
@@ -27,7 +27,7 @@ Last update: 2026-10-20, Phase 4: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = t
 - **D-39** test-half reporting: the 4 test cases below 3 Hz are reported separately (Table 2 column, "outside the 3-10 Hz training prior" in the Table 2 footnote, band tables and Table S1; kept in all totals); the test-half observations are findings in THESIS 11 (safe references only: +2.1°). New THESIS 7.3.1 holds Table 2 and the band tables, copied verbatim from `rq1_tables.md`.
 - **D-40** Task 4 plan approved as written: T4-1 (a) the 520 fit real-noise cases are a separate validation set for Task 5; T4-2 (a) records + meta in git, spectra npz local and git-ignored with SHA-256 in the meta and a bit-exact regeneration test; T4-3 noted for Task 5; T4-4 extension threshold set in Task 5; T4-5 run on 2026-10-20 in a new session.
 - **Task 4 done 2026-10-20 (`notes/task4_results.md`):** `data/labels/train_v1.jsonl.gz` (10,000 records `syn0000`-`syn9999`, RQ1 format + `gains` + `origin`) and `train_v1_meta.json` in git (data commit `df6b02e`, code `9324a5f`); `train_v1_spectra.npz` (float32 10,000 × 1,521) local and git-ignored, SHA-256 in the meta, regenerate with `.venv/Scripts/python experiments/phase4/dataset_gen.py check-spectra` (9 min). Check the set with `dataset_gen.py verify`. One run of 9 h 22 min, no restart; reuse check 20/20 bit-identical; 973 Scenario B, 420 flagged; every optimum within the limits.
-- **Open for the author (asked at the Task 4 report):** 24 cases without a Mode A label and 1 without a Mode B label, all flagged drones (21 infeasible on the coarse grid; 2 search gaps syn6473, syn7266; search cap of 3,000 candidates reached in syn8559 (A) and syn2012 (B)). Task 5 must select by `A.feasible` / `B.feasible`.
+- **D-41 (2026-10-20):** 24 cases without a Mode A label and 1 without a Mode B label, all flagged drones (21 infeasible on the coarse grid; 2 search gaps syn6473, syn7266; search cap of 3,000 candidates reached in syn8559 (A) and syn2012 (B)). `train_v1` stays as it is; **Task 5 selects by `A.feasible` / `B.feasible`** (Mode A 9,976 cases, Mode B 9,999); the gaps and cap hits are a stated limitation (decision log F 21).
 - **Next: Task 5 (ML tuner), only after the author's review.** Inputs: `train_v1` (10,000 generator cases), the 520 fit real-noise cases as a separate validation set (T4-1 (a)), grouping by generator source suggested (T4-3), learning curve 1,000 / 2,500 / 5,000 / 10,000 and the extension threshold (T4-4).
 - **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first. Deferred minor: ESC RPM averaged from first take-off to last landing in multi-flight logs.
 - Plan ledger (git-ignored): `.superpowers/sdd/phase4_plan/progress.md` (rulings, process notes).
@@ -45,7 +45,7 @@ Last update: 2026-10-20, Phase 4: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = t
 
 - **Decisions:**
   - No serious decision without evidence and the author's permission; ask with AskUserQuestion and a recommendation.
-  - Every decision goes into THESIS Section 2 (next ID: **D-41**) **and** `notes/decision_log.md`.
+  - Every decision goes into THESIS Section 2 (next ID: **D-42**) **and** `notes/decision_log.md`.
 - **Stopping:** stop and report immediately on any new landmine (unexpected data or code problem).
 - **Testing:**
   - Write tests first and see them fail.
