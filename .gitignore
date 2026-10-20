@@ -9,3 +9,10 @@ data/index/
 data/screen/screen_results.jsonl
 data/spectra/*_native/
 data/spectra/*.tmp
+# Task 4 (D-40, T4-2 (a)): spectra file local only (SHA-256 in train_v1_meta.json); partial, run log, temp files
+data/labels/train_v1_spectra.npz
+data/labels/*.partial.jsonl
+data/labels/*.runlog.jsonl
+data/labels/*.tmp
+data/labels/*.new.npz
+data/labels/*.check.npz
