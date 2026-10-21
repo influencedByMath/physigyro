@@ -1,6 +1,6 @@
-# Phase 4 Plan (DRAFT, waiting for the author's review): plant priors, Fig. 1, then optimizer results and training data
+# Phase 4 Plan: plant priors, Fig. 1, then optimizer results and training data
 
-> Status: **draft 2026-10-16, not started.** Nothing in this plan is executed before the author approves it.
+> Status: ✅ **DONE 2026-10-20.** Approved 2026-10-18; Task 1 (D-28) ✅, Task 2 (D-29) ✅, Task 3 (D-37, `notes/task3_results.md`) ✅, Task 4 (D-40, `notes/task4_results.md`) ✅. Only the optional Tier 2 figure (E12, cut list item 4) is open. (Was: draft 2026-10-16, executed only after the author's approval.)
 > Executor: native, test-first, full suite before every commit (author's standing instructions).
 > Stop and report on any new landmine.
 
@@ -82,7 +82,7 @@ Steps (test first):
 
 ## Task 3: RQ1 results (E3: Fig. 3, Fig. 4, Table 2). Needs A2-A4
 
-> **2026-10-18:** A2-A4 and F1-F4 are decided (D-30 to D-36). The detailed plan is `notes/task3_plan.md` (waits for the author's approval; Task 3 not started).
+> **2026-10-18:** A2-A4 and F1-F4 are decided (D-30 to D-36). The detailed plan is `notes/task3_plan.md` (approved 2026-10-19 as D-37). ✅ **Done 2026-10-19:** `notes/task3_results.md`.
 
 - **Synthetic noise from the Phase 3 generator:** default vs optimal settings, modes A/B/C, reporting $\tilde N$, $\tau_F$ and PM together.
 - **Real test-half spectra:** default vs the pilot's actual setting vs optimal, with the real gains (D-15).
@@ -103,6 +103,7 @@ Steps (test first):
 - **Data:** fit-half logs with profile bit 3 or 4.
 - **Method:** D-14 instrument rules.
 - **Output:** it would replace the Tier 1 ranges. It is proposed only if Tasks 1-4 finish early.
+- **Status 2026-10-21:** the identifications exist (fit half: evidence pack, 30 from 17 vehicles; test half: Task 3 S2) and informed D-36, which keeps them as a sensitivity check only (not a replacement of the Tier 1 ranges). Open: only the Fig. 12 histograms; the author decides whether to draw them.
 
 ## Review Focus (to be pinned by tests)
 

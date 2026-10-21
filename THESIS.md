@@ -651,24 +651,24 @@ A. Index filter (dbinfo) --> B. Header screen (range request) --> C. Vehicle spl
 
 #### 7.4.3 Data-quality gates (the cleaning pipeline)
 
-Every gate is checked in code (`src/data_quality.py`), and every rejected log or window gets a reason code. **All TBD thresholds below were frozen on 2026-10-15 as decision D-23 (Section 2).** The paper reports a **data funnel table** (Table 1): how many logs and windows each gate removed. **TBD** values are fixed by the pilot study below.
+Every gate is checked in code (`src/data_quality.py`), and every rejected log or window gets a reason code. **All TBD thresholds below were frozen on 2026-10-15 as decision D-23 (Section 2).** The paper reports a **data funnel table** (Table 1): how many logs and windows each gate removed. The pilot study below fixed every TBD value; the Threshold column shows the frozen values (code `data_quality.FROZEN`).
 
 | Gate | Problem | How to detect | Action | Threshold |
 |---|---|---|---|---|
 | Q1 | Not real flight hardware | `sys_hw` contains `SITL`/`SIM`; `source` = `CI`; check `ulog.msg_info_dict['ver_hw']` again after download | Drop | - |
 | Q2 | Wrong vehicle type | `mav_type` not a multirotor; VTOL types | Drop (VTOL may be added later) | - |
 | Q3 | Duplicate uploads | Same `vehicle_uuid` and same start time and duration | Keep one | - |
-| Q4 | **Logger dropouts** | `ulog.dropouts` (the logger's own records) and FIFO timestamp gaps larger than 1.5 $\times$ `dt` | Split the signal into gap-free segments. Never compute a PSD across a gap. Drop the log if its dropout fraction exceeds $D_{max}$; drop segments shorter than $L_{min}$ | $D_{max}$ **TBD** (pilot; candidates 1, 5, 10 %). $L_{min}$ **TBD** ($\ge$ window length $W$). Evidence: 49 % and 62 % lost in 2 of 4 pilot logs, both with heavy profiles (785 and 2047) |
-| Q5 | **Different sample rates; fixed frequency range** | $f_s = 10^6/\text{median}(dt)$ | Compute all features and the noise metric only on one fixed band $[f_{min}, f_{max}]$ for all logs. Drop the log if $0.8 \cdot f_s/2 < f_{max}$ | $f_{max}$ **TBD** (pilot; candidate 800 Hz). $f_{min}$ **TBD** (candidate 20 Hz). Evidence: 2,000 and 6,400 Hz in pilot logs |
-| Q6 | Sample-time jitter or rate change | std(`dt`)/median(`dt`); jumps in `dt` | Split at rate changes; drop windows with jitter above the limit | **TBD** (candidate 1 %) |
-| Q7 | Wrong axes | FIFO data are in the **board** frame ("FRD board frame" in `SensorGyroFifo.msg`) | Rotate to the body frame with `SENS_BOARD_ROT` (plus the small trims `SENS_BOARD_X_OFF`, `_Y_OFF`, `_Z_OFF`) | **VERIFY** the rotation table in PX4 `src/lib/conversion/rotation.h` |
+| Q4 | **Logger dropouts** | `ulog.dropouts` (the logger's own records) and FIFO timestamp gaps larger than 1.5 $\times$ `dt` | Split the signal into gap-free segments. Never compute a PSD across a gap. Drop the log if its dropout fraction exceeds $D_{max}$; drop segments shorter than $L_{min}$ | $D_{max}$ = **20 %** of a log (coarse filter; candidates were 1, 5, 10 %); $L_{min}$ = **one Welch segment** ($n_{perseg}/f_s$ = 0.67 s) (D-23). Evidence: 49 % and 62 % lost in 2 of 4 pilot logs, both with heavy profiles (785 and 2047) |
+| Q5 | **Different sample rates; fixed frequency range** | $f_s = 10^6/\text{median}(dt)$ | Compute all features and the noise metric only on one fixed band $[f_{min}, f_{max}]$ for all logs. Drop the log if $0.8 \cdot f_s/2 < f_{max}$ | Band **20-780 Hz** ($f_{min}$ = 20 Hz; $f_{max}$ = 780 Hz, candidate was 800 Hz); a log is dropped if $0.8 f_{s,measured}/2 < 780$ Hz (D-23). Evidence: 2,000 and 6,400 Hz in pilot logs |
+| Q6 | Sample-time jitter or rate change | std(`dt`)/median(`dt`); jumps in `dt` | Split at rate changes; drop windows with jitter above the limit | **1 %** (D-23) |
+| Q7 | Wrong axes | FIFO data are in the **board** frame ("FRD board frame" in `SensorGyroFifo.msg`) | Rotate to the body frame with `SENS_BOARD_ROT` (plus the small trims `SENS_BOARD_X_OFF`, `_Y_OFF`, `_Z_OFF`) | Table from PX4 v1.16.0 `rotation.h` (in `src/noise_data.py`); rotations 0, 2 and 4 verified on data; a log with any other rotation must pass the 3x3 axis check, else it is dropped (D-23). The trims `SENS_BOARD_*_OFF` are ignored in code (a fraction of a degree) |
 | Q8 | Several gyros | Several `sensor_gyro_fifo` instances | Use the instance whose `device_id` matches the gyro used by the controller (`sensor_selection`), else instance 0. Store `device_id`, `is_external` and a flag `fifo_is_control_gyro`. **Found 2026-10-10:** in pilot log b27d09e3 (FMU-V6X, 3 IMUs) only FIFO instance 0 was logged, but the controller used another IMU; its spectrum still predicted the logged filtered gyro within 1 dB (same board), so keep such logs but flag them | - |
-| Q9 | Clipping (sensor saturation) | Raw int16 counts at or near $\pm$32767 | Drop windows with clipped samples above the limit | **TBD** (candidate 0 clipped samples) |
-| Q10 | Not steady flight | `vehicle_land_detected.landed`, `vehicle_status.nav_state`, rate setpoint activity, throttle (mean of `actuator_motors`) | Keep in-air windows only. Skip $T_{edge}$ after take-off and before landing. Require low rate-setpoint activity and steady throttle | Window length $W$ **TBD** (candidate 10 s); $T_{edge}$ **TBD** (candidate 5 s); activity and throttle limits **TBD** |
+| Q9 | Clipping (sensor saturation) | Raw int16 counts at or near $\pm$32767 | Drop windows with clipped samples above the limit | **0** clipped samples (D-23; a sample counts as clipped at an absolute count of at least 32,000) |
+| Q10 | Not steady flight | `vehicle_land_detected.landed`, `vehicle_status.nav_state`, rate setpoint activity, throttle (mean of `actuator_motors`) | Keep in-air windows only. Skip $T_{edge}$ after take-off and before landing. Require low rate-setpoint activity and steady throttle | $W$ = **10 s**, $T_{edge}$ = **5 s**, rate-setpoint activity at most **15 °/s**, throttle std at most **0.02**; windows without `actuator_motors` are flagged, not dropped (D-23) |
 | Q11 | **Firmware version and defaults** | `ver_sw_release` (version), `ulog.initial_parameters` (actual values), `ulog.get_default_parameters(1)` then `(0)` (setup and system defaults), `ulog.changed_parameters` (changes during the log) | Store $\theta_{actual}$ and $\theta_{default}$ per window. A log stores a default only when it differs from the configured value (checked 2026-10-14 in PX4 v1.16.0 `logger.cpp`, `write_parameter_defaults`): if no default is stored, the actual value **is** the default. **Exception:** if the log has no default-parameter record at all (older firmware), the defaults are unknown: flag `defaults_known = False` and set $\theta_{default}$ to none. Use the parameter value valid at the window time. Never use the fixed table of Section 4.2 for real logs | - . Evidence: `IMU_DGYRO_CUTOFF` default 30 Hz (v1.15-v1.16) vs 20 Hz (v1.17+); `IMU_GYRO_RATEMAX` 400 generic vs 800 multicopter; setup gyro-cutoff defaults 40/80/90 Hz |
 | Q12 | IMU chip effects | `device_id` gives the sensor driver/chip; chips differ in rate and internal anti-aliasing filter | Record the chip. After clustering (Section 7.5), cross-tabulate clusters against chips. If a cluster is just one chip type, report it and revisit the features | - |
-| Q13 | PSD estimate quality | Number of Welch averages | Require at least the minimum number of averages; store the chi-squared 90 % upper-bound factor for the safety check | `nperseg` **TBD** (resolution about 1-2 Hz); minimum averages **TBD** (candidate 20) |
-| Q14 | One vehicle dominates | Windows per vehicle; empty `vehicle_uuid` | Cap the number of windows per vehicle. Fallback vehicle key = `sys_hw` + airframe + hash of the filter and PID parameters | Cap **TBD** (candidate 3) |
+| Q13 | PSD estimate quality | Number of Welch averages | Require at least the minimum number of averages; store the chi-squared 90 % upper-bound factor for the safety check | Resolution **1.5 Hz** ($n_{perseg} = f_s / 1.5$), at least **20** Welch averages (D-23) |
+| Q14 | One vehicle dominates | Windows per vehicle; empty `vehicle_uuid` | Cap the number of windows per vehicle. Fallback vehicle key = `sys_hw` + airframe + hash of the filter and PID parameters | At most **3** windows per vehicle (D-23) |
 | Q15 | Missing provenance | - | Store log id, URL, date and the CC-BY attribution with every spectrum | - |
 | Q16 | Bad flight-controller data | RPM = 0 or missing motors; wrong RPM units (see Section 7.4.5) | Set `has_rpm = False` for that window; the window stays in Scenario A | - |
 
@@ -687,8 +687,8 @@ Every gate is checked in code (`src/data_quality.py`), and every rejected log or
 2. Concatenate the first `samples` values of each message. Sample times: `timestamp_sample` is the time of the last sample in the message (**checked 2026-10-14** in the PX4 v1.16.0 ICM-42688-P driver: data-ready time of the newest sample, or the read time when polled; `notes/px4_notes.md`). **Found 2026-10-10:** `timestamp_sample` jitters by up to about ±1 sample between messages, so find gaps per message (break where the timestamp moves more than 3 samples away from the sample count) and fit one straight line of sample times per gap-free segment. The fitted IMU rate differs from the nominal `1e6/dt` (6,387.6 instead of 6,400 Hz; in the pilot logs that pass $D_{max}$: 2 kHz IMUs −0.30 to +0.03 %, 6.4 kHz −0.19 to +0.62 %, 8 kHz −1.0 to +1.5 %, one IMU −3.0 %): use the measured rate for the PSD frequency axis (gate Q6). **Corrected 2026-10-15:** the earlier figure "2,015 instead of 2,000 Hz" came from log b4a9719c with 63 % dropout, where the measured rate is not reliable; up to 20 % dropout it agrees with a single long-segment fit within 0.006 %.
 3. Apply gates Q4-Q9: gap-free segments, rotation to body axes, instance choice, clipping.
 4. Select steady windows (gate Q10).
-5. Welch PSD per axis (`scipy.signal.welch`, Hann window, `nperseg` from the pilot), only inside gap-free segments, then average.
-6. Detect noise peaks (`scipy.signal.find_peaks` on the log-PSD, prominence **TBD**).
+5. Welch PSD per axis (`scipy.signal.welch`, Hann window, $n_{perseg} = f_s / 1.5$ Hz, D-23 Q13), only inside gap-free segments, then average.
+6. Detect noise peaks (`scipy.signal.find_peaks` on the log-PSD, prominence **0.5 decades** above the robust floor, D-26 (4)).
 7. Save to `data/spectra/`: the PSD on the fixed band $[f_{min}, f_{max}]$ and the metadata: log id, vehicle key, split (fit or test), hardware, IMU `device_id`, $f_s$, firmware version, window times, $\theta_{actual}$, $\theta_{default}$, PID gains, per-motor RPM (mean and spread in the window), flags (`has_rpm`, `has_highrate`, `has_sysid`), dropout fraction, gate results, licence.
 
 #### 7.4.5 Using the flight-controller data in each log
@@ -807,7 +807,7 @@ The fallback triggers only when the newest log has zero windows passing Q10. In 
 
 $$S_n(f) = \sigma_w^2 + \sum_{i=1}^{4}\sum_{h=1}^{H} \frac{A_h}{1 + \left(\frac{f - h f_{m,i}}{\gamma_h}\right)^2} + \sum_{r} \frac{A_r}{1 + \left(\frac{f - f_r}{\gamma_r}\right)^2}$$
 
-The three parts are a broadband floor, motor harmonic peaks, and frame resonance peaks. Fit with `scipy.optimize.least_squares` on the log-PSD, on the fixed band only. Start the peak positions from `scipy.signal.find_peaks`. **When ESC RPM is available, fix $f_{m,i}$ to the measured RPM/60** instead of fitting them (Section 7.4.5, use 1). Report the fit error per spectrum and drop spectra the model cannot fit (error above **TBD** dB).
+The three parts are a broadband floor, motor harmonic peaks, and frame resonance peaks. Fit with `scipy.optimize.least_squares` on the log-PSD, on the fixed band only. Start the peak positions from `scipy.signal.find_peaks`. **When ESC RPM is available, fix $f_{m,i}$ to the measured RPM/60** instead of fitting them (Section 7.4.5, use 1). Report the fit error per spectrum and drop spectra the model cannot fit (error above **5 dB**, D-26 (4)).
 
 **Generator:** for each cluster, fit a simple distribution to the fitted parameters, for example a Gaussian on the log-parameters. Sample new parameter sets to create new realistic spectra. For the FPV extension, scale motor frequencies into the FPV range.
 
@@ -838,7 +838,7 @@ Details and all numbers: `experiments/part2/REPORT.md`. Decisions D-23 to D-27.
 - **Limitations** (to be stated in the paper):
   1. A remaining **+4.4 dB bias at 20-100 Hz** for non-ICM chips (median synthetic vs real; ICM-4268x +1.2 dB).
   2. **About 3 dB model misfit at the motor band** (95-130 Hz): several motors at slightly different, changing speeds make wider or split peaks than one Lorentzian.
-  3. The frequency jitter (0.65 %) rests on only **4 drones** with valid RPM and at least 2 windows. The synthetic peak sets are therefore near-copies of real ones; only the floor is a new draw.
+  3. The frequency jitter (0.64 %) rests on only **4 drones** with valid RPM and at least 2 windows. The synthetic peak sets are therefore near-copies of real ones; only the floor is a new draw.
   4. **Small chip groups:** IIM-42652 and IIM-42653 have 2 vehicles each, ICM-42686-P 3. Their low-pass terms are weakly supported. Also, BIC treats Welch bins as independent, which inflates the gains.
 - **Also recorded:**
   - The chip low-pass corner and order are not identifiable, so the ICM chip delay enters the loop model as a T_d uncertainty (D-25; VERIFY datasheet).
@@ -1030,8 +1030,8 @@ A static HTML and JavaScript page hosted on GitHub Pages:
 
 | ID | Experiment | Answers | Output |
 |---|---|---|---|
-| E1 | Verify filter and loop code against `scipy.signal` and hand calculations | Correctness | Unit tests; Fig. 1 Bode plot of the filter stack |
-| E2 | Real noise library: data funnel (gates Q1-Q16), statistics and clustering | Data description | Table 1 data funnel, logs, vehicles, rates, firmware versions, RPM availability; Fig. 2 cluster centroids |
+| E1 | Verify filter and loop code against `scipy.signal` and hand calculations (**completed**: unit tests 2026-10-10/14; Fig. 1 2026-10-18, D-29) | Correctness | Unit tests; Fig. 1 Bode plot of the filter stack |
+| E2 | Real noise library: data funnel (gates Q1-Q16), statistics and clustering (**completed** 2026-10-16/18: Table 1 in Section 7.4.7; no stable clusters, so Fig. 2 shows real vs synthetic spectra, `experiments/part2/figures/fig2_real_vs_synthetic`, D-24 (4)) | Data description | Table 1 data funnel, logs, vehicles, rates, firmware versions, RPM availability; Fig. 2 real vs synthetic spectra |
 | E3 | Default, actual (pilot-chosen) and optimal settings on synthetic and real noise, reporting $\tilde N$, $\tau_F$ and PM together (**completed 2026-10-19**, D-37, D-39: `notes/task3_results.md`, `experiments/phase4/rq1_tables.md`, Section 7.3.1) | RQ1 | Fig. 3 PM gain histogram; Fig. 4 Pareto fronts; Table 2 |
 | E4 | ML tuner vs baselines (synthetic, real noise, real gains, Scenario B with RPM) | RQ2 | Table 3 regret and violations |
 | E5 | Effect of the robust safety check | RQ2 | Extra columns in Table 3 (nominal and worst case, violation-rate bound); Fig. 5 regret and $\lambda$ before and after |
@@ -1041,7 +1041,7 @@ A static HTML and JavaScript page hosted on GitHub Pages:
 | E9 | Optional Betaflight preset | Generality | Extra table or figure |
 | E10 | Filter-model validation on real logs: predicted vs measured filtered-gyro PSD (Section 7.4.5) | Validity of C1 | Fig. 10 predicted vs measured spectra; error table |
 | E11 | Noise-metric validation on real logs: predicted vs measured controller-output PSD above $\max(5 f_c, 20\ \mathrm{Hz})$ (Section 7.4.5, D-36) | Validity of the noise metric | Fig. 11; error table |
-| E12 | Plant system identification from public logs (Tier 2, Section 7.1.1); optional | Plant realism | Fig. 12 histograms of $\tau_m$, $T_d$, $f_c$, PM of real drones |
+| E12 | Plant system identification from public logs (Tier 2, Section 7.1.1); optional (identifications done: fit half in the evidence pack, test half in Task 3; Fig. 12 not drawn; cut list item 4) | Plant realism | Fig. 12 histograms of $\tau_m$, $T_d$, $f_c$, PM of real drones |
 | E13 | ESC-RPM checks: RPM vs spectrum peaks; motor-frequency error without RPM (Scenario A) | Validity of the noise model; value of RPM | Small table; Fig. 13 RPM vs peaks |
 
 **E3 figures (drafted 2026-10-19, `experiments/phase4/figures/`, generated by `experiments/phase4/rq1_report.py`):**
@@ -1090,34 +1090,36 @@ research&thesis/
 `-- notes/                 <- literature.md (reading notes), px4_notes.md (source checks), math_roadmap.md, meetings
 ```
 
+**Actual layout (checked 2026-10-21):** the tree above is the plan. Library code is in `src/` (also `spectra_library.py`, `noise_generator.py`, `archetypes.py`, `priors.py`, `robust.py`, `tier3.py`, `split.py`, `ulog_header.py`, `fallback.py`); one-off experiment scripts are in `experiments/<part>/` (for example `experiments/phase4/rq1_run.py` and `experiments/phase4/dataset_gen.py`, not `src/dataset_gen.py`). `ml_tuner.py`, `safety_check.py`, `export_c.py` and `timesim.py` are written in Phases 5-6.
+
 ---
 
 ## 10. The project plan
 
 Day 1 = 2026-09-28. **Re-planned 2026-10-14 (D-18): Phases 3-9 start on Day 19 and end on Day 47 = 2026-11-13.** Each phase lists what to learn first, the tasks, and a "done when" test. If you fall behind, use the cut list at the end of this section.
 
-### Phase 0: Topic selection (Days 1-3, Sep 28-30) - DONE
+### Phase 0: Topic selection (Days 1-3, Sep 28-30) - ✅ DONE
 
 - [x] Compare candidate topics and check novelty
 - [x] Choose the topic and add the AI/ML part
 - [x] Create this master file
 
-### Phase 1: Setup, literature, proposal (planned Days 4-7, Oct 1-4; done Days 17-18, Oct 14-15)
+### Phase 1: Setup, literature, proposal (planned Days 4-7, Oct 1-4; done Days 17-18, Oct 14-15) - ✅ DONE except 3 author tasks (⬜ below)
 
 Learn first: reading papers quickly (3-pass method), Zotero basics, git basics.
 
 - [x] Install Python 3.11+, VS Code and git; create a virtual environment; install packages (Section 14.3). Done 2026-10-10: `.venv` with Python 3.13, `requirements.txt`
 - [x] `git init`; add `.gitignore`; first commit (2026-10-14)
-- [ ] **(Author)** Create a private GitHub repository and push (commands in the session log of 2026-10-14)
+- [ ] ⬜ **(Author)** Create a private GitHub repository and push (commands in the session log of 2026-10-14)
 - [x] Create the folder structure (Section 9) (2026-10-14)
-- [ ] **(Author)** Create accounts: GitHub, Overleaf, Zotero, arXiv, ORCID; import `paper/refs.bib` into Zotero
+- [ ] ⬜ **(Author)** Create accounts: GitHub, Overleaf, Zotero, arXiv, ORCID; import `paper/refs.bib` into Zotero
 - [x] Read and take notes in `notes/` on the key references in Section 16, plus 10-15 more from the search terms in Section 5.3 (2026-10-14: `notes/literature.md`, 60 references in `paper/refs.bib`, 16 new; pass 1 for all, must-read list for pass 2 in its Section H)
 - [x] Read the PX4 filter tuning guide and skim `VehicleAngularVelocity.cpp`; answer the VERIFY items in Section 4 (2026-10-14: `notes/px4_notes.md`; Betaflight phase-compensation filter and FIFO `timestamp_sample` answered)
 - [x] Write a 1-page proposal (problem, gap, RQs, method, timeline): `proposal/proposal.md` and `proposal/proposal.docx` (2026-10-14)
-- [ ] **(Author)** Fill in the names, check that the .docx fits one page, send it to the professor and ask them to supervise and co-author
+- [ ] ⬜ **(Author)** Fill in the names, check that the .docx fits one page, send it to the professor and ask them to supervise and co-author
 - **Done when:** the professor has the proposal; `python -c "import numpy, scipy, sklearn, pyulog"` runs (✓ 2026-10-14); at least 15 references are in Zotero (60 ready in `refs.bib`).
 
-### Phase 2: Physics model (Days 8-12, Oct 5-9)
+### Phase 2: Physics model (Days 8-12, Oct 5-9) - ✅ DONE
 
 Learn first: frequency response, Bode plots, z-transform basics, IIR filters, phase margin (Section 14).
 
@@ -1131,7 +1133,7 @@ Learn first: frequency response, Bode plots, z-transform basics, IIR filters, ph
 - [x] Draft Fig. 1: Bode plot of the PX4 default filter stack (**done 2026-10-18, Phase 4 Task 2**: `experiments/phase4/figures/fig1_filter_stack.{png,pdf}`; the feasibility `fig5_filter_stack_bode.png` was a first version; final version with two panels, ESC bank off (main) and on, D-29)
 - **Done when:** all tests pass, and the computed delay of the PX4 default filters matches the rules of thumb within 10 %.
 
-### Phase 3: Real noise data and unsupervised ML (Days 19-23, Oct 16-20)
+### Phase 3: Real noise data and unsupervised ML (Days 19-23, Oct 16-20) - ✅ DONE (2026-10-18)
 
 Learn first: PSD and Welch's method, pyulog, PCA, k-means.
 
@@ -1145,7 +1147,7 @@ Learn first: PSD and Welch's method, pyulog, PCA, k-means.
 - [x] **Go/no-go on Day 23 (Oct 20):** at least 100 vehicles after all gates (minimum 30). If no-go, use fallback R1 (Section 13). **Done 2026-10-16: 95 usable vehicles (fit 52 of 111, test 43 of 105; 254 windows): GO on the minimum, 5 short of the target.** Further screening (R1 a) is possible but needs a new author decision
 - **Done when:** the spectra library is saved, the generator produces realistic spectra, and Table 1 (data funnel) is drafted. **All three done (2026-10-16/18): library `data/spectra/`, generator Section 7.5.1, Table 1 Section 7.4.7.**
 
-### Phase 4: Optimizer and training data (Days 24-26, Oct 21-23)
+### Phase 4: Optimizer and training data (Days 24-26, Oct 21-23) - ✅ DONE (2026-10-20; only the optional E12 figure is open)
 
 Learn first: constrained optimization basics, grid search, `scipy.optimize.minimize`.
 
@@ -1155,7 +1157,7 @@ Learn first: constrained optimization basics, grid search, `scipy.optimize.minim
 - [x] Fig. 1 Bode plot of the filter stack (Task 2, E1, 2026-10-18): `experiments/phase4/fig1_bode.py`; final version with two panels and a computed caption (D-29); crossover band redrawn for D-36 (3-10 Hz)
 - [x] Evidence pack for A2-A4 (author request, 2026-10-18): `notes/evidence_pack_A2_A4.md`, tables `experiments/phase4/evidence_tables.md` (Tier 2 identifications on the fit half, pass/fail over PM floor x $M_{s,max}$ x uncertainty set, synthetic-design sensitivity)
 - [x] Decisions before Task 3 (2026-10-18): A2 PM floor 30° (D-30); A3 $M_{s,max}$ 2.0 (D-31); A4 separate worst-case limits (D-32), chip delay (D-33), set ±20 % / 1 controller sample / $M_{s,wc}$ 3.0, flagged real drones kept (D-36); findings F1-F4 (D-36). A5 (training-set size, Scenario B share): **decided 2026-10-19 as D-38, 10,000 cases**
-- [ ] Optional: `sysid.py`, Tier 2 plant identification on fit-half logs with profile bit 3 or 4 (Section 7.1.1); update the sampling ranges and the uncertainty set (E12). **2026-10-18:** fit half done in the evidence pack (30 identifications from 17 vehicles; gates frozen with A4, D-36); it informed the Tier 1 ranges and the uncertainty set (D-36). Open: the E12 figure; the test-half identification for the Task 3 real-gain cases (Task 3 plan)
+- [ ] Optional: `sysid.py`, Tier 2 plant identification on fit-half logs with profile bit 3 or 4 (Section 7.1.1); update the sampling ranges and the uncertainty set (E12). **2026-10-18:** fit half done in the evidence pack (30 identifications from 17 vehicles; gates frozen with A4, D-36); it informed the Tier 1 ranges and the uncertainty set (D-36). The test-half identification for the Task 3 real-gain cases was done in Task 3 S2 (frozen pipeline, 28 cases from 19 vehicles). **Open (optional, cut list item 4): the E12 figure (Fig. 12)**
 - [x] RQ1 results: default, actual (pilot-chosen) and optimal settings on synthetic and real spectra, reporting $\tilde N$, $\tau_F$ and PM together (Fig. 3, Fig. 4, Table 2). Plan `notes/task3_plan.md` (D-37); **done 2026-10-19:** `notes/task3_results.md` (median ΔPM at equal noise +3.3° synthetic, +2.6° real noise test, +2.1° real gain test with safe references; Mode B noise 0.57 / 0.62 / 0.74)
 - [x] `dataset_gen.py`: 10,000 cases (D-38; the 1,000 synthetic RQ1 cases are the first 1,000 and the debug run), about 9 h on 6 workers. Plan `notes/task4_plan.md` approved (D-40); **done 2026-10-20:** `data/labels/train_v1.jsonl.gz` + meta (seed 20261018, git hash `9324a5f`), spectra local with SHA-256; `notes/task4_results.md`
 - **Done when:** the training file is saved with its seed and git hash, and the RQ1 figures are drafted.
@@ -1496,16 +1498,16 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 
 | Phase | Days | Dates | Status |
 |---|---|---|---|
-| 0 Topic selection | 1-3 | Sep 28-30 | Done |
-| 1 Setup, literature, proposal | 4-7 → 17-18 | Oct 14-15 | Done 2026-10-14 except author tasks: accounts, GitHub push, Zotero import, send proposal |
-| 2 Physics model | 8-12 | Oct 5-9 | Core done 2026-10-10 (feasibility test); Tier 1 priors and Fig. 1 moved to Phase 4 |
-| 3 Real noise and clustering | 19-23 | Oct 16-20 | **Done 2026-10-16** (D-23 to D-27): 95 usable vehicles (52 fit + 43 test), one generator with chip covariate (AUC 0.495), independent review passed; branch `phase3` not merged (author) |
-| 4 Optimizer and training data | 24-26 | Oct 21-23 | **Started 2026-10-18** (branch `phase4`): Task 1 Tier 1 priors (D-28), Task 2 Fig. 1 (D-29), evidence pack, decisions A2-A4 and F1-F4 (D-30 to D-37), **Task 3 RQ1 done 2026-10-19** (`notes/task3_results.md`); A5 decided (D-38, 10,000 cases); the Task 4 plan approved (D-40); **Task 4 training set done 2026-10-20** (`notes/task4_results.md`) |
-| 5 ML tuner | 27-32 | Oct 24-29 | Not started |
-| 6 Deployment and validation | 33-35 | Oct 30-Nov 1 | Not started |
-| 7 Paper writing | 36-41 | Nov 2-7 | Not started |
-| 8 Review | 42-44 | Nov 8-10 | Not started |
-| 9 Release and submit | 45-47 | Nov 11-13 | Not started |
+| 0 Topic selection | 1-3 | Sep 28-30 | ✅ Done |
+| 1 Setup, literature, proposal | 4-7 → 17-18 | Oct 14-15 | ✅ Done 2026-10-14 except ⬜ author tasks: accounts, GitHub push, Zotero import, send proposal |
+| 2 Physics model | 8-12 | Oct 5-9 | ✅ Done 2026-10-10 (feasibility test); Tier 1 priors and Fig. 1 were moved to Phase 4 and are done there |
+| 3 Real noise and clustering | 19-23 | Oct 16-20 | ✅ **Done 2026-10-16** (D-23 to D-27): 95 usable vehicles (52 fit + 43 test), one generator with chip covariate (AUC 0.495), independent review passed; branch `phase3` not merged (author) |
+| 4 Optimizer and training data | 24-26 | Oct 21-23 | ✅ **Done 2026-10-20** (branch `phase4`; only the optional E12 figure open): Task 1 Tier 1 priors (D-28), Task 2 Fig. 1 (D-29), evidence pack, decisions A2-A4 and F1-F4 (D-30 to D-37), **Task 3 RQ1 done 2026-10-19** (`notes/task3_results.md`); A5 decided (D-38, 10,000 cases); the Task 4 plan approved (D-40); **Task 4 training set done 2026-10-20** (`notes/task4_results.md`) |
+| 5 ML tuner | 27-32 | Oct 24-29 | ⬜ Not started (next; the Task 5 plan needs the author's approval first) |
+| 6 Deployment and validation | 33-35 | Oct 30-Nov 1 | ⬜ Not started |
+| 7 Paper writing | 36-41 | Nov 2-7 | ⬜ Not started |
+| 8 Review | 42-44 | Nov 8-10 | ⬜ Not started |
+| 9 Release and submit | 45-47 | Nov 11-13 | ⬜ Not started |
 
 ### Open questions (VERIFY list)
 
@@ -1514,9 +1516,9 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 - [x] PX4: field names in `SensorGyroFifo.msg` (Section 7.4): checked 2026-10-06 (`dt`, `scale`, `samples`, `x/y/z[32]`, `timestamp_sample`, `device_id`, `is_external`)
 - [x] PX4 defaults by version: `IMU_DGYRO_CUTOFF` 30 Hz (v1.15-v1.16), 20 Hz (v1.17); multicopter `IMU_GYRO_RATEMAX` 800 Hz: checked 2026-10-06
 - [x] PX4: does `timestamp_sample` of `sensor_gyro_fifo` belong to the last sample of the message? (Section 7.4.4). Yes: checked 2026-10-14 in the v1.16.0 ICM-42688-P driver (data-ready time of the newest sample; read time when polled, which explains the ±1-sample jitter). `notes/px4_notes.md`
-- [ ] PX4: rotation table for `SENS_BOARD_ROT` and the frame of FIFO data (gate Q7). 2026-10-10: table copied from `rotation.h` v1.16.0 into `src/noise_data.py`. 2026-10-14: checked on data for rotations 0 and 4 (FIFO body rate vs logged `vehicle_angular_velocity`: correlation +0.99 and +0.91/+0.89 on x/y); PX4 filters the sensor axes and rotates afterwards (same result, linear filters). External IMUs use `CAL_GYROn_ROT` (now in code). Still open: other rotations, board trims `SENS_BOARD_*_OFF` **2026-10-15:** 3x3 axis check (`experiments/pilot_study/check_axes.py`) correct on 17 of 17 checkable pilot logs; rotation 2 (yaw 90°) now verified. Rotations 6, 8, 12, 14 occur only in heavy-dropout logs: every accepted log with such a rotation must pass the axis check in Part 2
+- [x] PX4: rotation table for `SENS_BOARD_ROT` and the frame of FIFO data (gate Q7). 2026-10-10: table copied from `rotation.h` v1.16.0 into `src/noise_data.py`. 2026-10-14: checked on data for rotations 0 and 4 (FIFO body rate vs logged `vehicle_angular_velocity`: correlation +0.99 and +0.91/+0.89 on x/y); PX4 filters the sensor axes and rotates afterwards (same result, linear filters). External IMUs use `CAL_GYROn_ROT` (now in code). Still open: other rotations, board trims `SENS_BOARD_*_OFF` **2026-10-15:** 3x3 axis check (`experiments/pilot_study/check_axes.py`) correct on 17 of 17 checkable pilot logs; rotation 2 (yaw 90°) now verified. Rotations 6, 8, 12, 14 occur only in heavy-dropout logs: every accepted log with such a rotation must pass the axis check in Part 2 **Closed 2026-10-21:** the rule is frozen in D-23: a log whose rotation is not verified on data (0, 2 and 4 are) must pass the 3x3 axis check, else it is dropped; 3 test vehicles were lost to it (rotations 6, 8, 12; Section 7.5.1). The trims `SENS_BOARD_*_OFF` are ignored (a fraction of a degree; `noise_data` docstring).
 - [x] PX4: exact rate-controller form, use of `MC_ROLLRATE_K` and D on measurement (Section 7.1): checked 2026-10-10
-- [ ] PX4: is `esc_status.esc_rpm` mechanical RPM for every ESC type? (Section 7.4.5). 2026-10-10: re-checked on the same 2 audit logs (FMU-V6X with bidirectional DShot; HKUST NXT Dual): RPM/60 harmonics match the spectrum peaks; other ESC types still unchecked
+- [ ] PX4: is `esc_status.esc_rpm` mechanical RPM for every ESC type? (Section 7.4.5). 2026-10-10: re-checked on the same 2 audit logs (FMU-V6X with bidirectional DShot; HKUST NXT Dual): RPM/60 harmonics match the spectrum peaks; other ESC types still unchecked **Status 2026-10-21:** still open for other ESC types. The pilot check found the strongest peak at 0.84-1.17 x RPM/60 in 18 windows (no factor-2 or pole-pair error); Scenario B rests on 5 generator sources and is reported separately (Section 11). Limitation, no task.
 - [x] Multi-rate loop: how to model filters at the FIFO rate and the controller at `IMU_GYRO_RATEMAX` (answer with E10): filters at the FIFO rate, then fold to the publication rate; matches the logged spectra within 1 dB (2026-10-10)
 - [x] **Author decision P1**: decided 2026-10-14 as D-13 (tracking notch, with a gate on the logged RPM rate)
 - [x] **Author decision P2**: decided 2026-10-14 as D-14 (instrument chosen by flight mode; checked: rate vs attitude setpoint agree within 0.2 dB on b27d09e3)
@@ -1525,44 +1527,44 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 - [x] **Author decision P5**: decided 2026-10-14 as D-17
 - [x] Safety-check calibration (Phase 5): with ±20 % b and τ_m and +1 sample delay, the pilot's well-flying roll setting fails the candidate limits in the worst case (PM 23°, M_s 3.9). Set the uncertainty set from data and recheck M_s,max = 2.0 (pilot roll M_s = 2.10). 2026-10-14: repeat fits on half windows of b27d09e3 failed for lack of excitation (one pitch half: b +24 %, τ_m +15 %), so ±20 % is not obviously too wide; the spread must come from several logs/flights in the fit half. Also decide whether the worst-case limits should be looser than the nominal ones (e.g. nominal PM ≥ 30°, worst case PM ≥ 20°) **2026-10-18 evidence pack, revised after the independent review** (`notes/evidence_pack_A2_A4.md`): with the same limits for every plant, ±20 % / +1 sample keeps only 39 % of the nominally passing real flown settings (41 % of synthetic defaults); a separate worst-case limit $M_s \le 3$ keeps 78 % (±20 %) to 96 % (±15 %) (synthetic 97-99 %). Waits for A2-A4. **2026-10-18 author:** separate worst-case limits accepted as a concept (D-32). The 5 real settings that fail at ±20 % / +1 sample with $M_{s,wc}$ 3 are nominally marginal ($M_s$ 1.81-1.94) and fail at the corner b +20 %, τ_m −20 %, $T_d$ +1 sample; extrapolation is not the cause (`notes/followup_A4_F1_F4.md` Sections 2-5). **Decided as D-36 (2026-10-18):** ±20 %, 1 controller sample, $M_{s,wc}$ 3.0; flagged real drones kept and reported
 - [x] Tier 2 window selection: the manoeuvre windows of b27d09e3 were picked by eye; the pilot study needs an automatic rule (setpoint activity, coherence) **2026-10-18:** no manual windows any more: Welch spectra over every gap-free airborne piece of one instrument class (`sysid.piece_spectra`, `experiments/phase4/plant_variation.py`); 30 accepted identifications from 17 fit-half vehicles (skipped controller publications held up to 8 samples); gates provisional (evidence pack)
-- [ ] FFT dynamic notch (`IMU_GYRO_DNF_EN` bit 1) is not modelled: flag and exclude such logs (code flag `fft_notch` added 2026-10-14)
-- [ ] Noise is not stationary inside one flight: band powers of two 8 s windows of b27d09e3 differ by up to 6 dB (60-90 Hz). Report window-to-window spread; consider several windows per vehicle
-- [ ] Pilot study: choose Welch `nperseg` per sample rate for a fixed resolution (a fixed 4096 gave only 6 averages at 2 kHz)
+- [ ] FFT dynamic notch (`IMU_GYRO_DNF_EN` bit 1) is not modelled: flag and exclude such logs (code flag `fft_notch` added 2026-10-14) **Status 2026-10-21:** flagged in code (`fft_notch`), not excluded. Raw FIFO spectra are taken before every filter, so the noise library is unaffected. Real-gain cases that fly it are kept and noted in Table S1 (fit: 5 cases of 3 vehicles; test: 6 cases of 4 vehicles); the test-half ones are a D-39 (2) finding (Section 11).
+- [x] Noise is not stationary inside one flight: band powers of two 8 s windows of b27d09e3 differ by up to 6 dB (60-90 Hz). Report window-to-window spread; consider several windows per vehicle **Closed 2026-10-21:** at most 3 windows per vehicle (Q14, D-23); the vehicle spectrum is the power mean of its windows (D-24 (2)); the within-vehicle spread is measured and used as the generator jitter (height 1.1 dB over 49 vehicles, frequency 0.64 % over 4 vehicles; `generator_check.json`).
+- [x] Pilot study: choose Welch `nperseg` per sample rate for a fixed resolution (a fixed 4096 gave only 6 averages at 2 kHz) **Closed 2026-10-21:** D-23 (Q13): $n_{perseg} = f_s / 1.5$ Hz, at least 20 averages (`data_quality.nperseg_for`).
 - [x] **Author decision (Phase 3):** no-ID vehicles excluded (D-23, 2026-10-15)
 - [x] **Author decision (Phase 3):** pilot thresholds approved and frozen (D-23, 2026-10-15)
 - [x] **Author decisions (Phase 3 Part 2):** recorded as D-24 (2026-10-15)
 - [x] **Author decisions (Phase 3 Part 2b):** recorded as D-26 (2026-10-15)
-- [ ] Go/no-go projection: 14 of 29 pilot logs usable (95 % CI 31-66 %), about 76 of 158 vehicles; target 100 needs about 780 more screened vehicles (R1 a)
+- [x] Go/no-go projection: 14 of 29 pilot logs usable (95 % CI 31-66 %), about 76 of 158 vehicles; target 100 needs about 780 more screened vehicles (R1 a) **Closed 2026-10-21:** go/no-go done 2026-10-16: 95 usable vehicles (52 fit + 43 test) after the extended screen of 4,327 vehicles (D-24 (5)); GO on the minimum of 30, 5 short of the target of 100 (Section 10, Phase 3).
 - [x] Part 2: `IMU_GYRO_RATEMAX` = 0 (v1.11) or 250 Hz in some logs: take the controller rate from the logged `vehicle_angular_velocity` or drop the log. **2026-10-18 (D-28):** the measured rate (median interval, logs with the high-rate or sysid profile) is used everywhere; it differs from the setting by more than 5 % in 42 of 102 fit logs (PX4 rounds to whole FIFO batches of the control IMU)
-- [ ] Part 2: the measured FIFO rate is unreliable above about 50 % dropout (1,251-1,823 Hz for 2 kHz IMUs); such logs fail Q4 first
-- [ ] Part 2: on-chip IMU low-pass filters shape the raw FIFO spectrum. **Confirmed 2026-10-15 on the fit half:** ICM-42688-P/42686-P fall by a median 3.1 decades (above 500 Hz vs 100-300 Hz), other chips by 0.15; on the same FMU-V6X board only the ICM-42688-P rolls off, so it is the chip, not the mount. PX4 v1.14/v1.16 set the ICM-42688-P anti-alias filter to 585 Hz, which alone cannot explain the drop: **VERIFY the on-chip filter path** (UI filter, AAF, FIFO resolution mode) in the datasheet and drivers of v1.12-v1.17. Its delay is not in the loop model
-- [ ] Part 2: gate Q8: on CUAV X7 Pro / NORA the FIFO chip (ICM-42688-P) differs from the control chip (ICM-20689); the feasibility 1 dB check used two IMUs of the same type. Check E10 on such a vehicle before using its FIFO spectrum as the controller's noise
-- [ ] Part 2: duplicate uploads (gate Q3) exist among vehicles without a board ID
-- [ ] Part 2: noise-floor shape of the parametric model (THESIS 7.5 assumes a flat floor; fit half: floors span 2.4 decades median; flat 6.8 dB, power law 5.1 dB, 4-knot spline 2.3 dB median error): author decision D-24
-- [ ] Gate Q11: logs without any default-parameter record (older firmware) get `defaults_known = False`; count them in the pilot study (2026-10-14, PX4 `logger.cpp` checked)
-- [ ] Setup defaults differ per vehicle even for `IMU_GYRO_RATEMAX` (b27d09e3, v1.16.0 release: setup default 400 Hz, actual 800 Hz). `θ_default` replaces only the filter parameters; loop rate and gains stay as flown
-- [ ] PADRE sampling rate (risk R1)
-- [ ] All TBD thresholds of Sections 7.1.1, 7.2, 7.4.3 and 7.8: fix in the pilot study, record as a decision
+- [x] Part 2: the measured FIFO rate is unreliable above about 50 % dropout (1,251-1,823 Hz for 2 kHz IMUs); such logs fail Q4 first **Closed 2026-10-21:** D-23 Q4 drops every log above 20 % dropout before any rate is used.
+- [ ] Part 2: on-chip IMU low-pass filters shape the raw FIFO spectrum. **Confirmed 2026-10-15 on the fit half:** ICM-42688-P/42686-P fall by a median 3.1 decades (above 500 Hz vs 100-300 Hz), other chips by 0.15; on the same FMU-V6X board only the ICM-42688-P rolls off, so it is the chip, not the mount. PX4 v1.14/v1.16 set the ICM-42688-P anti-alias filter to 585 Hz, which alone cannot explain the drop: **VERIFY the on-chip filter path** (UI filter, AAF, FIFO resolution mode) in the datasheet and drivers of v1.12-v1.17. Its delay is not in the loop model **Status 2026-10-21:** modelled as a fitted magnitude term per chip (D-24 (1), D-26 (3)); its delay enters as the D-33 chip delay. The datasheet check of the on-chip filter path is still open (limitation; decision log F 6).
+- [ ] Part 2: gate Q8: on CUAV X7 Pro / NORA the FIFO chip (ICM-42688-P) differs from the control chip (ICM-20689); the feasibility 1 dB check used two IMUs of the same type. Check E10 on such a vehicle before using its FIFO spectrum as the controller's noise **Status 2026-10-21:** the identified $T_d$ is corrected for FIFO ≠ control chip (`robust_limits.chip_td_correction`, review fix 2026-10-18). The E10 check on such a vehicle belongs to Phase 6.
+- [x] Part 2: duplicate uploads (gate Q3) exist among vehicles without a board ID **Closed 2026-10-21:** vehicles without a board ID are excluded (D-23).
+- [x] Part 2: noise-floor shape of the parametric model (THESIS 7.5 assumes a flat floor; fit half: floors span 2.4 decades median; flat 6.8 dB, power law 5.1 dB, 4-knot spline 2.3 dB median error): author decision D-24 **Closed 2026-10-21:** D-24 (3) (4-knot spline) and D-26 (1) (fixed robust floor).
+- [x] Gate Q11: logs without any default-parameter record (older firmware) get `defaults_known = False`; count them in the pilot study (2026-10-14, PX4 `logger.cpp` checked) **Closed 2026-10-21:** counted in the pilot study: defaults known in 97 % of the logs; 1 log (v1.11) has no default record and is flagged (`experiments/pilot_study/REPORT.md`).
+- [x] Setup defaults differ per vehicle even for `IMU_GYRO_RATEMAX` (b27d09e3, v1.16.0 release: setup default 400 Hz, actual 800 Hz). `θ_default` replaces only the filter parameters; loop rate and gains stay as flown **Closed 2026-10-21:** implemented as stated: $\theta_{default}$ is a filter setting only (`noise_data.fc_settings`, setup defaults); gains as flown, controller rate measured (D-28).
+- [x] PADRE sampling rate (risk R1) **Closed 2026-10-21:** not needed: R1 was not triggered (95 usable vehicles against the minimum of 30).
+- [ ] All TBD thresholds of Sections 7.1.1, 7.2, 7.4.3 and 7.8: fix in the pilot study, record as a decision **Status 2026-10-21:** 7.2, 7.4.3, 7.4.4 and 7.5 are fixed (D-23, D-26, D-30, D-31; the tables show the values). Remaining TBDs belong to later phases: the Section 6 targets of E10, E11 and E13 and the overshoot limit of 7.8 step 7.1 (Phase 6), the rate limit of 7.8 step 8 (future work, not built). 7.1.1 Tier 2 steps 3 and 5 belong to the least-squares method that D-14 replaced.
 - [x] Betaflight: is the phase-compensation filter on by default? (Section 4.3). No: it only shapes the chirp test signal (`USE_CHIRP`), checked 2026-10-14
 - [x] Parameter ranges for $f_c$, $\tau_m$, $T_d$, $f_m$ from literature (Section 7.1): D-28 (2026-10-18), `notes/tier1_priors.md`
-- [ ] (Phase 4) ESC firmware processing delay (BLHeli, AM32): no source found; part of $T_d$
-- [ ] (Phase 4) FPV extension priors: crossover, loop and FIFO rates have no source yet ($\tau_m$ evidence: Blaha et al. 2024, 20-26 ms)
-- [ ] (Phase 4) ICM-42686-P chip low-pass: optimum moved from the 150 Hz grid edge to 116 Hz (90 Hz within BIC 10), corner not bounded below; delay at least 2.0 ms (A4 input). The Phase 3 generator keeps the stored 150 Hz term (difference about 1.1 dB at 100 Hz)
-- [ ] (Phase 4) PX4 ICM-42688-P driver v1.16.0 checked: UI filter 1st order at ODR/2, AAF 585 Hz, on-chip notch enabled; this does not explain the measured roll-off (datasheet still needed)
+- [ ] (Phase 4) ESC firmware processing delay (BLHeli, AM32): no source found; part of $T_d$ **Status 2026-10-21:** still no source; covered by the $T_d$ prior 0.3-8 ms (D-36 (3)). Limitation, no task.
+- [ ] (Phase 4) FPV extension priors: crossover, loop and FIFO rates have no source yet ($\tau_m$ evidence: Blaha et al. 2024, 20-26 ms) **Status 2026-10-21:** only needed for the optional FPV / Betaflight extension (E9, cut list item 2).
+- [x] (Phase 4) ICM-42686-P chip low-pass: optimum moved from the 150 Hz grid edge to 116 Hz (90 Hz within BIC 10), corner not bounded below; delay at least 2.0 ms (A4 input). The Phase 3 generator keeps the stored 150 Hz term (difference about 1.1 dB at 100 Hz) **Closed 2026-10-21:** D-33: chip delay 2.00-3.02 ms by the fit-error rule (lower bound in the nominal $T_d$, rest in the delay step); the generator keeps the stored 150 Hz term (about 1.1 dB at 100 Hz).
+- [ ] (Phase 4) PX4 ICM-42688-P driver v1.16.0 checked: UI filter 1st order at ODR/2, AAF 585 Hz, on-chip notch enabled; this does not explain the measured roll-off (datasheet still needed) **Status 2026-10-21:** the same open datasheet check as the on-chip filter item above.
 - [x] (Phase 4 evidence pack, F1) The D-28 plant priors are slower than 9 of 30 identified fit-half plants (motor + delay lag at 10 Hz below the 53.3° the priors can reach); identified τ_m 11.7-64.9 ms, T_d 0-8.1 ms. Author: revisit D-28 (evidence-pack proposal τ_m 10-60 ms, T_d 0.1-5 ms, changed by the follow-up). Options with pass/fail impact: `notes/followup_A4_F1_F4.md` Section 7 (recommendation τ_m 15-60 ms, $T_d$ 0.3-8 ms: covers 19 of 28 identified plants, $T_d$ net of the chip filter). **Decided as D-36 (3)**; identified plants only as a sensitivity check
 - [x] (F2) Tier 3a design vs real drones: unfiltered PM of real drones 48.6-106.6° (median 72.8°; only 53 % in the 45-75° window); integral corner 0.030 of the crossover vs 0.1 in the design. Author: match the design (proposal window 60-95°, 0.03). Options: `notes/followup_A4_F1_F4.md` Section 7 (recommendation window 60-95°, integral corner 0.03: 76 % kept at the defaults instead of 50 %). **Decided as D-36 (4)**
 - [x] (F3, restated after the independent review) With the PX4 v1.16 defaults as the synthetic reference (D-09) and Tier 3 step 3, synthetic drones with $f_c \ge 10$ Hz are rare, not impossible: 0 of 117-196 pass nominally in designs a-c, 6.5 % (PM 25° / $M_s$ 2.2) with faster plant priors; $M_s$ and GM fail, not PM. Real drones above 10 Hz raise their cutoffs in the 2 cases seen (b27d09e3 80/40 Hz). Author: choose how to handle (keep and state / 4-10 Hz / pilot-like reference / keep flagged). Follow-up: in all 13 synthetic populations (F1 and F2 options) no drone with $f_c \ge 10$ Hz is kept at the defaults (recommendation: sample $f_c$ in 4-10 Hz, or 3-10 Hz with F4). **Decided as D-36 (5):** $f_c$ 3-10 Hz; real drones above 10 Hz reported separately
 - [x] (F4) 4 of 30 real flown settings cross over below 4 Hz, so $f_{lo} = 5 f_c < 20$ Hz (below the validated band). Task 3 needs a rule (proposal $f_{lo} = \max(5 f_c, 20\ \mathrm{Hz})$). Follow-up: D-23 Q5 freezes the noise-metric band at 20-780 Hz, so $f_{lo} = \max(5 f_c, 20\ \mathrm{Hz})$ follows from it; the band below 20 Hz holds 0.3-0.7 % of $N^2$ for the 4 settings; 3 $f_c$ would put 14 of 23 below 20 Hz and cannot be computed for synthetic drones (recommendation: max rule, optionally $f_c$ from 3 Hz). **Decided as D-36 (5):** $f_{lo} = \max(5 f_c, 20\ \mathrm{Hz})$ and $f_c$ from 3 Hz
-- [ ] (F5) Single identifications can be wrong (c901f9c1 roll: roll/pitch b ratio 1.82, nominal PM 20.8° of a flying drone); the FFT dynamic notch is not modelled (3 accepted vehicles); 5 fits on the T_d = 0 bound; rows whose gains changed in flight are excluded (a3f3ae23)
+- [ ] (F5) Single identifications can be wrong (c901f9c1 roll: roll/pitch b ratio 1.82, nominal PM 20.8° of a flying drone); the FFT dynamic notch is not modelled (3 accepted vehicles); 5 fits on the T_d = 0 bound; rows whose gains changed in flight are excluded (a3f3ae23) **Status 2026-10-21:** reported, not fixed: the test-half extreme cases are D-39 (2) findings (Section 11). Limitation of single identifications, no task.
 - [x] (A4 follow-up, for Task 3) Real-gain test cases need both a Tier 2 identification (manoeuvres) and a steady library window (calm flight): b79d2e3d is identified but has no library spectrum (all 82 candidate windows failed Q10 unsteady). Task 3 must count the real-gain cases that have both. **Decided as D-36 (6):** on the fit half 26 of the 28 identified cases (15 vehicles) qualify
 - [x] **A5 decided 2026-10-19 (D-38): Scenario B at its natural share (101 of the 1,000 RQ1 cases); measured test half: 4 Scenario B real-gain cases (2 vehicles) and 3 Scenario B real-noise vehicles.** (A5 input) Only 5 of the 50 generator entries carry motor harmonics (51603946 has valid RPM in 1 of its 3 windows; the vehicle spectrum keeps motor frequencies only if every window has them), so synthetic Scenario B drones come from 5 source peak sets; test-half Scenario B about 5 vehicles (proportional estimate, test half not opened). **Author 2026-10-18:** A5 waits until D-36 is recorded; the Scenario B limitation (5 sources, about 10 % of training) is stated in Section 11
-- [ ] (Phase 5, D-36 (2)) For a real drone whose flown setting is "reference unsafe", step 4 of Section 7.8 returns that unsafe reference when the ML proposal fails; decide whether a known-stable fallback replaces it (the highest cutoffs pass the stability limits for all 10 flagged fit-half settings; this would change 7.8)
+- [ ] (Phase 5, D-36 (2)) For a real drone whose flown setting is "reference unsafe", step 4 of Section 7.8 returns that unsafe reference when the ML proposal fails; decide whether a known-stable fallback replaces it (the highest cutoffs pass the stability limits for all 10 flagged fit-half settings; this would change 7.8) **Status 2026-10-21:** **a Phase 5 decision**, needed before `safety_check.py` is written.
 - [x] (Task 3) Optimizer limits $\mathcal{S}$: nominal only (as `optimizer.py` now) or also the worst-case limits over the uncertainty set (as the safety check); question T3-1 of `notes/task3_plan.md`. **Decided as D-37 (1):** nominal and worst-case limits
 - [x] **Decided 2026-10-19 (D-39 (1)): reported separately, flagged "outside the 3-10 Hz training prior", kept in the totals.** (Task 3, test half) 4 test-half real-gain cases cross over below 3 Hz unfiltered (1.95-2.92 Hz), outside the D-36 training range; D-36 (5) only rules on drones above 10 Hz. They stay in every result and are counted as "outside 3-10 Hz" in Table 2. Author: report them separately like the drones above 10 Hz, or keep them as now?
 - [x] **Reporting decided 2026-10-19 (D-39 (2)): findings in Section 11, not limitations; RQ1 stands on the safe-only number (+2.1°). The F5 question itself stays open in the F5 item above.** (Task 3, test half, F5) 9 of 28 test-half flown settings fail the nominal limits (fit half 5 of 26), some extremely for flying drones (c6f66b3d roll PM 17.4° / $M_s$ 9.25, d10980b0 roll 21.4° / 3.91, b98012f4 pitch 15.2° / 4.88; all 4 test Scenario B cases): likely wrong single identifications or unmodelled filters (6 test cases fly the FFT notch). Reported, nothing changed after seeing the test half; Table 2 separates the Mode A gain of safe references (test: +2.1° vs +4.5° over all cases)
 - [x] **A5 decided 2026-10-19 (D-38): 10,000 cases with the D-37 optimizer.** (Task 3, risk R4) Optimizer run time: with the full grid (1,500 stability points, 0.5 Hz noise grid, 40 x 30) a Scenario A case with two notch peaks (57 notch options) takes about 80 s on one core, the fast grid of the feasibility test (500 points, 1 Hz, 24 x 18) about 12 s; but the fast optimum can break the noise limit on the full grid (1 of 4 planning cases: $\tilde N$ = 1.023), so the final refinement must run on the full grid (`notes/task3_plan.md`, T3-4; D-37 (4)); decide before Task 4, where 10,000-30,000 cases are planned. **Measured in Task 3 (2026-10-19):** about 3.4 s per case on 6 workers (10,000 cases about 9.5 h); preliminary A5 recommendation 10,000 cases with the D-37 optimizer (`notes/task3_results.md` Section 8). **Author 2026-10-19:** A5 will be compute-limited (10,000 cases 5-8 h, 30,000 cases 16-24 h on 6 workers even on the fast grid); risk R4 in Section 13; a preliminary A5 recommendation comes with the Task 3 report
-- [ ] m2cgen support for the chosen boosting model (Section 7.10)
-- [ ] Current APCs for IEEE Access, Sensors and Aerospace; charges for IEEE ESL (Section 12)
+- [ ] m2cgen support for the chosen boosting model (Section 7.10) **Status 2026-10-21:** Phase 6.
+- [ ] Current APCs for IEEE Access, Sensors and Aerospace; charges for IEEE ESL (Section 12) **Status 2026-10-21:** Phase 7.
 
 ### Session log
 

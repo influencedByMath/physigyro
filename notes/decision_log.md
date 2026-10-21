@@ -6,7 +6,7 @@ Written for: the author, as the source when writing the paper. **The full wordin
 - the small **implementation rulings** made during the work;
 - every **correction** of an earlier claim.
 
-Keep it updated in every phase. Last update: 2026-10-20 (Phase 4, Task 4 done: `notes/task4_results.md`).
+Keep it updated in every phase. Last update: 2026-10-21 (documentation audit after Phase 4; Section D: jitter 0.64 %).
 
 Status values: **active** (in force), **extended** (still in force, with additions by a later decision), **partly superseded** (one part replaced; named), **done** (a one-off action).
 
@@ -107,7 +107,7 @@ All rulings in this table up to the evidence pack were accepted by the author on
 | The Q7 axis check uses all airborne gap-free time, and is "inconclusive" below 0.03 rad/s roll/pitch motion | The longest-segment version gave 2 false rejections | `noise_data.axis_correlation` |
 | Logs missing a Q10 topic get a reason code (`Q10_no_rate_setpoint`, `Q10_no_land_detector`) | Crashes would hide them | `spectra_library.process_log` |
 | Free-peak cap of 15 | A cap of 6 bound in 42 of 52 fits and truncated the generator's peak counts | `fit_model.py` |
-| Generator jitter measured within vehicles: frequency 0.65 % (4 drones), height 1.1 dB (49 drones) | Data-driven, not guessed | `generator_check.jitter` |
+| Generator jitter measured within vehicles: frequency 0.64 % (4 drones), height 1.1 dB (49 drones) | Data-driven, not guessed | `generator_check.jitter` |
 | The extended screen is "the exact first N of the D-21 order" (resume-safe) | `--max-logs` would overshoot on restart | `log_screen.run_screen(order_limit)` |
 | The Q7 rule was not changed after seeing the test half (3 vehicles lost) | That would be tuning on test data | REPORT 15 |
 | (Phase 4) The empirical (FIFO rate, controller rate) pairs of D-28 come only from logs whose logged FIFO IMU is the control IMU (38 of 111 fit logs) and whose controller rate is logged at full rate | Otherwise the pair mixes two IMUs (e.g. 8 kHz filters with a 667 Hz controller from a 2 kHz IMU), which PX4 never runs. **Author agreed 2026-10-18.** 37 such pairs exist (`priors_from_logs.json` `rate_rows`) | `notes/tier1_priors.md` 1.4; Task 4 |
@@ -151,6 +151,9 @@ All rulings in this table up to the evidence pack were accepted by the author on
 | (Task 4) Bit-exact spectra: the suite checks the first 200 rows and the SHA-256 in the meta; the full regeneration is `dataset_gen.py check-spectra` (9 min; MATCH after the run); npz uncompressed, gzip with mtime 0 | A full regeneration is too slow for every suite run; both output files are deterministic | `tests/test_dataset_gen.py`, `dataset_gen.py` |
 | (Task 4) The 24 cases without a Mode A label and the 1 without a Mode B label are kept as the D-37 optimizer produced them and reported | All are flagged drones; no limit is broken; changing the search would change the label algorithm (D-38 (5)); **decided by the author as D-41** | `notes/task4_results.md` Section 5 |
 | (Task 4, docs) THESIS Section 2, D-24: the magnitude written with lvert/rvert instead of bare pipes | A bare pipe inside a table cell split the D-24 row into extra cells (pre-existing since 2026-10-15); no content change | THESIS.md |
+| (Audit 2026-10-21) THESIS 7.4.3 gate table, 7.4.4 steps 5-6 and 7.5 show the frozen values instead of TBD (D-23, D-26 (4)); the Q7 cell names the verified rotations and that the board trims are ignored in code | The table still said TBD although D-23 froze the values; every value copied from `data_quality.FROZEN`, `noise_model` (prominence 0.5) and `fit_model.DROP_DB` (5 dB), no value changed | THESIS 7.4.3-7.5 |
+| (Audit 2026-10-21) VERIFY list: 11 items closed with their evidence (Q7 rule, window spread, nperseg, go/no-go, FIFO rate under dropout, duplicates without ID, floor shape, Q11 count, setup defaults, PADRE, ICM-42686-P); 12 stay open with their phase; status signs ✅ / ⬜ in Sections 10 and 17 (author's request) | They were resolved by D-23 to D-36 but never ticked | THESIS 17, 10 |
+| (Audit 2026-10-21) The deferred minor review point (ESC RPM averaged from the first take-off to the last landing) changes no result: every Scenario B real-gain case uses the RPM of its own windows; the 5 Scenario A cases flown with the ESC bank (fit d32cc24c x2; test 1388d408 x2, ceb1a318 pitch) are single-flight logs without valid RPM, so their bank is left out (Table S1 notes) | Checked on the logs (airborne intervals) | `experiments/phase4/rq1_cases.py`, `robust_limits.case_from_log` |
 
 ## D. Corrections of earlier claims (state honestly; useful for Limitations)
 
@@ -166,6 +169,7 @@ All rulings in this table up to the evidence pack were accepted by the author on
 | (Phase 4) Controller rate off `IMU_GYRO_RATEMAX` in "39 of 99" fit logs (shown to the author at the A1 STOP) | **42 of 102**. "Logged at full rate" was first judged by measured ≥ 0.5 × setting, which dropped 3 full-rate logs (settings 2000 → 999 Hz, 1000 → 499 Hz, 0 → 795 Hz); now by the logger profile (PX4 `logged_topics.cpp`). D-28 is unchanged | self-check before the Task 2 report |
 | (Phase 4) Evidence pack v1 (committed 250aef6): "±15 % is about twice the measured repeatability"; "F3: 0 % in every design"; real-gain margins "with the control IMU's filter rate"; "never count twice" without the FIFO/control caveat | Compared only at 10 Hz; at each drone's own M_s peak ±15 % covers 16 and ±20 % 17 of 18 pairs, so the recommendation is ±20 %. F3 is rare-not-impossible (6.5 % with faster priors). vehicle_imu_status was never loaded (all cases used the FIFO rate; now matched in 23 of 30). The caveat and a Td correction were added | independent review, 2026-10-18 |
 | (Phase 4, `notes/tier1_priors.md` 1.6) Scenario B synthetic drones possible with the 6 fit vehicles that have valid RPM | Only 5 can be generator sources: 51603946 has valid RPM in 1 of its 3 windows, and the vehicle spectrum keeps motor frequencies only if every window has them (`spectra_library.vehicle_spectra`); 5 of the 50 generator entries carry motor harmonics | A5 count in the follow-up, 2026-10-18 |
+| (Phase 3) Generator frequency jitter "0.65 %" (THESIS 7.5.1, this log, `experiments/part2/REPORT.md`, `notes/followup_A4_F1_F4.md`, a note string in `generator_check.py`) | **0.64 %**: log10 sd 0.0027758 gives 10^x - 1 = 0.641 %; 0.65 % came from rounding the sd to 0.0028 first. The generator uses the unrounded value, so no result changes. THESIS 7.5.1 and this log corrected; the dated reports and the code note are left as written | audit 2026-10-21 |
 | (follow-up, reviewer's point 4) "At 2 kHz the Fig. 1 curves change by at most 0.16 ms (D-term path)" | That holds for panel (a); in panel (b) the ESC bank adds about 0.02 ms, so the D-term path changes by up to 0.19 ms (crossover band). 6,400 Hz stays | recomputed while writing the THESIS limitation, 2026-10-18 |
 
 ## E. Open for Phase 4 (to be decided; see `notes/phase4_plan.md`)

@@ -1,5 +1,7 @@
 # Phase 3, Part 1 Implementation Plan: from the log index to the pilot-study proposal
 
+> **Status 2026-10-21: ✅ Phase 3 DONE** (2026-10-16; closing checks 2026-10-18). The step checkboxes below were not ticked while the work ran; THESIS Section 10 (Phase 3 checklist) and Section 7.5.1 hold the record of what was done. The open points P1-P4 were decided as D-24 (P1-P4 details) and D-26.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Find about 200 public PX4 logs with raw gyro FIFO, split their vehicles 50/50 into fit and test halves (fixed hash), download a fit-half pilot set, and produce a pilot-study report that **proposes** every TBD data-quality threshold for the author's approval.
