@@ -1507,7 +1507,7 @@ Checked 2026-09-28 to 2026-09-30; all re-checked 2026-10-14. **Full BibTeX of ev
 | 2 Physics model | 8-12 | Oct 5-9 | ✅ Done 2026-10-10 (feasibility test); Tier 1 priors and Fig. 1 were moved to Phase 4 and are done there |
 | 3 Real noise and clustering | 19-23 | Oct 16-20 | ✅ **Done 2026-10-16** (D-23 to D-27): 95 usable vehicles (52 fit + 43 test), one generator with chip covariate (AUC 0.495), independent review passed; branch `phase3` not merged (author) |
 | 4 Optimizer and training data | 24-26 | Oct 21-23 | ✅ **Done 2026-10-20** (branch `phase4`; optional E12 figure done 2026-10-21, D-42): Task 1 Tier 1 priors (D-28), Task 2 Fig. 1 (D-29), evidence pack, decisions A2-A4 and F1-F4 (D-30 to D-37), **Task 3 RQ1 done 2026-10-19** (`notes/task3_results.md`); A5 decided (D-38, 10,000 cases); the Task 4 plan approved (D-40); **Task 4 training set done 2026-10-20** (`notes/task4_results.md`) |
-| 5 ML tuner | 27-32 | Oct 24-29 | ⬜ Not started (next; the Task 5 plan needs the author's approval first) |
+| 5 ML tuner | 27-32 | Oct 24-29 | ⬜ Not started (next; "Task 5" in older notes = Phase 5; the plan `notes/phase5_plan.md` needs the author's approval first; start prompt `notes/phase5_start_prompt.md`) |
 | 6 Deployment and validation | 33-35 | Oct 30-Nov 1 | ⬜ Not started |
 | 7 Paper writing | 36-41 | Nov 2-7 | ⬜ Not started |
 | 8 Review | 42-44 | Nov 8-10 | ⬜ Not started |

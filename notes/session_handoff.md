@@ -1,6 +1,6 @@
 # Session handoff (read at the start of a new session)
 
-Last update: 2026-10-21 (audit, D-42 E12), Phase 4 ✅: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = training set, `notes/task4_results.md`); decisions D-28 to D-43 recorded; next ID D-43. **STOP: the author reviews Task 4 before Task 5.** Written for: Claude starting a new session, and the author.
+Last update: 2026-10-21 (audit, D-42 E12), Phase 4 ✅: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = training set, `notes/task4_results.md`); decisions D-28 to D-43 recorded; next ID D-44. **Next: Phase 5 (ML tuner; "Task 5" in older notes means the same work). It starts with `notes/phase5_plan.md` for the author's approval; start prompt `notes/phase5_start_prompt.md`.** Written for: Claude starting a new session, and the author.
 
 ## Where things stand
 
@@ -29,15 +29,15 @@ Last update: 2026-10-21 (audit, D-42 E12), Phase 4 ✅: Tasks 1-4 done (Task 3 =
 - **Task 4 done 2026-10-20 (`notes/task4_results.md`):** `data/labels/train_v1.jsonl.gz` (10,000 records `syn0000`-`syn9999`, RQ1 format + `gains` + `origin`) and `train_v1_meta.json` in git (data commit `df6b02e`, code `9324a5f`); `train_v1_spectra.npz` (float32 10,000 × 1,521) local and git-ignored, SHA-256 in the meta, regenerate with `.venv/Scripts/python experiments/phase4/dataset_gen.py check-spectra` (9 min). Check the set with `dataset_gen.py verify`. One run of 9 h 22 min, no restart; reuse check 20/20 bit-identical; 973 Scenario B, 420 flagged; every optimum within the limits.
 - **D-41 (2026-10-20):** 24 cases without a Mode A label and 1 without a Mode B label, all flagged drones (21 infeasible on the coarse grid; 2 search gaps syn6473, syn7266; search cap of 3,000 candidates reached in syn8559 (A) and syn2012 (B)). `train_v1` stays as it is; **Task 5 selects by `A.feasible` / `B.feasible`** (Mode A 9,976 cases, Mode B 9,999); the gaps and cap hits are a stated limitation (decision log F 21).
 - **Audit 2026-10-21 (author request):** Phases 0-4 ✅ done except the 3 Phase 1 author tasks (GitHub repo and push ✅ 2026-10-21 D-43; ⬜ accounts / Zotero; ⬜ send the proposal). **D-42:** ✅ E12 Fig. 12 drawn (`experiments/phase4/fig12_tier2.py`, `figures/fig12_tier2`, caption `figures/fig12_caption.md`); ✅ Section 11 limitation on unmodelled flown filters (14 real-gain cases). Fixed: stale TBDs in THESIS 7.4.3-7.5, 11 VERIFY items closed, phase signs ✅ / ⬜, the jitter number 0.64 % (not 0.65 %), stale plan headers.
-- **Next: Task 5 (ML tuner), only after the author's review.** Inputs: `train_v1` (10,000 generator cases), the 520 fit real-noise cases as a separate validation set (T4-1 (a)), grouping by generator source suggested (T4-3), learning curve 1,000 / 2,500 / 5,000 / 10,000 and the extension threshold (T4-4).
+- **Next: Phase 5 (ML tuner, called "Task 5" in D-40, D-41 and older notes), plan first (`notes/phase5_plan.md`), code only after the author approves it; start prompt `notes/phase5_start_prompt.md`.** Inputs: `train_v1` (10,000 generator cases), the 520 fit real-noise cases as a separate validation set (T4-1 (a)), grouping by generator source suggested (T4-3), learning curve 1,000 / 2,500 / 5,000 / 10,000 and the extension threshold (T4-4).
 - **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first. Deferred minor (ESC RPM averaged from first take-off to last landing in multi-flight logs): **checked 2026-10-21, it changes no result** (decision log C).
 - Plan ledger (git-ignored): `.superpowers/sdd/phase4_plan/progress.md` (rulings, process notes).
 
 ## Read first (in this order)
 
-1. `THESIS.md`: Section 0; Section 2 (D-01 to D-39); 7.1-7.1.1, 7.2, 7.8; 7.4.7 and 7.5.1; Section 10 Phase 4; Section 17 (VERIFY items F1-F5).
-2. `notes/task4_plan.md` (approved, D-40) and `notes/task4_start_prompt.md`, `notes/task3_results.md`, then `notes/followup_A4_F1_F4.md` and `notes/evidence_pack_A2_A4.md` (the evidence behind D-36).
-3. `notes/phase4_plan.md`: the approved plan (Tasks 3-4 next).
+1. `THESIS.md`: Section 0; Section 2 (D-01 to D-43); Section 6; 7.1-7.1.1, 7.2, 7.3, 7.6-7.9; 7.4.7 and 7.5.1; Section 10 Phase 5; Section 17 (open VERIFY items).
+2. `notes/phase5_start_prompt.md` (what the Phase 5 plan must cover), then `notes/task4_results.md`, `notes/task4_plan.md` (T4-1, T4-3, T4-4), `notes/task3_results.md`, `notes/followup_A4_F1_F4.md` and `notes/evidence_pack_A2_A4.md` (the evidence behind D-36).
+3. `notes/phase4_plan.md`: the Phase 4 plan (✅ done).
 4. `notes/tier1_priors.md`: Task 1 evidence.
 5. `notes/decision_log.md`: decisions, rulings, corrections. Keep it updated.
 6. `experiments/part2/REPORT.md` Sections 13-16 and `experiments/feasibility/REPORT.md`.
