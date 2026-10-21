@@ -12,7 +12,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 
 ---
 
-## A. Decisions D-01 to D-42
+## A. Decisions D-01 to D-43
 
 | ID | Date | Decision (short) | Evidence or reason | Status | Paper section |
 |---|---|---|---|---|---|
@@ -58,6 +58,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | D-40 | 10-19 | **Task 4 plan approved as written:** T4-1 (a) the 520 fit real-noise cases are a separate validation set for Task 5, not training; T4-2 (a) records + meta committed, spectra npz local (git-ignored) with SHA-256 in the meta and a bit-exact regeneration test; T4-3 grouping noted for Task 5; T4-4 extension to 20,000 only if the Task 5 learning curve asks (threshold then); T4-5 run on 2026-10-20 in a new session after the author switches off sleep; split, reuse guard, run guards and output files as planned; stop on any landmine | Author, 2026-10-19; `notes/task4_plan.md` | active | Methods 7.6; Task 4 |
 | D-41 | 10-20 | **Training cases without a label:** `train_v1` kept exactly as the D-37 optimizer made it; Task 5 uses the 9,976 cases with a Mode A label for Mode A and the 9,999 with a Mode B label for Mode B; the 24 + 1 unlabelled modes (all flagged drones) are reported; the 2 search gaps (syn6473, syn7266) and 2 cap hits (syn8559 A, syn2012 B) are a stated limitation; nothing is rerun | Task 4 finding (`notes/task4_results.md` Section 5): 21 infeasible on the coarse grid, 2 search gaps, 2 at the 3,000-candidate cap; no limit broken; keeps consistency with RQ1 and D-38 (1); dropping would select on the outcome (D-36 (2)) | active | Methods 7.6, 7.7; Limitations |
 | D-42 | 10-21 | **(1) E12 now:** Fig. 12 histograms of the existing identifications, fit and test halves separately: τ_m, T_d net of the chip filter, unfiltered f_c, flown PM (30° floor); b left out; fit 30 identifications / 17 vehicles (f_c and PM 28 / 16 without a3f3ae23), test 28 / 19. **(2)** one Section 11 limitation sentence on unmodelled flown filters (FFT notch 5 fit + 6 test cases, ESC bank without RPM 5 cases; 14 distinct) | Tasks 1-4 finished early (the plan's condition for E12); the identifications exist; the unmodelled filters were only in Table S1 notes | active | Results (E12); Limitations |
+| D-43 | 10-21 | **GitHub backup:** public repository `influencedByMath/physigyro` (author's choice); `phase3` and `phase4` pushed; GitHub's `main` keeps its own 'Initial commit' (MIT `LICENSE`) until the author merges; no merge | Author asked for the push without a merge; `phase4` holds the full history; checked before the push: no file over 20 MB, no secrets, no raw logs | active | Data and code availability |
 
 ---
 
