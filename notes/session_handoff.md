@@ -1,11 +1,11 @@
 # Session handoff (read at the start of a new session)
 
-Last update: 2026-10-20, Phase 4: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = training set, `notes/task4_results.md`); decisions D-28 to D-41 recorded; next ID D-42. **STOP: the author reviews Task 4 before Task 5.** Written for: Claude starting a new session, and the author.
+Last update: 2026-10-21 (audit, D-42 E12), Phase 4 ✅: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = training set, `notes/task4_results.md`); decisions D-28 to D-42 recorded; next ID D-43. **STOP: the author reviews Task 4 before Task 5.** Written for: Claude starting a new session, and the author.
 
 ## Where things stand
 
 - **Branch `phase4`** (created from the tip of `phase3`): everything is committed locally. **`phase3` and `phase4` are NOT merged** into `main`; the author decides the merge. **No GitHub push** until the author asks.
-- **Tests:** `.venv/Scripts/python -m pytest -q` (437 pass, about 3.5 min). Run the full suite before every commit.
+- **Tests:** `.venv/Scripts/python -m pytest -q` (448 pass, about 3.5 min). Run the full suite before every commit.
 - **Decided:**
   - **D-28** Tier 1 priors (evidence `notes/tier1_priors.md`); the ranges of f_c, τ_m and T_d are revised by D-36;
   - **D-29** Fig. 1 with two panels: (a, main) PX4 default with the ESC bank off, (b) bank on. Caption computed (`experiments/phase4/figures/fig1_caption.md`); crossover band 3-10 Hz since D-36;
@@ -28,7 +28,7 @@ Last update: 2026-10-20, Phase 4: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = t
 - **D-40** Task 4 plan approved as written: T4-1 (a) the 520 fit real-noise cases are a separate validation set for Task 5; T4-2 (a) records + meta in git, spectra npz local and git-ignored with SHA-256 in the meta and a bit-exact regeneration test; T4-3 noted for Task 5; T4-4 extension threshold set in Task 5; T4-5 run on 2026-10-20 in a new session.
 - **Task 4 done 2026-10-20 (`notes/task4_results.md`):** `data/labels/train_v1.jsonl.gz` (10,000 records `syn0000`-`syn9999`, RQ1 format + `gains` + `origin`) and `train_v1_meta.json` in git (data commit `df6b02e`, code `9324a5f`); `train_v1_spectra.npz` (float32 10,000 × 1,521) local and git-ignored, SHA-256 in the meta, regenerate with `.venv/Scripts/python experiments/phase4/dataset_gen.py check-spectra` (9 min). Check the set with `dataset_gen.py verify`. One run of 9 h 22 min, no restart; reuse check 20/20 bit-identical; 973 Scenario B, 420 flagged; every optimum within the limits.
 - **D-41 (2026-10-20):** 24 cases without a Mode A label and 1 without a Mode B label, all flagged drones (21 infeasible on the coarse grid; 2 search gaps syn6473, syn7266; search cap of 3,000 candidates reached in syn8559 (A) and syn2012 (B)). `train_v1` stays as it is; **Task 5 selects by `A.feasible` / `B.feasible`** (Mode A 9,976 cases, Mode B 9,999); the gaps and cap hits are a stated limitation (decision log F 21).
-- **Audit 2026-10-21 (author request):** Phases 0-4 ✅ done except the 3 Phase 1 author tasks (GitHub repo and push, accounts / Zotero, send the proposal) and the optional E12 figure. Fixed: stale TBDs in THESIS 7.4.3-7.5, 11 VERIFY items closed, phase signs ✅ / ⬜, the jitter number 0.64 % (not 0.65 %), stale plan headers.
+- **Audit 2026-10-21 (author request):** Phases 0-4 ✅ done except the 3 Phase 1 author tasks (GitHub repo and push, accounts / Zotero, send the proposal). **D-42:** ✅ E12 Fig. 12 drawn (`experiments/phase4/fig12_tier2.py`, `figures/fig12_tier2`, caption `figures/fig12_caption.md`); ✅ Section 11 limitation on unmodelled flown filters (14 real-gain cases). Fixed: stale TBDs in THESIS 7.4.3-7.5, 11 VERIFY items closed, phase signs ✅ / ⬜, the jitter number 0.64 % (not 0.65 %), stale plan headers.
 - **Next: Task 5 (ML tuner), only after the author's review.** Inputs: `train_v1` (10,000 generator cases), the 520 fit real-noise cases as a separate validation set (T4-1 (a)), grouping by generator source suggested (T4-3), learning curve 1,000 / 2,500 / 5,000 / 10,000 and the extension threshold (T4-4).
 - **Independent review (2026-10-18, author request):** no critical findings; 6 important ones fixed test-first. Deferred minor (ESC RPM averaged from first take-off to last landing in multi-flight logs): **checked 2026-10-21, it changes no result** (decision log C).
 - Plan ledger (git-ignored): `.superpowers/sdd/phase4_plan/progress.md` (rulings, process notes).
@@ -46,7 +46,7 @@ Last update: 2026-10-20, Phase 4: Tasks 1-4 done (Task 3 = RQ1, D-37; Task 4 = t
 
 - **Decisions:**
   - No serious decision without evidence and the author's permission; ask with AskUserQuestion and a recommendation.
-  - Every decision goes into THESIS Section 2 (next ID: **D-42**) **and** `notes/decision_log.md`.
+  - Every decision goes into THESIS Section 2 (next ID: **D-43**) **and** `notes/decision_log.md`.
 - **Stopping:** stop and report immediately on any new landmine (unexpected data or code problem).
 - **Testing:**
   - Write tests first and see them fail.

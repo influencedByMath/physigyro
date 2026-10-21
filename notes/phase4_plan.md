@@ -1,6 +1,6 @@
 # Phase 4 Plan: plant priors, Fig. 1, then optimizer results and training data
 
-> Status: ✅ **DONE 2026-10-20.** Approved 2026-10-18; Task 1 (D-28) ✅, Task 2 (D-29) ✅, Task 3 (D-37, `notes/task3_results.md`) ✅, Task 4 (D-40, `notes/task4_results.md`) ✅. Only the optional Tier 2 figure (E12, cut list item 4) is open. (Was: draft 2026-10-16, executed only after the author's approval.)
+> Status: ✅ **DONE 2026-10-20.** Approved 2026-10-18; Task 1 (D-28) ✅, Task 2 (D-29) ✅, Task 3 (D-37, `notes/task3_results.md`) ✅, Task 4 (D-40, `notes/task4_results.md`) ✅. Optional Tier 2 figure (E12): ✅ done 2026-10-21 (D-42, Fig. 12). (Was: draft 2026-10-16, executed only after the author's approval.)
 > Executor: native, test-first, full suite before every commit (author's standing instructions).
 > Stop and report on any new landmine.
 
@@ -103,7 +103,7 @@ Steps (test first):
 - **Data:** fit-half logs with profile bit 3 or 4.
 - **Method:** D-14 instrument rules.
 - **Output:** it would replace the Tier 1 ranges. It is proposed only if Tasks 1-4 finish early.
-- **Status 2026-10-21:** the identifications exist (fit half: evidence pack, 30 from 17 vehicles; test half: Task 3 S2) and informed D-36, which keeps them as a sensitivity check only (not a replacement of the Tier 1 ranges). Open: only the Fig. 12 histograms; the author decides whether to draw them.
+- **Status 2026-10-21:** the identifications exist (fit half: evidence pack, 30 from 17 vehicles; test half: Task 3 S2) and informed D-36, which keeps them as a sensitivity check only (not a replacement of the Tier 1 ranges). ✅ Fig. 12 drawn 2026-10-21 (D-42): `experiments/phase4/fig12_tier2.py`.
 
 ## Review Focus (to be pinned by tests)
 

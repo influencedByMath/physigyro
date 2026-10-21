@@ -6,13 +6,13 @@ Written for: the author, as the source when writing the paper. **The full wordin
 - the small **implementation rulings** made during the work;
 - every **correction** of an earlier claim.
 
-Keep it updated in every phase. Last update: 2026-10-21 (documentation audit after Phase 4; Section D: jitter 0.64 %).
+Keep it updated in every phase. Last update: 2026-10-21 (documentation audit after Phase 4; Section D: jitter 0.64 %; D-42: Fig. 12 and limitation 22).
 
 Status values: **active** (in force), **extended** (still in force, with additions by a later decision), **partly superseded** (one part replaced; named), **done** (a one-off action).
 
 ---
 
-## A. Decisions D-01 to D-41
+## A. Decisions D-01 to D-42
 
 | ID | Date | Decision (short) | Evidence or reason | Status | Paper section |
 |---|---|---|---|---|---|
@@ -57,6 +57,7 @@ Status values: **active** (in force), **extended** (still in force, with additio
 | D-39 | 10-19 | **Test-half reporting:** (1) the 4 test cases below 3 Hz unfiltered (f5af01aa pitch 1.95, a515d8f0 pitch 2.73, 603b2aa6 roll 2.92 / pitch 2.90 Hz) are reported separately like those above 10 Hz: own count column in Table 2; every case outside 3-10 Hz marked "outside the 3-10 Hz training prior" (Table 2 footnote, band-table column, Table S1 notes); not dropped, kept in every total; (2) the test-half observations (9 of 28 vs 5 of 26 nominally unsafe; all 4 test Scenario B cases fail nominally; c6f66b3d, d10980b0, b98012f4 extreme; 6 cases fly the FFT notch) go to THESIS 11 as findings, not limitations; they do not invalidate RQ1 (safe references only: +2.1° on the test half) | Only the reporting changed after the test half was seen. All 4 cases below 3 Hz are safe references (ΔPM 0.0-4.4°, band median 1.0°); 3 of them fly the FFT notch. THESIS 7.3.1, 11 | active | Results (E3); Discussion |
 | D-40 | 10-19 | **Task 4 plan approved as written:** T4-1 (a) the 520 fit real-noise cases are a separate validation set for Task 5, not training; T4-2 (a) records + meta committed, spectra npz local (git-ignored) with SHA-256 in the meta and a bit-exact regeneration test; T4-3 grouping noted for Task 5; T4-4 extension to 20,000 only if the Task 5 learning curve asks (threshold then); T4-5 run on 2026-10-20 in a new session after the author switches off sleep; split, reuse guard, run guards and output files as planned; stop on any landmine | Author, 2026-10-19; `notes/task4_plan.md` | active | Methods 7.6; Task 4 |
 | D-41 | 10-20 | **Training cases without a label:** `train_v1` kept exactly as the D-37 optimizer made it; Task 5 uses the 9,976 cases with a Mode A label for Mode A and the 9,999 with a Mode B label for Mode B; the 24 + 1 unlabelled modes (all flagged drones) are reported; the 2 search gaps (syn6473, syn7266) and 2 cap hits (syn8559 A, syn2012 B) are a stated limitation; nothing is rerun | Task 4 finding (`notes/task4_results.md` Section 5): 21 infeasible on the coarse grid, 2 search gaps, 2 at the 3,000-candidate cap; no limit broken; keeps consistency with RQ1 and D-38 (1); dropping would select on the outcome (D-36 (2)) | active | Methods 7.6, 7.7; Limitations |
+| D-42 | 10-21 | **(1) E12 now:** Fig. 12 histograms of the existing identifications, fit and test halves separately: τ_m, T_d net of the chip filter, unfiltered f_c, flown PM (30° floor); b left out; fit 30 identifications / 17 vehicles (f_c and PM 28 / 16 without a3f3ae23), test 28 / 19. **(2)** one Section 11 limitation sentence on unmodelled flown filters (FFT notch 5 fit + 6 test cases, ESC bank without RPM 5 cases; 14 distinct) | Tasks 1-4 finished early (the plan's condition for E12); the identifications exist; the unmodelled filters were only in Table S1 notes | active | Results (E12); Limitations |
 
 ---
 
@@ -154,6 +155,8 @@ All rulings in this table up to the evidence pack were accepted by the author on
 | (Audit 2026-10-21) THESIS 7.4.3 gate table, 7.4.4 steps 5-6 and 7.5 show the frozen values instead of TBD (D-23, D-26 (4)); the Q7 cell names the verified rotations and that the board trims are ignored in code | The table still said TBD although D-23 froze the values; every value copied from `data_quality.FROZEN`, `noise_model` (prominence 0.5) and `fit_model.DROP_DB` (5 dB), no value changed | THESIS 7.4.3-7.5 |
 | (Audit 2026-10-21) VERIFY list: 11 items closed with their evidence (Q7 rule, window spread, nperseg, go/no-go, FIFO rate under dropout, duplicates without ID, floor shape, Q11 count, setup defaults, PADRE, ICM-42686-P); 12 stay open with their phase; status signs ✅ / ⬜ in Sections 10 and 17 (author's request) | They were resolved by D-23 to D-36 but never ticked | THESIS 17, 10 |
 | (Audit 2026-10-21) The deferred minor review point (ESC RPM averaged from the first take-off to the last landing) changes no result: every Scenario B real-gain case uses the RPM of its own windows; the 5 Scenario A cases flown with the ESC bank (fit d32cc24c x2; test 1388d408 x2, ceb1a318 pitch) are single-flight logs without valid RPM, so their bank is left out (Table S1 notes) | Checked on the logs (airborne intervals) | `experiments/phase4/rq1_cases.py`, `robust_limits.case_from_log` |
+| (E12, D-42) Fig. 12 values: τ_m and the net T_d (f_options.net_td with the Task 1 lower chip bounds) for every identification; the unfiltered f_c (rq1_cases.unfiltered_crossover) and the flown PM (robust.robust_metrics nominal) for the cases whose loop parameters did not change in flight; Task 3 cases use the window RPM of Task 3; b79d2e3d (no window) computed with the same functions | Every value of the 54 Task 3 cases equals the Task 3 value (tested to 1e-9); one source for both halves | `experiments/phase4/fig12_tier2.py` |
+| (E12, D-42) Fig. 12 layout: one row per half, one column per quantity, the same bins per column, the D-36 prior shaded, the 30° floor dotted; Fig. 3 palette and style | Halves comparable at a glance; no dual axis; identity by row, not colour | `fig12_tier2.make_figure` |
 
 ## D. Corrections of earlier claims (state honestly; useful for Limitations)
 
@@ -215,6 +218,7 @@ All rulings in this table up to the evidence pack were accepted by the author on
 19. **Coverage gap at high crossover:** about 1.7 % of the kept synthetic drones lie at 8-10 Hz, but 5 of 26 real fit-half cases do (follows from F3).
 20. **"Reference unsafe" has two numbers** (D-37 (7)): 22 % of the nominal passes fail the worst case (5 of 23); 36 % of all flown settings are flagged (10 of 28; Task 3 set 9 of 26).
 21. **The D-37 search can miss a Mode A optimum of a flagged drone** (D-41): in `train_v1` 2 of 10,000 cases (syn6473, syn7266) have no Mode A label although their Mode B optimum meets every Mode A constraint, and 2 searches stopped at the 3,000-candidate cap (syn8559 Mode A, syn2012 Mode B); 21 further flagged drones have no Mode A setting on the coarse grid (every safe setting found is noisier than the PX4 default).
+22. **Unmodelled flown filters in real-gain cases** (D-42 (2)): 14 of the 54 real-gain cases fly the FFT dynamic notch (5 fit, 6 test cases) or the ESC notch bank without valid RPM (5 cases; d32cc24c both); their flown margins and optima are computed without that filter (Table S1 notes).
 
 ## G. Findings of the held-out test half (D-39 (2); findings, not limitations)
 
